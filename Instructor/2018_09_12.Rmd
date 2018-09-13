@@ -46,11 +46,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 * [git-scm download](https://git-scm.com/downloads)
 
-* 자신의 수정 사항 Git에 올리기 : Stage - Commit - Push
+* 자신의 수정 사항 Git에 올리기 : Stage - Commit - Push -- New Pull Request
 
 * Configuring a remote for a fork
 
-```{r eval=FALSE}
+```
      $ git remote -v
      $ remote add upstream https://github.com/kwhkim/MJU-2018-02-DataScience.git
      $ git remote -v
@@ -63,7 +63,7 @@ knitr::opts_chunk$set(echo = TRUE)
      $ git checkout master
      $ git merge upstream/master
 ```
-    
+
 
 ## 데이터
 
