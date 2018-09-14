@@ -48,13 +48,15 @@ knitr::opts_chunk$set(echo = TRUE)
 
 * 자신의 수정 사항 Git에 올리기 : Stage - Commit - Push -- New Pull Request
 
-* Configuring a remote for a fork
+* Configuring a remote for a fork(**이때 주의할 점은 cd 명령어를 통해 자신의 project 폴더로 이동한 후 다음의 명령을 실행해야 합니다.**)
 
 ```
+     $ cd D:/GDrive/Lecture/MJU-2018-02-DataScience(여기에 자신의 폴더를 넣습니다.)
      $ git remote -v
-     $ remote add upstream https://github.com/kwhkim/MJU-2018-02-DataScience.git
+     $ git remote add upstream https://github.com/kwhkim/MJU-2018-02-DataScience.git
      $ git remote -v
 ```
+![git remote를 하기 전에 cd로 현재 폴더를 프로젝트가 저장된 폴더로 바꾸세요.](./gitremote.png)
   
 * Syncing a fork
 
