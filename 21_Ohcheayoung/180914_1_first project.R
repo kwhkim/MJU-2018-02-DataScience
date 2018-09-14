@@ -1,4 +1,4 @@
 library(dplyr)
-library(ggplot2)
-
-1+1
+library(readxl)
+df_exam <- read_excel("excel_exam.xlsx")
+df_exam
