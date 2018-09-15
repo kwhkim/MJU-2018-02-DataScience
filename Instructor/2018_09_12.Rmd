@@ -58,6 +58,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 ![git remote를 하기 전에 cd로 현재 폴더를 프로젝트가 저장된 폴더로 바꾸세요.](./gitremote.png)
   
+![git 탭의 Shell 선택하기: R Studio의 오른쪽 git 탭에서 Shell을 선택하거나, 주메뉴의 Tools-Shell을 선택하면 Git Bash가 실행되고 R 프로젝트 폴더로 자동 이동합니다.](./shell_in_R_Studio.png)
+  
 * Syncing a fork
 
 ```
