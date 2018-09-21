@@ -30,7 +30,7 @@
 |:-:|:-:|---|
 |01   |09/07   |(개교기념일 휴강)   |
 |02   |09/14   |[과목 소개, git 설치, github 등](./00_Instructor/2018_09_12.html)  |
-|03  |09/21   |R의 데이터 타입, R 마크다운, 데이터 읽어오기   |
+|03  |09/21   |[R의 데이터 타입](https://github.com/kwhkim/stat-programming-01/blob/master/RClass02_.pdf), [R 마크다운](./00_Instructor/Class02_RMarkdown.html), [데이터 읽어오기](./00_Instructor/Class02_ImportingData.html)   |
 |04   |09/28   |데이터 전처리1   |
 |05   |10/05   |데이터 전처리2   |
 |06   |10/12   |R 그래픽스   |
