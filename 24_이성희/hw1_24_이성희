@@ -1,0 +1,23 @@
+hw1_24_이성희
+
+일별 암호화폐 거래 데이터
+
+: coinmarketcap.com에서 각 거래소마다 데이터를 평균하여 제공한 것이다(price의 경우에는 가격 X 거래량으로 가중평균).
+
+2013년 4월 28일 비트코인의 거래를 시작으로 현재(2018-09-20)는 2018년 9월 18일까지의 데이터가 제공되고 있으나 계속 업데이트 될 것으로 보인다.
+
+그리고 76개 암호화폐들로 구성되어있고 각 암호화폐마다 column이 다르지만 기본적으로 시가총액, 가격, 거래량 등의 데이터가 제공된다.
+
+
+
+분석 
+
+1. 한국의 김치프리미엄 정도
+   - bithumb과 upbit api 에서 json을 받아와서 binance(외국거래소)와 비교
+   - https://www.kaggle.com/mczielinski/bitcoin-historical-data (외국거래소 bitflyer, coinbase 등)
+2. 비트코인 연도별 변동성 비교
+3. 연도별(또는 월별) 코인 시총 순위 변화
+
+
+
+데이터 출처 : https://coinmetrics.io/data-downloads/
