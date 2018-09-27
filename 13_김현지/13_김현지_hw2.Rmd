@@ -8,11 +8,8 @@ output: html_document
 
 ---
 
-# 1. 데이터
+# 1. 데이터 ##### 출처 : [서울열린데이터광장](http://data.seoul.go.kr/)
 
-##### 출처 : [서울열린데이터광장](http://data.seoul.go.kr/)
-
----
 
 1) 서울시 주민등록인구 통계(2014-2017)
 
