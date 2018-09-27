@@ -1,0 +1,141 @@
+---
+title: "응용데이터사이언스: 세 번째 수업"
+author: "김권현"
+date: "2018년 9월 28일"
+output: html_document
+---
+
+```#{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 오늘 수업의 주요 내용
+
+* 지난 시간의 소개한 Simpson's paradox과 새로 소개하는 Berkson's paradox
+* [R로 데이터 읽어오기](./Class02_ImportingData.html)
+* 데이터 살펴보기
+* R의 데이터 타입 : numeric(수치형), character(문자열), factor/ordered(범주형,순위형)[^1]
+* 그밖에 : 조 구성, 발표 순번 결정
+
+[^1]: 측정척도(scales of measurement)는 '대상들에 부여한 숫자들의 관계의 특징'이다. 예를 들어 다음의 세 질문에 답해보자. 1) 수영대회에서 당신의 등번호는? 2) 수영대회에서 당신의 등수는? 3) 수영장을 한 번 도는 데 몇 초 걸렸나요? 이들은 1) 명명척도(nominal scale), 2) 서열척도(ordinal scale), 3) 비율척도(ratio scale)의 예이다. 그 외에도 간격척도(interval scale)가 있다.
+
+---
+
+## 데이터 살펴보기
+
+데이터를 전체적으로 살펴보고 분석의 방향을 가늠한다. 이 과정에서 자료의 오류를 찾을 수도 있다. 특히 특이값(outlier)과 결측값(missing value)에 주목한다.
+
+> 데이터에는 크고 작은 오류가 있기 마련이다.
+
+* 데이터 프레임`df`의 전체적인 구조 확인하기
+```{r, eval=FALSE}
+df <- mtcars
+head(df, n=10); tail(df); View(df)
+dim(df); nrow(df); ncol(df)
+colnames(df); rownames(df)
+apply(df, 2, function(x) sum(is.na(x)))
+sum(duplicated(df))
+sum(!complete.cases(df))
+```
+* [통계 요약치](###통계요약치)
+    - 집중경향치 : 평균(mean), 중앙값(median), 최빈값(mode), 절사평균(trimmed mean)
+    - 변산성 측정치 : 범위(range), 사분점간 범위(inter-quartile range), 분산(variance), 표준편차(standard deviation)
+* [데이터 시각화](###데이터시각화)
+    - 1변수 시각화 : 이산형 데이터(`plot`), 연속형 데이터(`hist`)
+    - 2변수 시각화 : `plot(y ~ x, data = )`
+    - 조건부 시각화 : `xyplot(y ~ x | g, data = )`
+    
+### 통계요약치
+
+```{r, eval=FALSE}
+x <- rnorm(100)
+x <- c(x, 2, 2)
+
+# 집중경향치
+mean(x)
+median(x)
+Mode <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+Mode(x) # table
+mean(x, trim = 0.2)
+
+# 변산성 측정치
+range(x)
+IQR(x)
+var(x)
+sd(x)
+```
+
+함수 `Mode`는 [stackoverflow](https://stackoverflow.com/questions/2547402/is-there-a-built-in-function-for-finding-the-mode)에서 가져왔다.
+
+주어진 데이터 프레임의 모든 열에 대해 요약통계치를 얻으려면 `apply(df, 2, func)`을 사용한다.
+
+```{r, eval=FALSE}
+data(mtcars)
+apply(mtcars, 2, mean)
+
+data("BankWages", package='AER')
+apply(BankWages, 2, Mode)
+```
+
+
+R에는 좀 더 간단한 함수를 제공한다. `summary`, `psych::describe`등을 활용해보자.
+```{r, eval=FALSE}
+data('singer', package='lattice')
+summary(mtcars)
+summary(BankWages)
+summary(singer)
+```
+
+### 데이터시각화
+
+* 1변수의 시각화 
+    - 이산형 : `plot`
+    - 연속형 : `hist`
+    
+* 2변수의 시각화
+    - `plot(y ~ x, data= )`
+  
+* 조건부 1변수 시각화
+    - 이산형 : `lattice::histogram(~ x | g, data= )`
+    - 연속형 : `lattice::histogram(~ x | g, data= )`
+    
+* 조건부 2변수 시각화
+    - `x`, `y` 이산형 : `lattice::histogram(~ y | x*g, data = )`
+    - `x` 이산형, `y` 연속형 : `lattice::xyplot(y ~ x | g, data = , jitter.x = TRUE)`
+    - `x`, `y` 연속형 : `lattice::xyplot()`[^2]
+
+----
+
+### 시각화 결과 
+
+```{r}
+library(lattice)
+data('BankWages', package='AER')
+data(mtcars)
+# 일변수
+hist(BankWages$education) #histogram(~education, data=BankWages)
+plot( ~ gender, data=BankWages)
+# 이변수
+plot(job ~ gender, data=BankWages)
+plot(education ~ gender, data=BankWages)
+plot(qsec ~ hp, mtcars)
+# 조건부 플롯
+histogram( ~ job | gender * minority, BankWages)
+library(dplyr)
+par(mfcol=c(1,2))
+BankWages %>% group_by(minority) %>% do({
+  plot(job~gender, main = .$minority[1], data=.)
+  data.frame()
+})
+xyplot(education ~ job | gender, BankWages)
+xyplot(education ~ job | gender, BankWages, jitter.x=TRUE)
+xyplot(qsec ~ hp | am, mtcars)
+xyplot(qsec ~ hp | mpg, mtcars)
+mpgequal <- equal.count(mtcars$mpg, number=3, overlap=0)
+xyplot(qsec ~ hp | mpgequal, mtcars)
+```
+
+
