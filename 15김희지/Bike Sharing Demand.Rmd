@@ -1,0 +1,130 @@
+---
+title: "Bike Sharing Demand"
+author: "김희지"
+date: "2018년 9월 23일"
+output: html_document
+---
+
+---
+
+##주제: 서울시 공공자전거 따릉이 현황 분석
+
+###* [Kaggle "Bike Sharing Demand"](https://www.kaggle.com/c/bike-sharing-demand)
+
+![](https://s3.amazonaws.com/poly-screenshots.angel.co/enhanced_screenshots/186462-original.png)  
+
+
+- 캐글 자전거 수요예측을 통한 선수공부 및 참고
+- Submission 이후 _ 서울시 공공자전거 '따릉이' _에 적용  
+
+![](https://www.bikeseoul.com/images/logo.png)  
+
+
+* 따릉이 부족 문제  
+
+![](C:\Users\mizy\Desktop\MJU-2018-02-DataScience\15김희지\따릉이 부족.jpg)
+* 거치대 지역 설정 문제  
+
+['따릉이 님비'...대여소 만들 곳이 없네](http://news.donga.com/3/all/20171101/87052797/1)
+
+* 자전거를 타는 이유?
+
+1) 환경친화적  
+2) 교통수단  
+3) 건강  
+4) 재미  
+
+출처: [시리즈자전거 타는 사람들. #1 자전거를 타는 이유](https://post.naver.com/viewer/postView.nhn?volumeNo=8253006&memberNo=37263873)
+
+
+---
+
+```{r}
+library(readxl)
+library(knitr)
+library(dplyr)
+```
+
+## Kaggle  
+
+### Data
+: train 데이터와 test 데이터가 구분되어 있다.  
+train 데이터를 통해 모델링 -> test 데이터로 검증 -> Submission  
+
+* train  
+
+```{r}
+train <- read.csv("train.csv")
+kable(head(train))
+dim(train) #train 데이터 행, 열의 크기
+```
+
+* test  
+
+```{r}
+
+test <- read.csv("test.csv")
+kable(head(test))
+dim(test) #test 데이터 행, 열의 크기 
+```
+
+
+- column 설명  
+datetime - hourly date + timestamp  
+season -  1 = spring, 2 = summer, 3 = fall, 4 = winter  
+holiday - whether the day is considered a holiday  
+workingday - whether the day is neither a weekend nor holiday  
+weather - 1: Clear, Few clouds, Partly cloudy, Partly cloudy  
+          2: Mist + Cloudy, Mist + Broken clouds, Mist + Few clouds, Mist  
+          3: Light Snow, Light Rain + Thunderstorm + Scattered clouds, Light Rain + Scattered clouds  
+          4: Heavy Rain + Ice Pallets + Thunderstorm + Mist, Snow + Fog  
+temp - temperature in Celsius  
+atemp - "feels like" temperature in Celsius  
+humidity - relative humidity  
+windspeed - wind speed  
+casual - number of non-registered user rentals initiated  
+registered - number of registered user rentals initiated  
+count - number of total rentals  
+
+
+데이터 출처 : [Kaggle Bike Sharing Demand](https://www.kaggle.com/c/bike-sharing-demand)  
+
+### 데이터 분석 방향  
+  
+1. 데이터 파악 및 탐색적 자료 분석(EDA)  
+2. 데이터 정제/전처리  
+3. 선형회귀(Linear Regression), 랜덤포레스트(Random Forest), 서포트벡터머신(SVM)을 통한 모델링  
+4. test 데이터를 통한 검증  
+  
+---  
+
+## 서울시 공공자전거 '따릉이'  
+
+### Data
+
+1.공공자전거대여소정보  
+출처 : [서울열린데이터광장 '서울시 공공자전거 대여소 정보'](http://data.seoul.go.kr/dataList/datasetView.do?infId=OA-13252&srvType=S&serviceKind=1&currentPageNo=1)
+
+```{r}
+station <- read_excel("공공자전거대여소정보.xlsx")
+kable(head(station))
+dim(station) #공공자전거대여소정보 데이터 행, 열의 크기
+```
+
+2. 서울특별시 공공자전거 이용정보(일별) 
+출처: [서울열린데이터광장 '서울특별시 공공자전거 이용정보(일별)'](http://data.seoul.go.kr/dataList/datasetView.do?infId=OA-15246&srvType=F&serviceKind=1&currentPageNo=1)
+```{r}
+daily_rent171 <- read.csv("2017년_자전거이용통계_일_1.csv")
+daily_rent172 <- read.csv("2017년_자전거이용통계_일_2.csv")
+daily_rent173 <- read.csv("2017년_자전거이용통계_일_3.csv")
+daily_rent <- bind_rows(daily_rent171, daily_rent172)
+daily_rent <- bind_rows(daily_rent, daily_rent173)
+kable(head(daily_rent))
+dim(daily_rent) #공공자전거대여소정보 데이터 행, 열의 크기
+```
+
+3. 추가데이터
+
+1) 날씨데이터 -> 기상청 API이용
+2) 공휴일데이터 -> sk API이용
+3) 지역데이터 -> 역, 버스정거장, 공원,주거지역 등
