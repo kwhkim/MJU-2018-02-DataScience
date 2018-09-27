@@ -1,28 +1,51 @@
 ---
-title: "180918_과제"
+title: "2차 과제"
+author: "이예은"
 output: html_document
 ---
+<br><br>
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+**1. 데이터 선정**
 
-## R Markdown
+* 서울시 노인여가 복지시설 (구별) 통계 
+-출처 : [서울열린데이터광장](http://data.seoul.go.kr/dataList/datasetView.do?infId=54&srvType=S&serviceKind=2)
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+* 서울시 노인의 선호여가 활동
+-출처 : [서울열린데이터광장](http://data.seoul.go.kr/dataList/datasetView.do?infId=10664&srvType=S&serviceKind=2)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+* 서울시 노인 사회활동 참가 통계
+-출처 : [서울열린데이터광장](http://data.seoul.go.kr/dataList/datasetView.do?infId=47&srvType=S&serviceKind=2)
 
-```{r cars}
-summary(cars)
-```
+**2. 데이터 선정 이유**
 
-## Including Plots
+* 한국은 현재 빠르게 고령화 되고 있다. 사회가 고령화 되고, 시대가 변함에 따라 노인여가의 의미가 이전과는 달라졌다고 생각한다. 현 노인여가복지 실태를 알고 싶고, 보다 효율적이고 효과적인 노인여가복지를 알아보기 위해 위의 데이터를 선정했다.
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+**3. 데이터 관련 지식**
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+> 총인구 대비 65세 이상 노인인구가 2000년 7% 를 넘어 UN이 정한 고령화 사회(Aging Society)로 진입한 상태이며, 2010년 10.7%, 2019년 14.4% 가 되면서 고령화 사회에서 고령사회(Aged Society)로 가는데 19년이 걸릴 것으로 추정된다. 주요 선진국의 경우 프랑스 115년, 미국 75년, 서독.영국 45년, 일본 26년이 소요된 것과 비교하면, 우리나라는 이 보다도 훨씬 단기간인 19년 만에 인구 고령화가 진행되는 실정으로 장기간에 걸 쳐 인구고령화에 대처해 온 선진국과는 달리 우리나라의 경우 급속한 인구의 고령화에 대비한 사회복지 기능이 매우 취약한 상황이어서 커다란 사회문제가 될 수밖에 없다(하상락, 2002). <br><br>
+  이러한 사회문제를 해결하고 과거보다 길어진 노년기를 무료하지 않고 보다 만족스럽게 보낼 수 있는 방안, 즉 은퇴 후 남은 시간을 건강하고 편하게 쉴 수 있는 방안이 필요하게 되었다. 이에 1989년 노인복지법을 개정 할 때 노인여가복지시설에 대한 조항이 삽입되었으며, 그 후로 노인여가복지시설로 노인복지관, 경로당, 노인교실이 설치되었다(보건복지부, 2013). <br><br>
+  우리사회의 인구고령화가 급속히 진행되면서, 노인문제에 대한 사회정책적 대책 마련이 시급히 요구되고 있다. 삶의 질적인 측면이 강조되고 있는 21세기에는 노인문제도 단순한 생존이나 부양의 차원에서가 아니라 문화적이고 정신적인 풍요를 보장하는 관점에서 접근할 필요가 있다. 
+  
+  ![](/Users/iyeeun/Desktop/노인여가.png)
+  ![](/Users/iyeeun/Desktop/노인여가2.png)
+  ![](/Users/iyeeun/Desktop/노인여가3.png)
+  ![](/Users/iyeeun/Desktop/노인여가4.png)
+  
+  
+
+  
+
+
+**4. 데이터 분석 방향**
+
+(1) 서울시 노인여가 복지시설 (구별) 통계와 서울시 노인 사회활동 참가 통계를 통해 현재의 노인여가복지시설이 적절한지 알아본다.
+(2) 서울시 노인의 선호여가 활동과 서울시 노인 사회활동 참가 통계를 통해 현재의 노인여가복지가 노인의 선호를 반영하고 있는지(만족을 줄 수 있는지) 알아본다.
+(3) 현재의 노인여가복지시설이 적절하지 않거나, 노인의 선호를 반영하지 못하고 있다면 어떤 노인여가복지시설(또는 프로그램)이 필요한지 분석해본다.
+
+<br><br><br><br><br>
+<참고문헌><br>
+임흥수,고두갑,박송춘(2014), "노인여가복지시설 운영의 문제점과 개선방안: 외국 노인여가복지시설의 사례분석"<br>
+이현아(2003), "고령화시대 노인의 여가생활향상을 위한 여가정책의 방향-노인의 여가실태에 근거하여-"
+
+
