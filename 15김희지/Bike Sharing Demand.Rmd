@@ -7,9 +7,9 @@ output: html_document
 
 ---
 
-##주제: 서울시 공공자전거 따릉이 현황 분석
+## 주제: 서울시 공공자전거 따릉이 현황 분석
 
-###* [Kaggle "Bike Sharing Demand"](https://www.kaggle.com/c/bike-sharing-demand)
+### [Kaggle "Bike Sharing Demand"](https://www.kaggle.com/c/bike-sharing-demand)
 
 ![](https://s3.amazonaws.com/poly-screenshots.angel.co/enhanced_screenshots/186462-original.png)  
 
@@ -22,7 +22,16 @@ output: html_document
 
 * 따릉이 부족 문제  
 
-![](C:\Users\mizy\Desktop\MJU-2018-02-DataScience\15김희지\따릉이 부족.jpg)
+[따릉이 대수 부족](https://bikeseoul.com/customer/opinionBoard/opinionBoardView.do?usrQnaSeq=17722&currentPageNo=1)  
+[[삼일초등학교 인근 정류소] 따릉이   부족](https://bikeseoul.com/customer/opinionBoard/opinionBoardView.do?usrQnaSeq=15168&currentPageNo=1) [자전거 분배요청](https://bikeseoul.com/customer/opinionBoard/opinionBoardView.do?usrQnaSeq=34522&currentPageNo=2&searchValue=%EB%B6%80%EC%A1%B1)  
+-> 제가 따릉이를 사용한지 일주일가량 되었는데 강남/신논현 의 자전거 수량이 정말 턱없이 부족하다고 생각합니다. 
+
+출퇴근시간에 이용하려하면 1-3대뿐이고 정작 퇴근후 사용하려 앱을 열면 0대인게 하루가 멀다 한 상황입니다. 
+
+강남대로 근방은 직장인의 수요도 월등히 높은 상황이므로 자전거 분량을 현격히 증가시켜야 한다고 생각합니다. 
+
+
+
 * 거치대 지역 설정 문제  
 
 ['따릉이 님비'...대여소 만들 곳이 없네](http://news.donga.com/3/all/20171101/87052797/1)
@@ -62,7 +71,6 @@ dim(train) #train 데이터 행, 열의 크기
 * test  
 
 ```{r}
-
 test <- read.csv("test.csv")
 kable(head(test))
 dim(test) #test 데이터 행, 열의 크기 
