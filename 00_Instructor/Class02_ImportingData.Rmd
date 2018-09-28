@@ -1,0 +1,247 @@
+---
+title: "명지대 응용데이터사이언스(2018-02)"
+author: "김권현"
+date: "2018년 9월 20일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# R로 데이터 읽어오기
+
+## R 내장 데이터
+
+데이터를 불러들이는 가장 쉬운 방법은 R의 내장 데이터를 사용하는 것이다. `library(help = "datasets")`는 내장 데이터의 목록을 보여준다. 패키지에 포함된 데이터를 사용할 경우에는 `data()`의 `package` 인자를 사용하거나 `library()`로 먼저 패키지를 읽어들인 후 `data()`를 사용한다.[^1]
+
+[^1]: 설치된 모든 패키지의 데이터를 확인하고자 한다면 `data(package = .packages(all.available = TRUE))`를 사용할 수 있다.
+
+```{r data, collapse=TRUE}
+data(mtcars)
+head(mtcars)
+
+data("BankWages", package='AER')
+head(BankWages)
+```
+
+## 들어가기 : `write.table`/`read.table`, `save`/`load`
+
+```{r intro, collapse=TRUE}
+dat <- mtcars
+head(dat)
+class(dat)
+
+write.table(dat, file='dat.txt')
+dat02 <- read.table(file='dat.txt')
+
+head(dat02)
+all.equal(dat, dat02)
+```
+
+데이터 프레임을 가장 손쉽게 읽고 쓸 수 있는 방법은 `read.table`과 `write.table`을 사용하거나, `load`와 `save`를 사용하는 것이다. `read.table`/`write.table`과 `load`/`save`의 가장 큰 차이는 저장된 데이터를 문서 편집기를 통해 읽을 수 있느냐, 그렇지 않느냐이다.
+
+```{r intro02, collapse=TRUE, error=TRUE}
+dat <- mtcars
+head(dat)
+class(dat)
+
+save(dat, file='dat.RData')
+datBackup <- dat
+rm(dat)
+head(dat)
+
+load(file='dat.RData')
+
+head(dat)
+all.equal(dat, datBackup)
+```
+
+## 텍스트로 저장된 데이터 화일 읽기
+
+### 직접 텍스트 데이터 화일을 작성해 보기
+
+다음은 어떤 통신 회사의 문자 메세지 관련 데이터이다.
+
+```
+이름 : BTS
+전화번호 : 010-4342-5842 
+지난달 총 사용료 : 38000원
+메세지 : 안녕? 날씨 좋다. "가즈아!"라고 말하고 싶다.
+가격 : 30원 
+
+이름 : 트와이스
+전화번호 : 010-5821-4433
+지난달 총 사용료 : 58000원
+메세지 : 달빛 아래 춤추자! '너무너무너무'라고 노래 부를래.
+가격 : 10원 
+
+이름 : 케이티 킴
+전화번호 : 010-5532-4432
+지난달 총 사용료 : 31000원
+메세지 : Memorable! 
+가격 : <NA>
+```
+
+R은 다음과 같은 방법으로 `dat`라는 데이터 프레임에 데이터를 저장할 수 있다.
+```{r dataframe}
+datMsg <- data.frame(name = c("BTS", "트와이스", "케이티 킴"),
+                    phone = c('010-4342-5842', '010-5821-4433', '010-5532-4432'),
+                    usageLastMonth = c(38000, 58000,31000),
+                    message = c('안녕, 날씨 좋다! "가즈아!"라고 말하고 싶다.',
+                                '달빛 아래 춤추자! \'너무너무너무\'라고 노래 부를래.',
+                                'Memorable'),
+                    price = c(30, 10, NA), stringsAsFactors=F)
+datMsg
+```
+
+동일한 데이터를 R에서 읽어들일 수 있도록 텍스트 화일로 작성해보자.
+
+---
+
+테이블의 형식의 데이터는 다양한 형태로 화일로 저장될 수 있다. 형태는 흔히 화일의 확장자로부터 유추할 수 있다. 예를 들어 csv는 comma seperated value, tsv는 tab seperated value의 약자이다. 하지만 csv 확장자의 텍스트 화일이 반드시 쉼표(comma)로 열이 구분되는 것은 아니다. R에서 csv 화일을 불러들이는 쉬운 방법은 `read.csv` 함수를 사용하는 것이다. 이때 주의할 점이 있다. 다음을 보자.
+
+```{r readcsv, collapse=T}
+write.csv(dat, file='dat.csv')
+dat02 <- read.csv(file='dat.csv')
+all.equal(dat, dat02)
+head(dat02)
+```
+
+특이하게도 `write.csv()`로 쓴 화일은 `read.csv(   , row.names=1)`로 읽어야 한다. 
+
+```{r readcsv02, collapse=T}
+dat03 <- read.csv(file='dat.csv', row.names=1)
+all.equal(dat, dat03)
+head(dat03)
+```
+
+---
+
+열 구분자(column seperator) 외에도 테이블 형태의 데이터를 화일로 저장하기 위해 결정해야 할 사항이 많다. 다음은 `read.table` 함수를 통해 테이블 형태의 텍스트 데이터 화일을 읽어올 때 고려할 점들을 보여준다.
+
+1. 텍스트 인코딩
+    - `readr::guess_encoding()` 하지만 확실하지 않다. 예) UTF-8-BOM
+    - [notepad++](https://notepad-plus-plus.org/) 등의 문서작성 프로그램을 활용하면 인코딩을 확인할 수도 있다. 
+2. 전체적인 형식
+    - 행이름을 포함하는가? `header=c(TRUE,FALSE)`
+    - 열이름을 포함하는가? `row.names=c(1,NULL)`
+    - 열 구분자(delimiter) `sep=c('\t', ',', ' ')`
+3. 데이터를 표기하는 방법
+    - 주석은 어떻게 구분하는가? `comment.char`
+    - 따옴표(quotation mark; 문자열 속에 열 구분자를 포함시켜야 할 경우를 생각해보자): `quote`
+    - 소수점 표기 방법(decimal seperator): `dec` ([나라마다 소수점 표기 방법이 다르다.](https://en.wikipedia.org/wiki/Decimal_separator#Examples_of_use))
+4. 그 밖에
+    - `stringsAsFactors=c(TRUE,FALSE)`
+
+---
+
+####<연습문제>
+
+* 다음의 코드를 보고 화일을 정확히 읽을 수 있도록 코드를 고쳐보자.
+
+```{r exercise01, error=TRUE}
+dat01 <- read.csv('서울시 한강공원 이용객 현황 (2009_2013년).csv', fileEncoding = 'UTF-8')
+head(dat01)
+dat02 <- read.csv('서울특별시 공공자전거 대여소별 이용정보(월간)_2017_1_12.csv')
+head(dat02)
+dat03 <- read.csv("http://www.nber.org/data/population-birthplace-diversity/JoEG_BP_diversity_data.csv")
+head(dat03)
+```
+
+---
+
+### 빅데이터 
+
+```{r fread, eval=FALSE}
+readr::read_delim(file= , delim= , header= )
+data.table::fread(file= , sep= , header= )
+```
+
+용량이 큰 텍스트 데이터 화일을 `read.table`로 읽으려면 시간이 너무 많이 걸린다. 이때에는 `data.table` 패키지의 `fread` 함수를 사용하자. 가장 중요한 부분은 헤더(`header`; 열이름)의 존재 여부와 열을 분리하는 기호(`sep`)를 설정하는 것이다.
+
+---
+
+## EXCEL 화일 읽기
+
+```{r excel, eval=FALSE}
+readxl::excel_sheets(path= )
+readxl::read_excel(path= , sheet= )  
+```
+
+#### <연습문제>
+
+```{r exerciese_excel, error=TRUE}
+library(readxl)
+readxl::read_excel('서울시 한강공원 이용객 현황 (2009_2013년).xls', sheet=1)
+```
+
+---
+
+## 그 밖의 통계 프로그램 데이터 화일
+
+```{r eval=F}
+library(foreign)
+read.spss() # SPSS
+read.dta() # Stata
+read.ssd() # SAS
+read.octave() # Octave
+read.mtp() # Minitab
+read.systat() # Systat
+```
+
+
+```{r eval=F}
+library(haven)
+read_dta() # Stata
+read_por() # SPSS .por
+read_sas() # SAS
+read_sav() # SPSS .sav, .zsav
+read_stata() # Stata
+read_xpt() # SAS transport files
+```
+
+---
+
+####<연습문제>
+
+```{r eval=FALSE}
+url = 'http://www.nber.org/data/population-birthplace-diversity/JoEG_BP_diversity_data.dta'
+```
+* 위 주소의 Stata 데이터를 `foreign` 또는 `haven` 패키지의 함수를 활용하여 읽어보자. 
+
+---
+
+## Web에서 데이터 긁어오기(Web scraping)
+
+```{r htmltab}
+library(htmltab)
+
+url <- "https://en.wikipedia.org/wiki/List_of_most_common_surnames_in_Europe"
+surnames <- htmltab(doc = url, which = 13)
+head(surnames, n=10)
+```
+
+```{r readHTMLTable}
+library(XML)
+library(RCurl) # install.packages("RCurl")
+library(rlist) 
+
+url <- "https://en.wikipedia.org/wiki/List_of_most_common_surnames_in_Europe"
+theurl <- getURL(url, .opts = list(ssl.verifypeer = FALSE) )
+df <- readHTMLTable(theurl, 
+                    header = TRUE, which = 13, stringsAsFactors = FALSE, encoding = "UTF-8")
+head(df, n=10)
+```
+
+---
+
+####<연습문제>
+
+* `"https://en.wikipedia.org/wiki/List_of_Korean_surnames"`의 첫 번째 테이블을 읽어오세요.
+
+---
+
+* R에서 데이터를 읽어오는 방법에 대해 좀 더 자세히 알고 싶은 학생은 <https://cran.r-project.org/doc/manuals/R-data.pdf>를 참조하세요. 
+
+
