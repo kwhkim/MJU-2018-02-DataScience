@@ -1,4 +1,53 @@
-lottery <- c("tryagain", "congratulation")
-sum(1:100)
-hist(sample(1:6, 10000, replace=TRUE), breaks=0 : 6)
-mean(sample(1:6, 100, replace=TRUE))
+---
+title: "yongbeomkwon"
+author: "kwon"
+date: "2018년 9월 28일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# <아시안게임, 그리고 오지환>
+ 
+# 1. 선정 데이터
+
+2018년도 KBO 유격수 타자 기록
+* 출처 : <https://www.koreabaseball.com>
+[KBO 기록실](https://www.koreabaseball.com)
+
+* 데이터와 관련된 사진
+
+![LG 트윈스 오지환](https://www.koreabaseball.com/file/person/middle/2018/79109.jpg)
+
+![2018 Jakarta Asian Game Team Korea](https://www.koreabaseball.com/FILE/pressbox/images/2018/8/%ed%99%88%ed%8e%98%ec%9d%b4%ec%a7%80%ec%9a%a9%ec%b5%9c%ec%a2%85.jpg)
+
+![논란](https://i.ytimg.com/vi/0fnUtNakOtk/hqdefault.jpg)
+
+#2. 데이터 설명
+- 2018년도 자카르타 아시안게임 이전의 내야수/유격수별 선수들의 타석 그리고 수비 기록
+
+
+#3. 데이터 선정 이유
+- 자라르타 아시안게임 가장 큰 논란의 중심이었던 오지환 선수를 둘러싼 의혹들을 데이터라는 객관적인 매개체를 통해 진실을 살펴본다.
+
+
+#4. 데이터 일부
+
+|  이름 | G  |  AB |
+|:-:|:-:|:-:|
+| 오지환  |  137 | 507  |
+|  하주석| 132  |  450 |
+| 김재호  |  122 |  379 |
+
+#5. 데이터와 관련된 전문지식(domain knowledge)
+
+*기존에 통상적으로 사용되어 왔넌 기록이 아닌 Bill James가 창설한 Sabermetrics라는 새로운 분야를 통해서 데이터를 해석한다.
+
+
+#6. 데이버 분석의 방법
+*선수를 측정하는 새로운 변수(Ex. Runs Created)를 작성한 후 scatter plot, 다양한 통계기법을 통해서 유격수, 내야수를 서로 비교한다.
+
+
+
