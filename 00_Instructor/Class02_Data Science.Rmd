@@ -1,0 +1,51 @@
+---
+title: "02_데이터 사이언스란?"
+author: "김권현"
+date: "2018년 9월 21일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE
+)
+```
+
+# 데이터 사이언스이란?
+
+데이터를 수집, 가공, 분석하여 새로운 지식이나 통찰을 얻어내는 과정, 방법을 연구하는 학문?
+
+> Data science is an interdisciplinary field that uses scientific methods, processes, algorithms and systems to extract knowledge and insights from data in various forms, both structured and unstructured, similar to data mining.
+
+> Data science is a "concept to unify statistics, data analysis, machine learning and their related methods" in order to "understand and analyze actual phenomena" with data. It employs techniques and theories drawn from many fields within the context of mathematics, statistics, information science, and computer science.
+
+출처:<https://en.wikipedia.org/wiki/Data_science>
+
+## 데이터 과학의 성공 사례(Success story)
+
+* 포도주 가격 예측 :
+
+* 프로야구 구단 운영하기 : [Moneyball](https://www.youtube.com/watch?v=b3RVsxAZ3_o)
+
+* [Netflix Prize](https://www.netflixprize.com/), [관련내용](http://www.shalomeir.com/2014/11/netflix-prize-1/)
+
+## 연관 분야
+
+* 통계학(Statistics)
+* 기계학습(Machine Learning)
+* 데이터 마이닝(Data Mining)
+* 예측 분석(Predictive Analytics)
+
+참고 : [구글트렌드](https://trends.google.co.kr/trends/explore?date=all&geo=KR&q=Data%20Science,Predictive%20Analytics,Data%20Mining,Machine%20Learning,Statistics)
+
+## 몇 가지 용어들
+
+* 기술(Descriptive) 통계학/추론(Inferential) 통계학[^1]
+* 빈도주의(Frequentist) 통계학, 베이지안(Bayesian) 통계학
+* 모형 비교, 모형 선택
+* 지도학습(Supervised Learning) : 회귀(Regression), 분류(classification)
+* 비지도학습(Unsupervised Learning) : 차원축소(Dimension Reduction), 군집분석(Clustering)
+
+[^1]: 참고: [인구주택총조사](http://www.census.go.kr/cui/cuiDefView.do?q_menu=1&q_sub=1)
+[^2]: 용어는 [통계용어사전](https://www.kss.or.kr/bbs/board.php?bo_table=psd_sec)을 참조하였다.
