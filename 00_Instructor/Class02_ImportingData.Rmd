@@ -240,6 +240,8 @@ head(df, n=10)
 
 * `"https://en.wikipedia.org/wiki/List_of_Korean_surnames"`의 첫 번째 테이블을 읽어오세요.
 
+---
 
+* R에서 데이터를 읽어오는 방법에 대해 좀 더 자세히 알고 싶은 학생은 <https://cran.r-project.org/doc/manuals/R-data.pdf>를 참조하세요. 
 
 
