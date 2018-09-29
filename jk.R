@@ -1,0 +1,6 @@
+dat01 <- read.csv('서울시 한강공원 이용객 현황 (2009_2013년).csv')
+head(dat01)
+dat02 <- read.csv('서울특별시 공공자전거 대여소별 이용정보(월간)_2017_1_12.csv')
+head(dat02)
+dat03 <- read.csv("http://www.nber.org/data/population-birthplace-diversity/JoEG_BP_diversity_data.csv")
+head(dat03)
