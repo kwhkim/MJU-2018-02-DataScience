@@ -44,7 +44,7 @@ git init .
 4. 작업 내용을 모두 커밋한다(이력 관리를 위해 저장한다).
 
 ```
-git add -A .
+git add -A . # <-> git rm
 git commit
 ```
 
@@ -62,6 +62,8 @@ git reset --hard HEAD
 git clean -fd  # delete untracked files, but deleting this way, you can not restore files from Recycle Bin...!!!
 git clean -fdx # delete untracked files and files listed in .gitignore
 ```
+
+* [HEAD](https://git-scm.com/book/ko/v2/Git-%EB%8F%84%EA%B5%AC-Reset-%EB%AA%85%ED%99%95%ED%9E%88-%EC%95%8C%EA%B3%A0-%EA%B0%80%EA%B8%B0)의 의미 : HEAD는 현재 브랜치를 가리키는 포인터이며, 브랜치는 브랜치에 담긴 커밋 중 가장 마지막 커밋을 가리킨다. 지금의 HEAD가 가리키는 커밋은 바로 다음 커밋의 부모가 된다. 단순하게 생각하면 HEAD는 현재 브랜치 마지막 커밋의 스냅샷이다.
 
 ---
 
@@ -132,6 +134,16 @@ git push -u origin <BRANCH_NAME>
 git checkout --track origin/<BRANCH_NAME>
 ```
 
+### 원격 저장소 관련
+```
+git remote
+git remote -v
+
+git remote add <name> <url>
+git remote rm <name>
+git remote rename <oldname> <newname>
+```
+
 * <https://www.git-tower.com/learn/git/faq/track-remote-upstream-branch>
 
 ---
@@ -152,5 +164,6 @@ function lazygit() {
 
 * [Fun with keeping local changes around](https://gitster.livejournal.com/29060.html)
 
+* [How to undo anything with Git](https://blog.github.com/2015-06-08-how-to-undo-almost-anything-with-git/)
 
-
+* [Be a git pro in just one blog](https://itnext.io/become-a-git-pro-in-just-one-blog-a-thorough-guide-to-git-architecture-and-command-line-interface-93fbe9bdb395)
