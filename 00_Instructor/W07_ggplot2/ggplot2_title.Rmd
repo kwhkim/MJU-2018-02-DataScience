@@ -86,4 +86,6 @@ t2 + theme(plot.caption = element_text(lineheight=.8, face='bold'))
 ### References
 
 * [More about theme](https://ggplot2.tidyverse.org/reference/theme.html)
+* [Labels(`+labs()`)](https://ggplot2.tidyverse.org/reference/labs.html)
 * [Rotating and spacing axis labels in ggplot2](https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2)
+* [폰트 설정](https://blog.jongbin.com/2016/12/ggplot2-korean-font/)

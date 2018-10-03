@@ -144,6 +144,20 @@ git remote rm <name>
 git remote rename <oldname> <newname>
 ```
 
+### [commit 하지 않은 내용을 다른 브랜치로 옮기기](https://stackoverflow.com/questions/6925099/git-stash-changes-apply-to-new-branch)
+```
+git checkout -b <branchname>
+```
+
+### [두 브랜치에 동일한 내용 commit 하기](https://stackoverflow.com/questions/7259135/git-commit-to-multiple-branches-at-the-same-time/18529576#18529576)
+```
+git checkout <branchA>
+git commit -m "commit message"
+git checkout <branchB>
+git cherry-pick <branchA>
+```
+
+
 * <https://www.git-tower.com/learn/git/faq/track-remote-upstream-branch>
 
 ---
