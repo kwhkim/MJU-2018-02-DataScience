@@ -10,7 +10,7 @@ output: html_document
 * 서울시 노인여가 복지시설 (구별) 통계 
     - 출처 : [서울열린데이터광장](http://data.seoul.go.kr/dataList/datasetView.do?infId=54&srvType=S&serviceKind=2)
     
-```{r message=FALSE, warning=FALSE}
+```{r message=TRUE, warning=FALSE}
 
 library(dplyr)
 library(ggplot2)
@@ -60,7 +60,7 @@ welfare %>%
 * 서울시 노인의 선호여가 활동
     - 출처 : [서울열린데이터광장](http://data.seoul.go.kr/dataList/datasetView.do?infId=10664&srvType=S&serviceKind=2)
     
-```{r message=FALSE, warning=FALSE}
+```{r message=TRUE, warning=FALSE}
 
 leisure_prefer <- read.csv(file='report.txt-5.csv',sep="\t",fileEncoding="UTF-8")
 head(leisure_prefer)
@@ -84,7 +84,7 @@ senior_prefer
 * 서울시 노인 사회활동 참가 통계 
      - 출처 : [서울열린데이터광장](http://data.seoul.go.kr/dataList/datasetView.do?infId=47&srvType=S&serviceKind=2)
      
-```{r message=FALSE, warning=FALSE}
+```{r message=TRUE, warning=FALSE}
 leisure_participation <- read.csv(file='report.txt-6.csv',sep="\t",fileEncoding="UTF-8")
 head(leisure_participation)
 
