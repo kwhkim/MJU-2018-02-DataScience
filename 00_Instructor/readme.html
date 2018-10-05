@@ -1079,7 +1079,7 @@ $(document).ready(function () {
 <ul>
 <li>summarise(요약) 함수는 여러 개의 행을 하나의 행으로 줄이기 위해 사용됩니다. 예. <code>df %&gt;% summarise(mean(x), min(x), sd(x))</code></li>
 <li>집단 별로 요약하기 위해서는 <code>%&gt;% group_by(g) %&gt;% summarise(mean(x))</code> 등으로 쓸 수 있습니다. 이때 전체에 대해 요약한 것과 집단별로 요약한 것을 비교할 수 있습니다.</li>
-<li>예를 들어, 만약 <code>gender</code>열에 성별, <code>height</code>열에 키가 저장되어 있는 데이터 프레임 <code>df</code>가 있을 때, <code>df %&gt;% summarise(mean(height))</code>는 전체에 대해서 키의 평균을 구합니다. 반면 <code>df %&gt;% group(gender) %&gt;% summarise(mean(height))</code>는 남자 따로, 여자 따로 키의 평균을 구합니다. 그리고 그 결과가 예를 들어 전체 평균이 170인데, 남자 평균이 175, 여자 평균이 165라면, 남자 평균은 전체 평균보다 5cm 크고, 여자 평균이 전체 평균보다 5cm 작음을 알 수 있습니다. 반면 남자 평균과 여자 평균이 모두 170으로 같았다면 남자 집단과 여자 집단이 서로 <strong>균질한 집단</strong>이라고 추정할 수 있습니다.</li>
+<li>예를 들어, 만약 <code>gender</code>열에 성별, <code>height</code>열에 키가 저장되어 있는 데이터 프레임 <code>df</code>가 있을 때, <code>df %&gt;% summarise(mean(height))</code>는 전체에 대해서 키의 평균을 구합니다. 반면 <code>df %&gt;% group_by(gender) %&gt;% summarise(mean(height))</code>는 남자 따로, 여자 따로 키의 평균을 구합니다. 그리고 그 결과가 예를 들어 전체 평균이 170인데, 남자 평균이 175, 여자 평균이 165라면, 남자 평균은 전체 평균보다 5cm 크고, 여자 평균이 전체 평균보다 5cm 작음을 알 수 있습니다. 반면 남자 평균과 여자 평균이 모두 170으로 같았다면 남자 집단과 여자 집단이 서로 <strong>균질한 집단</strong>이라고 추정할 수 있습니다.</li>
 <li>long-form의 data를 wide-form으로 바꿔보면 수업에서 얘기한 것처럼 결측값의 분포나 패턴을 눈으로 확인할 수 있습니다.</li>
 <li>long-form과 wide-form으로 변환할 때 바뀌지 않는 부분에 주의하세요.</li>
 </ul></li>
