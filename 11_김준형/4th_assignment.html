@@ -91,6 +91,9 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
 }
@@ -200,26 +203,26 @@ data %&gt;%
 <pre><code>## # A tibble: 20 x 5
 ##    HomeTeam         min   max  mean    sd
 ##    &lt;chr&gt;          &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Man City          0.    7. 3.21  1.72 
-##  2 Arsenal           0.    5. 2.84  1.42 
-##  3 Liverpool         0.    5. 2.37  1.67 
-##  4 Tottenham         0.    5. 2.11  1.63 
-##  5 Man United        0.    4. 2.00  1.29 
-##  6 Chelsea           0.    5. 1.58  1.39 
-##  7 Crystal Palace    0.    5. 1.53  1.26 
-##  8 Everton           0.    4. 1.47  1.22 
-##  9 Watford           0.    4. 1.42  1.07 
-## 10 Bournemouth       0.    4. 1.37  1.12 
-## 11 Leicester         0.    3. 1.32  0.946
-## 12 Brighton          0.    4. 1.26  1.15 
-## 13 West Ham          0.    3. 1.26  0.933
-## 14 Newcastle         0.    3. 1.11  1.10 
-## 15 West Brom         0.    2. 1.11  0.737
-## 16 Southampton       0.    4. 1.05  1.13 
-## 17 Stoke             0.    3. 1.05  0.911
-## 18 Swansea           0.    4. 0.895 1.10 
-## 19 Burnley           0.    2. 0.842 0.688
-## 20 Huddersfield      0.    4. 0.842 1.01</code></pre>
+##  1 Man City           0     7 3.21  1.72 
+##  2 Arsenal            0     5 2.84  1.42 
+##  3 Liverpool          0     5 2.37  1.67 
+##  4 Tottenham          0     5 2.11  1.63 
+##  5 Man United         0     4 2     1.29 
+##  6 Chelsea            0     5 1.58  1.39 
+##  7 Crystal Palace     0     5 1.53  1.26 
+##  8 Everton            0     4 1.47  1.22 
+##  9 Watford            0     4 1.42  1.07 
+## 10 Bournemouth        0     4 1.37  1.12 
+## 11 Leicester          0     3 1.32  0.946
+## 12 Brighton           0     4 1.26  1.15 
+## 13 West Ham           0     3 1.26  0.933
+## 14 Newcastle          0     3 1.11  1.10 
+## 15 West Brom          0     2 1.11  0.737
+## 16 Southampton        0     4 1.05  1.13 
+## 17 Stoke              0     3 1.05  0.911
+## 18 Swansea            0     4 0.895 1.10 
+## 19 Burnley            0     2 0.842 0.688
+## 20 Huddersfield       0     4 0.842 1.01</code></pre>
 <pre class="r"><code># 원정경기 성적
 
 data %&gt;% 
@@ -232,26 +235,26 @@ data %&gt;%
 <pre><code>## # A tibble: 20 x 5
 ##    AwayTeam         min   max  mean    sd
 ##    &lt;chr&gt;          &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
-##  1 Man City          0.    6. 2.37  1.38 
-##  2 Liverpool         0.    5. 2.05  1.51 
-##  3 Tottenham         0.    4. 1.79  1.27 
-##  4 Chelsea           0.    4. 1.68  1.38 
-##  5 Leicester         0.    4. 1.63  1.38 
-##  6 Man United        0.    4. 1.58  1.39 
-##  7 West Ham          0.    4. 1.26  1.15 
-##  8 Arsenal           0.    5. 1.05  1.18 
-##  9 Burnley           0.    3. 1.05  1.03 
-## 10 Bournemouth       0.    3. 1.00  0.943
-## 11 Newcastle         0.    3. 0.947 0.911
-## 12 Southampton       0.    3. 0.895 0.875
-## 13 Watford           0.    3. 0.895 1.05 
-## 14 Crystal Palace    0.    3. 0.842 0.958
-## 15 Everton           0.    2. 0.842 0.688
-## 16 Stoke             0.    2. 0.789 0.713
-## 17 Huddersfield      0.    4. 0.632 1.16 
-## 18 Swansea           0.    2. 0.579 0.692
-## 19 Brighton          0.    3. 0.526 0.841
-## 20 West Brom         0.    1. 0.526 0.513</code></pre>
+##  1 Man City           0     6 2.37  1.38 
+##  2 Liverpool          0     5 2.05  1.51 
+##  3 Tottenham          0     4 1.79  1.27 
+##  4 Chelsea            0     4 1.68  1.38 
+##  5 Leicester          0     4 1.63  1.38 
+##  6 Man United         0     4 1.58  1.39 
+##  7 West Ham           0     4 1.26  1.15 
+##  8 Arsenal            0     5 1.05  1.18 
+##  9 Burnley            0     3 1.05  1.03 
+## 10 Bournemouth        0     3 1     0.943
+## 11 Newcastle          0     3 0.947 0.911
+## 12 Southampton        0     3 0.895 0.875
+## 13 Watford            0     3 0.895 1.05 
+## 14 Crystal Palace     0     3 0.842 0.958
+## 15 Everton            0     2 0.842 0.688
+## 16 Stoke              0     2 0.789 0.713
+## 17 Huddersfield       0     4 0.632 1.16 
+## 18 Swansea            0     2 0.579 0.692
+## 19 Brighton           0     3 0.526 0.841
+## 20 West Brom          0     1 0.526 0.513</code></pre>
 <div id="---------." class="section level4">
 <h4>2. 집단별로 함수를 적용하는 방법을 활용하여 자료에서 새로운 사실을 발견해 보세요.</h4>
 </div>
@@ -303,18 +306,18 @@ total &lt;- left_join(data, data2, by = &quot;Date&quot;)
 
 total</code></pre>
 <pre><code>## # A tibble: 2,136 x 65
-##    Div   Date                HomeTeam AwayTeam   FTHG  FTAG FTR    HTHG
-##    &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;    &lt;chr&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;
-##  1 E0    2011-08-17 00:00:00 Arsenal  Leicester    4.    3. H        2.
-##  2 E0    2012-08-17 00:00:00 Brighton Man City     0.    2. A        0.
-##  3 E0    2012-08-17 00:00:00 Brighton Man City     0.    2. A        0.
-##  4 E0    2012-08-17 00:00:00 Brighton Man City     0.    2. A        0.
-##  5 E0    2012-08-17 00:00:00 Brighton Man City     0.    2. A        0.
-##  6 E0    2012-08-17 00:00:00 Brighton Man City     0.    2. A        0.
-##  7 E0    2012-08-17 00:00:00 Brighton Man City     0.    2. A        0.
-##  8 E0    2012-08-17 00:00:00 Brighton Man City     0.    2. A        0.
-##  9 E0    2012-08-17 00:00:00 Chelsea  Burnley      2.    3. A        0.
-## 10 E0    2012-08-17 00:00:00 Chelsea  Burnley      2.    3. A        0.
+##    Div   Date                HomeTeam AwayTeam  FTHG  FTAG FTR    HTHG
+##    &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;    &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;
+##  1 E0    2011-08-17 00:00:00 Arsenal  Leicest~     4     3 H         2
+##  2 E0    2012-08-17 00:00:00 Brighton Man City     0     2 A         0
+##  3 E0    2012-08-17 00:00:00 Brighton Man City     0     2 A         0
+##  4 E0    2012-08-17 00:00:00 Brighton Man City     0     2 A         0
+##  5 E0    2012-08-17 00:00:00 Brighton Man City     0     2 A         0
+##  6 E0    2012-08-17 00:00:00 Brighton Man City     0     2 A         0
+##  7 E0    2012-08-17 00:00:00 Brighton Man City     0     2 A         0
+##  8 E0    2012-08-17 00:00:00 Brighton Man City     0     2 A         0
+##  9 E0    2012-08-17 00:00:00 Chelsea  Burnley      2     3 A         0
+## 10 E0    2012-08-17 00:00:00 Chelsea  Burnley      2     3 A         0
 ## # ... with 2,126 more rows, and 57 more variables: HTAG &lt;dbl&gt;, HTR &lt;chr&gt;,
 ## #   Referee &lt;chr&gt;, HS &lt;dbl&gt;, AS &lt;dbl&gt;, HST &lt;dbl&gt;, AST &lt;dbl&gt;, HF &lt;dbl&gt;,
 ## #   AF &lt;dbl&gt;, HC &lt;dbl&gt;, AC &lt;dbl&gt;, HY &lt;dbl&gt;, AY &lt;dbl&gt;, HR &lt;dbl&gt;, AR &lt;dbl&gt;,
