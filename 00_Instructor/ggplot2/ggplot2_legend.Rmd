@@ -1,0 +1,46 @@
+---
+title: "ggplot2_coord"
+author: "KwH Kim"
+date: "2018년 10월 18일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(fig.width=4)
+knitr::opts_chunk$set(fig.height=3)
+library(ggplot2)
+library(dplyr)
+```
+
+## Key components of every plot
+
+1. Data
+
+2. Aesthetic mapping
+    
+3. Geoms
+        
+4. Auxillary lines
+
+5. Coordinate System & Zooming
+
+6. **Legends**
+    - legend title : `+ labs(color='  ')`
+    - position : `+ theme(legend.position='bottom')`
+        - `top`, `left`, `bottom`, `right`
+    - legend type : `+ guides(fill='  ')`
+        - `none`, `colorbar`, `legend`
+    - legend label : `+ scale_x_discrete(labels=c())`
+
+```{r, collapse=T}
+t <- ggplot(mpg, aes(cty, hwy, color=cyl)) + geom_point() 
+t + scale_x_continuous(name='city miles per gallon')
+t + labs(color='number of cylinders')
+t + theme(legend.position='bottom')
+t + guides(color='none')
+t + guides(color='colorbar')
+t + guides(color='legend')
+
+
+```

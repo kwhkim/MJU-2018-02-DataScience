@@ -124,945 +124,138 @@ $(document).ready(function () {
 </div>
 
 
-<div id="hbe01239-5733" class="section level1">
-<h1>HBE01239: 응용데이터사이언스(5733)</h1>
+<div id="ggplot2gg-grammar-of-graphics-summary" class="section level1">
+<h1><code>ggplot2</code>(gg = <strong>G</strong>rammar of <strong>G</strong>raphics) Summary</h1>
+<div id="key-components-of-every-plot" class="section level2">
+<h2>Key components of every plot</h2>
+<ol style="list-style-type: decimal">
+<li><strong>Data</strong></li>
+<li><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/ggplot2_aes.html"><strong>Aesthetic mapping</strong></a>
 <ul>
-<li><p>담당교수 : 김권현</p></li>
-<li><p>강의시간 : 금요일 오후 1:30 - 4:15</p></li>
-<li><p>강의장소 : S1353</p></li>
-<li><p>상담시간 : 금요일 수업 전후(이메일로 사전 약속 필요)</p></li>
-<li><p>선수과목 : R통계분석</p></li>
-</ul>
-<div id="-" class="section level2">
-<h2>교과목 개요</h2>
-<p>’R통계분석’에 기초하여 상위 과정의 R 사용법과 프로그래밍 능력을 배양한다.</p>
-</div>
-<div class="section level2">
-<h2>성적평가방법</h2>
-<p>출석(20), 과제물/보고서(20), 수시시험 및 중간고사(20), 학기말시험(20), 발표(20)</p>
-</div>
-<div id="-----r-markdown--github-" class="section level2">
-<h2>과제 및 수업 관련 관련 R Markdown 및 Github 운영</h2>
+<li><code>mapping</code> : which aesthetics to use
 <ul>
-<li><p>수업자료 및 과제는 R Markdown을 활용함을 기본으로 한다.</p></li>
-<li><p>수강생은 자신의 github id를 만들고, 수업 레포지토리를 fork해서 자신의 레포지토리를 운영한다. 과제 등을 자신의 repository(자신만의 폴더)에 commit-push한 후, pull request를 넣어서 수업 레포지토리에 합친다(merge).</p></li>
-</ul>
-</div>
-<div id="-" class="section level2">
-<h2>강의 계획</h2>
-<table>
-<thead>
-<tr class="header">
-<th align="center">주</th>
-<th align="center">날짜</th>
-<th>내용</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="center">01</td>
-<td align="center">09/07</td>
-<td>(개교기념일 휴강)</td>
-</tr>
-<tr class="even">
-<td align="center">02</td>
-<td align="center">09/14</td>
-<td><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/2018_09_12.html">과목 소개, git 설치, github 등</a></td>
-</tr>
-<tr class="odd">
-<td align="center">03</td>
-<td align="center">09/21</td>
-<td><a href="https://github.com/kwhkim/stat-programming-01/blob/master/RClass02_.pdf">R의 데이터 타입</a>, <a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/Class02_RMarkdown.html">R 마크다운</a></td>
-</tr>
-<tr class="even">
-<td align="center"><a href="./Class03.html">04</a></td>
-<td align="center">09/28</td>
-<td><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/Class02_ImportingData.html">데이터 읽어오기</a>, <a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/Class03.html">데이터 살펴보기</a></td>
-</tr>
-<tr class="odd">
-<td align="center">05</td>
-<td align="center">10/05</td>
-<td><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/Class04.html">집단별 함수 적용</a></td>
-</tr>
-<tr class="even">
-<td align="center">06</td>
-<td align="center">10/12</td>
-<td><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/Class05.html"><code>dplyr</code>/<code>join</code>/<code>tidyr</code> 활용</a></td>
-</tr>
-<tr class="odd">
-<td align="center">07</td>
-<td align="center">10/19</td>
-<td><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/ggplot2.html">R 그래픽스</a></td>
-</tr>
-<tr class="even">
-<td align="center">08</td>
-<td align="center">10/26</td>
-<td>R 프로그래밍</td>
-</tr>
-<tr class="odd">
-<td align="center">09</td>
-<td align="center">11/02</td>
-<td>중간고사</td>
-</tr>
-<tr class="even">
-<td align="center">10</td>
-<td align="center">11/09</td>
-<td>선형 회귀 모형</td>
-</tr>
-<tr class="odd">
-<td align="center">11</td>
-<td align="center">11/16</td>
-<td>일반화 선형 모형, 혼합모형</td>
-</tr>
-<tr class="even">
-<td align="center">12</td>
-<td align="center">11/23</td>
-<td>주성분분석, 요인분석, 문항반응이론</td>
-</tr>
-<tr class="odd">
-<td align="center">13</td>
-<td align="center">11/30</td>
-<td>경로분석, 구조방정식모형</td>
-</tr>
-<tr class="even">
-<td align="center">14</td>
-<td align="center">12/07</td>
-<td>텍스트 마이닝</td>
-</tr>
-<tr class="odd">
-<td align="center">15</td>
-<td align="center">12/14</td>
-<td>기말고사</td>
-</tr>
-<tr class="even">
-<td align="center">16</td>
-<td align="center">12/21</td>
-<td>프로젝트 발표</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div id="-" class="section level2">
-<h2>과제 채점</h2>
-<table>
-<thead>
-<tr class="header">
-<th align="center">순번</th>
-<th align="center">과제1(9/21)</th>
-<th align="center">과제2(9/29)</th>
-<th align="center">과제3</th>
-<th align="center">과제4</th>
-<th align="center">과제5</th>
-<th align="center">과제6</th>
-<th align="center"></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="center">01</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
-<td align="center">02</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="center">03</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
-<td align="center">04</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="center">05</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
-<td align="center">06</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="center">07</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
-<td align="center">08</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="center">09</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
-<td align="center">10</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="center">11</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
-<td align="center">12</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="center">13</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
-<td align="center">14</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="center">15</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
-<td align="center">16</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="center">17</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
-<td align="center">18</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="center">19</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
-<td align="center">20</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="center">21</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
-<td align="center">22</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="center">23</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
-<td align="center">24</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="center">25</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
-<td align="center">26</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="center">27</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
-<td align="center">28</td>
-<td align="center">2</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="center">29</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
-<td align="center">30</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="center">31</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
-<td align="center">32</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="center">33</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
-<td align="center">34</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="odd">
-<td align="center">35</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-<tr class="even">
-<td align="center">36</td>
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li><strong>과제1(9/21)</strong>
-<ul>
-<li>많은 주제가 흥미로웠습니다.</li>
-<li>데이터를 통해 새로운 지식을 창출하거나 가설을 뒷받침하기 위해서 어떤 분석 방법을 쓸 수 있을지 생각해보세요.</li>
-<li><p>특히 데이터가 엄청나게 많지 않은 이상 데이터 분석을 위해서 관련 분야의 지식(domain knowledge)가 중요한 역할을 합니다.</p></li>
-<li>아이디가 yeongbi인 학생은 “자신의 순번_이름”의 폴더를 만든 후 그 폴더 안에 과제를 제출하세요.</li>
-<li>순번 10번 학생은 내용이 없습니다. 내용을 확인 후 다음 수업 전까지 과제를 제출하세요.</li>
-<li><p>순번 16번 학생은 pull request를 close했는데, 과제를 .txt 화일로 만들어서 다시 제출하기 바랍니다.</p></li>
+<li><code>x</code>, <code>y</code>, <code>+ facet_grid(y ~ x)</code> and <code>+ fact_wrap(~g)</code></li>
+<li><code>color</code>, <code>fill</code></li>
+<li><code>shape</code></li>
+<li><code>size</code></li>
+<li><code>alpha</code> : usu. for avoid overplotting</li>
 </ul></li>
-<li><strong>과제 2(9/28) 채점</strong>
+<li><code>scale</code> : how to map
 <ul>
-<li>모두 수고했습니다.</li>
-<li>신정민, 이도휘, 황수민, 장민지 학생은 과제를 자신의 “순번_이름”의 폴더 안에 저장하기 바랍니다.</li>
-<li>과제 제출 시에는 R Markdown, Including plots 등 과제와 상관없는 내용은 삭제하세요.</li>
-<li>데이터 화일이 클 때에는 데이터 화일을 샘플링해서 저장하길 바랍니다.</li>
-<li>아래는 부분채점표입니다. 부분 점수 1점은 총점에서 0.5점입니다.</li>
+<li><code>x</code>, <code>y</code> : <code>scale_x_log10()</code>, <code>scale_x_reverse()</code>, <code>scale_x_sqrt()</code></li>
+<li>discrete <code>color</code>, <code>fill</code>
+<ul>
+<li><code>scale_fill_brewer(palette=  )</code></li>
+<li><code>scale_fill_grey(start= , end= , na.value= )</code></li>
 </ul></li>
+<li>continous <code>color</code>, <code>fill</code>
+<ul>
+<li><code>scale_fill_distiller(palette= )</code></li>
+<li><code>scale_fill_gradient(low= , high= )</code></li>
+<li><code>scale_fill_gradient(low= , high= , mid= , midpoint= )</code></li>
+<li><code>scale_fill_gradientn(colours= )</code></li>
+</ul></li>
+<li>general
+<ul>
+<li><code>scale_*_manual(values= )</code></li>
+<li><code>scale_*_date(date_labels=&quot;%m/%d&quot;)</code></li>
+<li><code>scale_*_datetime()</code></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/ggplot2_geoms.html"><strong>Geoms</strong></a>
+<ul>
+<li>one instance geoms (ex. <code>point</code>, <code>jitter</code>, <code>rug</code>, <code>col</code>, <code>label</code>, <code>text</code>)</li>
+<li>summary geoms
+<ul>
+<li>1 variable distribution : <code>density</code>, <code>histogram</code>, <code>barplot</code></li>
+<li>1 variable distribution conditional on another variable : <code>boxplot</code>, <code>violin</code></li>
+<li>2 variable distribution : <code>density2d</code>, <code>bin2d</code>, <code>hex</code></li>
+<li>model : <code>smooth</code>, <code>quantile</code></li>
+</ul></li>
+</ul></li>
+<li><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/ggplot2_lines.html"><strong>Auxillary lines</strong></a>
+<ul>
+<li><code>geom_hline(yintercept= , col= , size= , linetype= )</code></li>
+<li><code>geom_vline(xintercept= , col= , size= , linetype= )</code></li>
+<li><code>geom_abline(intercept= , col= , slope= )</code></li>
+</ul></li>
+</ol>
+<p>linetypes <img src="data:image/png;base64,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" width="576" /></p>
+<ol start="5" style="list-style-type: decimal">
+<li><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/ggplot2_coord.html"><strong>Coordinate System</strong></a>
+<ul>
+<li>Coordinate System
+<ul>
+<li>Cartesian vs. Polar</li>
+<li><code>coord_fixed(ratio = )</code>, <code>coord_flip()</code>, <code>coord_trans()</code></li>
+<li><code>coord_quickmap()</code>, <code>coord_map()</code></li>
+</ul></li>
+<li>Coordinate label
+<ul>
+<li><code>+ labs(x='  ', y='  ')</code></li>
+</ul></li>
+<li>Breaks &amp; Labels
+<ul>
+<li><code>scale_x_continuous(breaks=c())</code></li>
+<li><code>scale_x_continuous(labels=c())</code> or <code>scale_x_continuous(labels=NULL)</code></li>
+</ul></li>
+<li>Zooming
+<ul>
+<li>Without clipping : <code>coord_cartesian(xlim = c( , ), ylim = c( , ))</code></li>
+<li>With clipping
+<ul>
+<li><code>+ xlim( , ) + ylim( , )</code></li>
+<li><code>+ scale_x_continuous(limits=c( , ))+scale_y_continuous(limits=c( , ))</code></li>
+</ul></li>
+<li><code>scale_x_continuous(labels=c())</code> or <code>scale_x_continuous(labels=NULL)</code></li>
+</ul></li>
+</ul></li>
+<li><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/ggplot2_legend.html"><strong>Legends</strong></a>
+<ul>
+<li>legend title : <code>+ scale_x_continous(name='  ')</code></li>
+<li>position : <code>+ theme(legend.position='bottom')</code>
+<ul>
+<li><code>top</code>, <code>left</code>, <code>bottom</code>, <code>right</code></li>
+</ul></li>
+<li>legend type : <code>+ guides(fill='  ')</code>
+<ul>
+<li><code>none</code>, <code>colorbar</code>, <code>legend</code></li>
+</ul></li>
+<li>legend label : <code>+ scale_x_continuous(labels=c())</code></li>
+</ul></li>
+<li><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/ggplot2_title.html"><strong>Title, subtitle, caption and themes</strong></a>
+<ul>
+<li>title : <code>labs(title='  ')</code></li>
+<li>subtitle : <code>labs(subtitle='  ')</code></li>
+<li>caption : <code>labs(cpation='  ')</code></li>
+<li>themes
+<ul>
+<li><code>+ theme_bw()</code></li>
+<li><code>+ theme_gray()</code></li>
+<li><code>+ theme_dark()</code></li>
+<li><code>+ theme_class()</code></li>
+<li><code>+ theme_light()</code></li>
+<li><code>+ theme_linedraw()</code></li>
+<li><code>+ theme_minimal()</code></li>
+<li><code>+ theme_void()</code></li>
+</ul></li>
+</ul></li>
+</ol>
+<div class="section level3">
+<h3>참고자료</h3>
+<ul>
+<li><p>RStudio - Help - Cheatsheets - Data Visualization with ggplot2</p></li>
+<li><a href="https://bookdown.org/">R Bookdown</a>
+<ul>
+<li><a href="https://socviz.co/">Data Visualization</a></li>
+<li><a href="https://serialmentor.com/dataviz/">Fundamentals of Data Visualization</a></li>
+<li><a href="http://r4ds.had.co.nz/">R for Data Science</a></li>
+</ul></li>
+<li><a href="https://github.com/hadley/ggplot2-book">ggplot2-book</a></li>
+<li><p><a href="http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html">Top 50 ggplot2 Visualizations</a></p></li>
 </ul>
-<table>
-<thead>
-<tr class="header">
-<th align="center">순번</th>
-<th align="center"></th>
-<th align="center">데이터 출처와 링크</th>
-<th align="center">사진 포함</th>
-<th align="center">나열</th>
-<th align="center">데이터 일부</th>
-<th align="center"></th>
-<th align="center">분석 방향</th>
-<th align="center">총점</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">2.5</td>
-</tr>
-<tr class="even">
-<td align="center">2</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-</tr>
-<tr class="odd">
-<td align="center">3</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-</tr>
-<tr class="even">
-<td align="center">4</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-</tr>
-<tr class="odd">
-<td align="center">5</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">3</td>
-</tr>
-<tr class="even">
-<td align="center">6</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-</tr>
-<tr class="odd">
-<td align="center">7</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">3</td>
-</tr>
-<tr class="even">
-<td align="center">8</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-</tr>
-<tr class="odd">
-<td align="center">9</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">2</td>
-</tr>
-<tr class="even">
-<td align="center">10</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-</tr>
-<tr class="odd">
-<td align="center">11</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">3</td>
-</tr>
-<tr class="even">
-<td align="center">12</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-</tr>
-<tr class="odd">
-<td align="center">13</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">2.5</td>
-</tr>
-<tr class="even">
-<td align="center">14</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">3</td>
-</tr>
-<tr class="odd">
-<td align="center">15</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">3</td>
-</tr>
-<tr class="even">
-<td align="center">16</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-</tr>
-<tr class="odd">
-<td align="center">17</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">3</td>
-</tr>
-<tr class="even">
-<td align="center">18</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-</tr>
-<tr class="odd">
-<td align="center">19</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">2.5</td>
-</tr>
-<tr class="even">
-<td align="center">20</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-</tr>
-<tr class="odd">
-<td align="center">21</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-</tr>
-<tr class="even">
-<td align="center">22</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-</tr>
-<tr class="odd">
-<td align="center">23</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">3</td>
-</tr>
-<tr class="even">
-<td align="center">24</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-</tr>
-<tr class="odd">
-<td align="center">25</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">2.5</td>
-</tr>
-<tr class="even">
-<td align="center">26</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-</tr>
-<tr class="odd">
-<td align="center">27</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">3</td>
-</tr>
-<tr class="even">
-<td align="center">28</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">2.5</td>
-</tr>
-<tr class="odd">
-<td align="center">29</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-</tr>
-<tr class="even">
-<td align="center">30</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">3</td>
-</tr>
-<tr class="odd">
-<td align="center">31</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">0</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">2</td>
-</tr>
-<tr class="even">
-<td align="center">32</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">2.5</td>
-</tr>
-<tr class="odd">
-<td align="center">33</td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center"></td>
-<td align="center">0</td>
-</tr>
-<tr class="even">
-<td align="center">34</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">3</td>
-</tr>
-<tr class="odd">
-<td align="center">35</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center">1</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">2.5</td>
-</tr>
-<tr class="even">
-<td align="center">36</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">2.5</td>
-</tr>
-<tr class="odd">
-<td align="center">청강</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">1</td>
-<td align="center">0</td>
-<td align="center"></td>
-<td align="center">1</td>
-<td align="center">2.5</td>
-</tr>
-</tbody>
-</table>
+</div>
 </div>
 </div>
 

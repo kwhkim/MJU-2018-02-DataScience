@@ -1,0 +1,122 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+url0 <- 'https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/'
+htmlFiles <- c(               'ggplot2_aes',
+                              'ggplot2_geoms',
+                              'ggplot2_lines',
+                              'ggplot2_coord',
+                              'ggplot2_legend',
+                              'ggplot2_title')
+htmlUrl <- paste0(url0, htmlFiles, '.html')
+i=0
+```
+
+# `ggplot2`(gg = **G**rammar of **G**raphics) Summary
+
+## Key components of every plot
+1. **Data**
+2. [**Aesthetic mapping**](`r i=i+1; htmlUrl[i]`)
+    - `mapping` : which aesthetics to use
+        - `x`, `y`, `+ facet_grid(y ~ x)` and `+ fact_wrap(~g)`
+        - `color`, `fill`
+        - `shape`
+        - `size`
+        - `alpha` : usu. for avoid overplotting
+    - `scale` : how to map
+        - `x`, `y` : `scale_x_log10()`, `scale_x_reverse()`, `scale_x_sqrt()`
+        - discrete `color`, `fill` 
+            - `scale_fill_brewer(palette=  )`
+            - `scale_fill_grey(start= , end= , na.value= )`
+        - continous `color`, `fill`
+            - `scale_fill_distiller(palette= )`
+            - `scale_fill_gradient(low= , high= )`
+            - `scale_fill_gradient(low= , high= , mid= , midpoint= )`
+            - `scale_fill_gradientn(colours= )`
+        - general 
+            - `scale_*_manual(values= )`
+            - `scale_*_date(date_labels="%m/%d")`
+            - `scale_*_datetime()`
+3. [**Geoms**](`r i=i+1; htmlUrl[i]`)
+    - one instance geoms (ex. `point`, `jitter`, `rug`, `col`, `label`, `text`)
+    - summary geoms 
+        - 1 variable distribution : `density`, `histogram`, `barplot`
+        - 1 variable distribution conditional on another variable : `boxplot`, `violin`
+        - 2 variable distribution : `density2d`, `bin2d`, `hex`
+        - model : `smooth`, `quantile`
+4. [**Auxillary lines**](`r i=i+1; htmlUrl[i]`)
+    - `geom_hline(yintercept= , col= , size= , linetype= )`
+    - `geom_vline(xintercept= , col= , size= , linetype= )`
+    - `geom_abline(intercept= , col= , slope= )`
+    
+linetypes
+```{r fig.height=1.5, fig.width=6, results=F, echo= F}
+lty <- c("solid", "dashed", "dotted", "dotdash", "longdash", "twodash")
+linetypes <- data.frame(
+  y = seq_along(lty),
+  lty = lty
+) 
+ggplot(linetypes, aes(0, y)) + 
+  geom_segment(aes(xend = 5, yend = y, linetype = lty)) + 
+  scale_linetype_identity() + 
+  geom_text(aes(label = lty), hjust = 0, nudge_y = 0.2) +
+  scale_x_continuous(NULL, breaks = NULL) + 
+  scale_y_reverse(NULL, breaks = NULL)
+```
+
+5. [**Coordinate System**](`r i=i+1; htmlUrl[i]`)
+    - Coordinate System
+        - Cartesian vs. Polar
+        - `coord_fixed(ratio = )`, `coord_flip()`, `coord_trans()`
+        - `coord_quickmap()`, `coord_map()`
+    - Coordinate label
+        - `+ labs(x='  ', y='  ')`
+    - Breaks & Labels
+        - `scale_x_continuous(breaks=c())`
+        - `scale_x_continuous(labels=c())` or `scale_x_continuous(labels=NULL)`
+    - Zooming
+        - Without clipping : `coord_cartesian(xlim = c( , ), ylim = c( , ))`
+        - With clipping 
+            - `+ xlim( , ) + ylim( , )`
+            - `+ scale_x_continuous(limits=c( , ))+scale_y_continuous(limits=c( , ))`
+        
+        - `scale_x_continuous(labels=c())` or `scale_x_continuous(labels=NULL)`
+
+		        
+6. [**Legends**](`r i=i+1; htmlUrl[i]`)
+    - legend title : `+ scale_x_continous(name='  ')`
+    - position : `+ theme(legend.position='bottom')`
+        - `top`, `left`, `bottom`, `right`
+    - legend type : `+ guides(fill='  ')`
+        - `none`, `colorbar`, `legend`
+    - legend label : `+ scale_x_continuous(labels=c())`
+	
+7. [**Title, subtitle, caption and themes**](`r i=i+1; htmlUrl[i]`)
+	- title : `labs(title='  ')`
+	- subtitle : `labs(subtitle='  ')`
+	- caption : `labs(cpation='  ')`
+	- themes 
+	    - `+ theme_bw()`
+  		- `+ theme_gray()`
+  		- `+ theme_dark()`
+  		- `+ theme_class()`
+  		- `+ theme_light()`
+  		- `+ theme_linedraw()`
+  		- `+ theme_minimal()`
+  		- `+ theme_void()`
+		
+
+### 참고자료 
+
+* RStudio - Help - Cheatsheets - Data Visualization with ggplot2
+    
+* [R Bookdown](https://bookdown.org/)
+    - [Data Visualization](https://socviz.co/)
+    - [Fundamentals of Data Visualization](https://serialmentor.com/dataviz/)
+    - [R for Data Science](http://r4ds.had.co.nz/)
+* [ggplot2-book](https://github.com/hadley/ggplot2-book)
+* [Top 50 ggplot2 Visualizations](http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html)
+
+
+
