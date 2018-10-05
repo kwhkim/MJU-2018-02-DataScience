@@ -339,7 +339,23 @@ library(tidyr)
 
 data %&gt;%
   gather(key = 'feature', value = 'Value', Date, HomeTeam, AwayTeam, FTHG, FTAG, FTR, HTHG, HTAG, HTR, Referee, HS, AS, HST, AST, HF, AF, HC, AC, HY, AY, HR, AR) -&gt; new_data
-head(new_data)</code></pre>
+
+data %&gt;% gather(key='feature', value='value', FTHG:AR)</code></pre>
+<pre><code>## # A tibble: 7,220 x 6
+##    Div   Date                HomeTeam       AwayTeam     feature value
+##    &lt;chr&gt; &lt;dttm&gt;              &lt;chr&gt;          &lt;chr&gt;        &lt;chr&gt;   &lt;chr&gt;
+##  1 E0    2011-08-17 00:00:00 Arsenal        Leicester    FTHG    4    
+##  2 E0    2012-08-17 00:00:00 Brighton       Man City     FTHG    0    
+##  3 E0    2012-08-17 00:00:00 Chelsea        Burnley      FTHG    2    
+##  4 E0    2012-08-17 00:00:00 Crystal Palace Huddersfield FTHG    0    
+##  5 E0    2012-08-17 00:00:00 Everton        Stoke        FTHG    1    
+##  6 E0    2012-08-17 00:00:00 Southampton    Swansea      FTHG    0    
+##  7 E0    2012-08-17 00:00:00 Watford        Liverpool    FTHG    3    
+##  8 E0    2012-08-17 00:00:00 West Brom      Bournemouth  FTHG    1    
+##  9 E0    2013-08-17 00:00:00 Man United     West Ham     FTHG    4    
+## 10 E0    2013-08-17 00:00:00 Newcastle      Tottenham    FTHG    0    
+## # ... with 7,210 more rows</code></pre>
+<pre class="r"><code>head(new_data)</code></pre>
 <pre><code>## # A tibble: 6 x 3
 ##   Div   feature Value     
 ##   &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;     
@@ -350,6 +366,11 @@ head(new_data)</code></pre>
 ## 5 E0    Date    1345161600
 ## 6 E0    Date    1345161600</code></pre>
 </div>
+<div id="-" class="section level2">
+<h2><span style="color:red">채점 사항</span></h2>
+<blockquote>
+<p>Div, Date, HomeTeam, AwayTeam이 모두 하나의 경기를 식별하기 위한 정보이고, FTHG, FTAG, …등은 모두 그 경에 대한 결과를 나타내고 있으므로, gather(key=‘feature’, value=‘value’, FTHG:AR)이 적절할 것입니다.</p>
+</blockquote>
 <div id="-------." class="section level4">
 <h4>5. 위의 방법을 활용하여 자료에서 새로운 사실을 발견해 보세요.</h4>
 <pre class="r"><code># 데이터프레임 만들기
@@ -373,6 +394,13 @@ View(data_new)
 # 분석하기가 너무 어렵다.    
 
 # 해당변수에 어떠한 값이 있는지는 알기 쉬우나 이 값이 어떤 데이터의 값인지 알기가 매우 어렵다.</code></pre>
+</div>
+</div>
+<div id="--1" class="section level2">
+<h2><span style="color:red">채점 사항</span></h2>
+<blockquote>
+<p>수고했습니다. 만약 결측치가 상당히 존재하는 데이터의 경우 가로형/세로형 변환을 통해 결측치의 패턴을 확인할 수 있습니다.</p>
+</blockquote>
 </div>
 </div>
 
