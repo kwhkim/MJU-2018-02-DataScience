@@ -127,6 +127,13 @@ git checkout -b <BRANCH_NAME>
 git push -u origin <BRANCH_NAME>
 ```
 
+### 원격 저장소의 브랜치 불러오기
+```
+git checkout --track origin/<BRANCH_NAME>
+```
+
+* <https://www.git-tower.com/learn/git/faq/track-remote-upstream-branch>
+
 ---
 ## 참고
 
