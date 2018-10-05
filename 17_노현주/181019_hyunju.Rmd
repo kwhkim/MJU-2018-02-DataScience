@@ -11,7 +11,7 @@ output: html_document
 
 ```{r warning=FALSE}
 # 데이터 불러오기
-traffic <- read.csv("2017_traffic_rawdata.csv")
+traffic <- read.csv("17_노현주/2017_traffic_rawdata.csv", fileEncoding="CP-949")
 ```
 
 ```{r warning=FALSE}
@@ -165,3 +165,8 @@ all.equal(group_road_sh, group_road_lo2)
 
 - 세로형(Long-form)인 경우에는 각 변수에서 연결돼있는 데이터들을 한 눈에 구분하기가 수월하지만, 변수들 간의 구분이 어렵다.
 반면 가로형(Wide-form)의 경우에는 각 변수 간의 구분은 수월하나, 변수가 많을 경우에는 각 변수에서 연결되는 데이터들의 관계를 파악하기가 어렵다.
+
+## <span style="color:red">채점 사항</span>
+
+> 무슨 말인지 모르겠네요.
+

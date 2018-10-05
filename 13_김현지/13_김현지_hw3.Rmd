@@ -107,4 +107,4 @@ View(wide_data)
 
 ## <span style="color:red">채점 사항</span>
 
-> 데이터를 internet에서 다운 받거나 local에 올려주길 바랍니다.
+> 데이터를 internet에서 다운 받거나 local에 올려주길 바랍니다. 
