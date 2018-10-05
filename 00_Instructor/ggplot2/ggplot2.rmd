@@ -3,13 +3,13 @@ knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(dplyr)
 url0 <- 'https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/'
-htmlFiles <- c(               'ggplot2_aes',
-                              'ggplot2_geoms',
-                              'ggplot2_lines',
-                              'ggplot2_coord',
-                              'ggplot2_legend',
-                              'ggplot2_title',
-                              'ggplot2_summary')
+htmlFiles <- c('ggplot2_aes',
+               'ggplot2_geoms',
+               'ggplot2_lines',
+               'ggplot2_coord',
+               'ggplot2_legend',
+               'ggplot2_title',
+               'ggplot2_summary')
 htmlUrl <- paste0(url0, htmlFiles, '.html')
 i=0
 ```

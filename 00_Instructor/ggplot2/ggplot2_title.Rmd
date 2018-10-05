@@ -1,5 +1,5 @@
 ---
-title: "ggplot2_coord"
+title: "ggplot2_title"
 author: "KwH Kim"
 date: "2018년 10월 18일"
 output: html_document
