@@ -59,3 +59,11 @@ head(accident02)
 
 all.equal(accident01, accident02)
 ```
+
+
+## <span style="color:red">채점 사항</span>
+
+> .rmd 를 knit할 수 없으며, .html도 없습니다.
+> gather를 사용하는 방법은 맞았지만 death.x와 death.y를 gather하는 이유를 알 수가 없습니다.
+> death.x와 death.y는 join의 결과로 이루어진 것이라면 동일한 값이여야 합니다.
+> 그렇지 않다면 다른 의미를 가진 값입니다.
