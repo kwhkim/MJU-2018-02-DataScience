@@ -32,7 +32,7 @@
 |02   |09/14   |[과목 소개, git 설치, github 등](./00_Instructor/2018_09_12.html)  |
 |03 |09/21   |[R의 데이터 타입](https://github.com/kwhkim/stat-programming-01/blob/master/RClass02_.pdf), [R 마크다운](./00_Instructor/Class02_RMarkdown.html)   |
 |[04](./00_Instructor/Class03.html)   |09/28   |[데이터 읽어오기](./00_Instructor/Class02_ImportingData.html), [데이터 살펴보기](./00_Instructor/Class03.html)  |
-|05   |10/05   |데이터 전처리2   |
+|05   |10/05   |[집단별 함수 적용](./00_Instructor/Class04.html)   |
 |06   |10/12   |R 그래픽스   |
 |07   |10/19   |R 프로그래밍   |
 |08   |10/26   |보충   |
