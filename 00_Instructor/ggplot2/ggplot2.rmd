@@ -2,22 +2,30 @@
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(dplyr)
+url0 <- 'https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/'
+htmlFiles <- c(               'ggplot2_aes',
+                              'ggplot2_geoms',
+                              'ggplot2_lines',
+                              'ggplot2_coord',
+                              'ggplot2_legend',
+                              'ggplot2_title',
+                              'ggplot2_summary')
+htmlUrl <- paste0(url0, htmlFiles, '.html')
+i=0
 ```
 
 # ggplot (gg = grammar of graphics)
 
-## ggplot2 book contents
-
-3. **toolbox**
-4. grammar
-5. **layer by layer**
-6. **scales, axes and legends**
-7. positioning : zooming in/out, ...
-
 ### 3 key components of every plot
-1. Data
-2. Aesthetic mapping(with scale)
-3. Geoms
+1. **Data**
+2. [**Aesthetic mapping**](`r i=i+1; htmlUrl[i]`)
+3. [**Geoms**](`r i=i+1; htmlUrl[i]`)
+4. [**Auxillary lines**](`r i=i+1; htmlUrl[i]`)
+5. [**Coordinate System**](`r i=i+1; htmlUrl[i]`)
+6. [**Legends**](`r i=i+1; htmlUrl[i]`)
+7. [**Title, subtitle, caption and themes**](`r i=i+1; htmlUrl[i]`)
+
+* [**Summary**](`r i=i+1; htmlUrl[i]`)
 
 We will use `mpg` from package `ggplot2`.[^1]
 
@@ -73,9 +81,9 @@ ggplot(data, aes(x=  )) + geom_bar(col=  , fill= )
 
 Examples
 ```{r, error=T}
-ggplot(mpg, aes(x=manufacturer)) + geom_bar()
-ggplot(mpg, aes(x=manufacturer)) + geom_bar(aes(col=model))
-ggplot(mpg, aes(x=manufacturer)) + geom_bar(aes(fill=model))
+ggplot(data, aes(x=  )) + geom_bar()
+ggplot(data, aes(x=  )) + geom_bar(aes(col=  ))
+ggplot(data, aes(x=  )) + geom_bar(aes(fill=  ))
 ```
 
 Another bar chart
@@ -87,18 +95,16 @@ colnames(df) = c('name', 'n')
 ggplot(df, aes(x=name, y=n)) + geom_bar(stat='identity')
 ```
 
-```{r}
-dat <- mpg %>% 
-  group_by(year, manufacturer) %>% 
-  summarise(num=length(manufacturer)) # or n()
-ggplot(dat, aes(x=year, y=num, col=manufacturer)) + geom_point() + geom_line()
-```
+### 참고자료 
 
-### How to specify Aesthetics
-
-```{r}
-vignette('ggplot2-specs')
-```
+* RStudio - Help - Cheatsheets - Data Visualization with ggplot2
+    
+* [R Bookdown](https://bookdown.org/)
+    - [Data Visualization](https://socviz.co/)
+    - [Fundamentals of Data Visualization](https://serialmentor.com/dataviz/)
+    - [R for Data Science](http://r4ds.had.co.nz/)
+* [ggplot2](https://github.com/hadley/ggplot2-book)
+* [Top 50 ggplot2 Visualizations](http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html)
 
 
 
