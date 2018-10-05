@@ -99,6 +99,8 @@ tot_data <- full_join(facility , data_p , by="자치구")
 tot_data <- rename(tot_data, "보육시설총계" = "tot_sum",
                    "보호구역총계" = "n")
 
+hist(tot_data$보호구역총계)
+
 head(tot_data)
 ```
 
@@ -109,12 +111,45 @@ library(tidyr)
 #세로형 데이터
 longform <- tot_data %>%
   gather(보육시설, 보호구역총계, 국공립:직장, factor_key=TRUE)
+
+longform2 <- tot_data %>%
+  gather(종류, 갯수, 국공립:보호구역총계, factor_key=TRUE)
+head(longform2)
 head(longform)
+
+
 
 #가로형 데이터
 wideform <- spread(longform, 보육시설, 보호구역총계)
+wideform2 <- spread(longform2, 종류, 갯수)
 head(wideform)
+head(wideform2)
+
 ```
+
+
+## <span style="color:red">채점 사항</span>
+
+> gather을 할 때, key, value 컬럼에 해당하는 컬럼의 이름을 정해 줘야 합니다. 그 후에 gather할 컬럼을 정해야 합니다. 결과는 비슷하지만 완벽하지 않았습니다.
+
+```{r}
+library(dplyr)
+tot_data %>% filter(자치구 =="종로구", 동=="사직동")
+longform %>% filter(자치구 =="종로구", 동=="사직동")
+wideform %>% filter(자치구 =="종로구", 동 =="사직동")
+
+tot_data %>% filter(자치구 =="종로구", 동=="사직동")
+longform2 %>% filter(자치구 =="종로구", 동=="사직동")
+wideform2 %>% filter(자치구 =="종로구", 동 =="사직동")
+```
+
 
 5. 위의 방법을 활용하여 자료에서 새로운 사실을 발견해 보세요.
  - 어떠한 지역의 보육시설총계와 관련없이 보육시설의 종류에 따라 어린이 보호구역의 수가 다르다는 것을 알 수 있다.
+
+## <span style="color:red">채점 사항</span>
+
+> key, value에 해당하는 이름을 "보육시설총계", "보육시설"로 정했기 때문에 잘못된 겨론에 이르게 되었습니다.
+
+
+
