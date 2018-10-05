@@ -115,6 +115,19 @@ git rebase --continue
 * `git rebase`를 취소할 경우: `git rebase --abort`
 
 ---
+
+## 브랜치 관리
+### 새로운 브랜치 만들기
+```
+git checkout -b <BRANCH_NAME>
+```
+
+### 원격 저장소(remote repository) `origin` 에 새로운 이름으로 PUSH하기
+```
+git push -u origin <BRANCH_NAME>
+```
+
+---
 ## 참고
 
 * `lazygit()`
