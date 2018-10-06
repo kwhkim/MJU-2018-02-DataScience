@@ -57,9 +57,9 @@ output: html_document
 5. 데이터 크기
 ```{r}
 
-Jeju201511 <- read.csv("jeju201511.csv", header = TRUE)
-head(Jeju201511)
-str(Jeju201511)
+#Jeju201511 <- read.csv("jeju201511.csv", header = TRUE)
+#head(Jeju201511)
+#str(Jeju201511)
 
 ```
 
