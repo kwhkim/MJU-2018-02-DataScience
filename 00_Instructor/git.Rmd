@@ -173,6 +173,14 @@ function lazygit() {
 
 * [참고자료: Version control with RStudio and Github](https://aberdeenstudygroup.github.io/studyGroup/lessons/SG-T1-GitHubVersionControl/VersionControl/)
 
+* [삭제된 화일을 commit history에서 찾기](https://stackoverflow.com/questions/11845321/search-for-and-view-a-file-deleted-from-the-repo)
+```
+#by filepath and filename
+git log -- filepaht/filename
+#by filename
+git log --diff-filter=D --sumary | grep filename
+```
+
 * 빨리감기 병합(fast-forwad merge) : 병합할 브랜치가 현재 브랜치의 자식인 경우?
 
 * [Fun with keeping local changes around](https://gitster.livejournal.com/29060.html)
