@@ -1,0 +1,65 @@
+---
+title: "subject_markdown"
+author: "윤준호"
+date: "26 September 2018"
+output: html_document
+---
+
+### **주제**
+
+
+#### **상업광고**에서 사용된 편집된 통계자료를 원본과 대조하여, 광고가 **어떤 식으로 제품 홍보를 위해 통계자료를 유리하게 분석**했는지 밝혀낸다.
+
+---
+
+### **분석방법**
+
+* 원본 데이터의 내용이 광고의 주장을 증명하는데 충분한지 검토
+* 편집된 통계자료가 데이터의 결측치, 이상치를 처리한 방법 살펴봄
+* 편집된 통계자료가 요약하거나 수정, 삭제한 항목들을 검토하고 각각의 중요도 판별
+* 제품 홍보에 유리하게 분석한 방식이 얼마나 효과적인지 / 왜곡의 정도 혹은 편집된 통계자료의 신뢰도 추정
+등의 방법을 활용한다.
+
+---
+
+### **예시**
+
+[건강보조제 Lactoferrin Nicelimmer(링크)](http://www.lionwellnessdirect.co.kr/order/order_infoA_tab1.aspx?it_id=1)
+
+![*제품사진1*](http://www.lionwellnessdirect.co.kr/upload_files/product/락토페~1(2).JPG)
+
+![*제품사진2*](http://www.lionwellnessdirect.co.kr/upload_files/product/WD_LF1.jpg)
+
+#### 분석자료
+
+* 일본 락토페린 기능성식품시장 8년 연속 매출점유율 No.1(*출처: 일본야노경제연구소*)
+* 락토페린 인체적용시험 결과(*논문출처: British Journal of Nutrition(2010), 104*)
+
+ 등의 통계자료를 원본과 대조하는 방식을 중점으로 분석하고, 광고가 어떤 식으로 통계자료를 가공하고 분석하였는지 알아볼 수 있을 것이다.
+
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
