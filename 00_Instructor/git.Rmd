@@ -54,7 +54,15 @@ git commit
     - `git checkout` : 이전 화일 내용 확인
     - `git status` : 현재 상태 확인. 마지막 커밋 이후 수정된 사항 등.
     
-    
+# 몇 가지 팁
+1. `error: unable to resolve reference refs/remotes/origin/...`
+
+```
+git gc --prune=now
+git remote prune origin
+```
+출처 : [stackoverflow](https://stackoverflow.com/questions/2998832/git-pull-fails-unable-to-resolve-reference-unable-to-update-local-ref)
+
 ---
 ```
 function lazygit() {
