@@ -2,7 +2,7 @@
 knitr::opts_chunk$set(echo = TRUE)
 library(ggplot2)
 library(dplyr)
-url0 <- 'https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/'
+url0 <- 'https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/W07_ggplot2/'
 htmlFiles <- c(               'ggplot2_aes',
                               'ggplot2_geoms',
                               'ggplot2_lines',

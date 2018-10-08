@@ -130,7 +130,7 @@ $(document).ready(function () {
 <h2>Key components of every plot</h2>
 <ol style="list-style-type: decimal">
 <li><strong>Data</strong></li>
-<li><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/ggplot2_aes.html"><strong>Aesthetic mapping</strong></a>
+<li><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/W07_ggplot2/ggplot2_aes.html"><strong>Aesthetic mapping</strong></a>
 <ul>
 <li><code>mapping</code> : which aesthetics to use
 <ul>
@@ -163,7 +163,7 @@ $(document).ready(function () {
 </ul></li>
 </ul></li>
 </ul></li>
-<li><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/ggplot2_geoms.html"><strong>Geoms</strong></a>
+<li><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/W07_ggplot2/ggplot2_geoms.html"><strong>Geoms</strong></a>
 <ul>
 <li>one instance geoms (ex. <code>point</code>, <code>jitter</code>, <code>rug</code>, <code>col</code>, <code>label</code>, <code>text</code>)</li>
 <li>summary geoms
@@ -174,7 +174,7 @@ $(document).ready(function () {
 <li>model : <code>smooth</code>, <code>quantile</code></li>
 </ul></li>
 </ul></li>
-<li><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/ggplot2_lines.html"><strong>Auxillary lines</strong></a>
+<li><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/W07_ggplot2/ggplot2_lines.html"><strong>Auxillary lines</strong></a>
 <ul>
 <li><code>geom_hline(yintercept= , col= , size= , linetype= )</code></li>
 <li><code>geom_vline(xintercept= , col= , size= , linetype= )</code></li>
@@ -183,7 +183,7 @@ $(document).ready(function () {
 </ol>
 <p>linetypes <img src="data:image/png;base64,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" width="576" /></p>
 <ol start="5" style="list-style-type: decimal">
-<li><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/ggplot2_coord.html"><strong>Coordinate System</strong></a>
+<li><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/W07_ggplot2/ggplot2_coord.html"><strong>Coordinate System</strong></a>
 <ul>
 <li>Coordinate System
 <ul>
@@ -211,7 +211,7 @@ $(document).ready(function () {
 <li><code>scale_x_continuous(labels=c())</code> or <code>scale_x_continuous(labels=NULL)</code></li>
 </ul></li>
 </ul></li>
-<li><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/ggplot2_legend.html"><strong>Legends</strong></a>
+<li><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/W07_ggplot2/ggplot2_legend.html"><strong>Legends</strong></a>
 <ul>
 <li>legend title : <code>+ scale_x_continous(name='  ')</code></li>
 <li>position : <code>+ theme(legend.position='bottom')</code>
@@ -224,7 +224,7 @@ $(document).ready(function () {
 </ul></li>
 <li>legend label : <code>+ scale_x_continuous(labels=c())</code></li>
 </ul></li>
-<li><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/ggplot2_title.html"><strong>Title, subtitle, caption and themes</strong></a>
+<li><a href="https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/W07_ggplot2/ggplot2_title.html"><strong>Title, subtitle, caption and themes</strong></a>
 <ul>
 <li>title : <code>labs(title='  ')</code></li>
 <li>subtitle : <code>labs(subtitle='  ')</code></li>

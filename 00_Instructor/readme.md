@@ -34,7 +34,7 @@
 |[04](./Class03.html)   |09/28   |[데이터 읽어오기](https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/Class02_ImportingData.html), [데이터 살펴보기](https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/Class03.html)  |
 |05   |10/05   |[집단별 함수 적용](https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/Class04.html)   |
 |06   |10/12   |[`dplyr`/`join`/`tidyr` 활용](https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/Class05.html)   |
-|07   |10/19   |[R 그래픽스](https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/ggplot2.html)   |
+|07   |10/19   |[R 그래픽스](https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/W07_ggplot2/ggplot2.html)   |
 |08   |10/26   |[R 프로그래밍](https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/control_and_functions.pdf)   |
 |09   |11/02   |중간고사   |
 |10   |11/09   |선형 회귀 모형   |
