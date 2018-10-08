@@ -147,6 +147,7 @@ git remote rename <oldname> <newname>
 * <https://www.git-tower.com/learn/git/faq/track-remote-upstream-branch>
 
 ---
+
 ## 다른 사용자와 공동 작업하기
 
 ### 다른 사용자 초대하기(https://help.github.com/articles/inviting-collaborators-to-a-personal-repository/)
@@ -158,6 +159,16 @@ git remote rename <oldname> <newname>
 5. 공동작업자의 사용자이름(username)을 적는다.
 6. 드롭다운 메뉴에서 사용자이름을 선택한다.
 7. Add collaborator를 클릭한다.
+
+---
+
+## Authentication 관련
+
+* [Git push requires username and password](https://stackoverflow.com/questions/6565357/git-push-requires-username-and-password)
+
+* [Changing a remote's URL](https://help.github.com/articles/changing-a-remote-s-url/#switching-remote-urls-from-https-to-ssh)
+
+* [Connecting to GitHub with SSH](https://help.github.com/articles/connecting-to-github-with-ssh/)
 
 ---
 ## 참고
