@@ -82,6 +82,21 @@ git pull
 
 [참조](https://backlog.com/git-tutorial/kr/intro/intro5_1.html)
 
+### `git pull`에서 발생할 수 있는 다른 문제
+
+1. 다음의 메세지 발생할 때,
+```
+error: unable to resolve reference refs/remotes/origin/...
+```
+
+2. 다음을 실행한다.
+```
+git gc --prune=now
+git remote prune origin
+```
+[참고: stackoverflow](https://stackoverflow.com/questions/2998832/git-pull-fails-unable-to-resolve-reference-unable-to-update-local-ref)
+
+
 ### `git merge`에서 충돌이 발생할 경우
 
 * `git pull`의 충돌과 동일하게 처리한다. `git pull` = `git fetch` + `git merge`
@@ -113,10 +128,3 @@ function lazygit() {
 
 * [Fun with keeping local changes around](https://gitster.livejournal.com/29060.html)
 
-* `error: unable to resolve reference refs/remotes/origin/...`
-
-```
-git gc --prune=now
-git remote prune origin
-```
-출처 : [stackoverflow](https://stackoverflow.com/questions/2998832/git-pull-fails-unable-to-resolve-reference-unable-to-update-local-ref)
