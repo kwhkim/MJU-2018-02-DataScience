@@ -53,9 +53,54 @@ git commit
     - `git blame` : 현재 소스의 최종 작성자 확인
     - `git checkout` : 이전 화일 내용 확인
     - `git status` : 현재 상태 확인. 마지막 커밋 이후 수정된 사항 등.
-    
-    
+
+## 마지막 커밋을 복원하기
+```
+git reset --hard HEAD  
+git clean -fd  # delete untracked files
+git clean -fdx # delete untracked files and files listed in .gitignore
+```
+
 ---
+
+## 충돌 처리
+### `git push`가 실패할 경우, `git pull`을 실행한다. `git pull`도 충돌이 발생할 경우
+
+1. 충돌이 일어나면 다음과 같은 메세지가 출력된다.
+```
+Auto-merging <filename.txt>
+CONFLICT (content): Merge conflict in <filename.txt>
+Automatic merge failed; fix conflicts and then commit the result.
+```
+2. 충돌이 일어난 화일을 수정한다.
+3. 다음을 실행한다.
+```
+git add 
+git commit
+git pull
+```
+
+[참조](https://backlog.com/git-tutorial/kr/intro/intro5_1.html)
+
+### `git merge`에서 충돌이 발생할 경우
+
+* `git pull`의 충돌과 동일하게 처리한다. `git pull` = `git fetch` + `git merge`
+* `git fetch`를 하면 `git checkout FETCH_HEAD`로 체크아웃할 수 있다.
+
+### `git rebase`에서 충돌이 발생할 경우
+
+* 충돌을 해결 한 후
+```
+git add
+git rebase --continue
+```
+
+* `git rebase`를 취소할 경우: `git rebase --abort`
+
+---
+## 참고
+
+* `lazygit()`
 ```
 function lazygit() {
     git add .
@@ -63,3 +108,7 @@ function lazygit() {
     git push
 }
 ```
+
+* 빨리감기 병합(fast-forwad merge) : 병합할 브랜치가 현재 브랜치의 자식인 경우?
+
+* [Fun with keeping local changes around](https://gitster.livejournal.com/29060.html)
