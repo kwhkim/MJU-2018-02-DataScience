@@ -21,6 +21,8 @@ output: html_notebook
 
 * `git config --list` : git 설정 확인
 
+* `git config credential.helper store` : git user.name, password 저장, [참고](https://stackoverflow.com/questions/35942754/how-to-save-username-and-password-in-git)
+
 * `git blame` : 현재 소스의 최종 작성자 확인
 
 # 작업 순서
