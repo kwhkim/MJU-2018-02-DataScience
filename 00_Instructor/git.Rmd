@@ -57,7 +57,7 @@ git commit
 ## 마지막 커밋을 복원하기
 ```
 git reset --hard HEAD  
-git clean -fd  # delete untracked files
+git clean -fd  # delete untracked files, but deleting this way, you can not restore files from Recycle Bin...!!!
 git clean -fdx # delete untracked files and files listed in .gitignore
 ```
 
