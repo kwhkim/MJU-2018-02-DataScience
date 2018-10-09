@@ -1417,6 +1417,147 @@ df02 &lt;- df01 %&gt;% gather('변수', '값', height:weight)</code></pre>
 <li>선형회귀분석 결과에 대해 진단(diagnostics)하세요.</li>
 </ul></li>
 </ul>
+<div id="-" class="section level3">
+<h3>채점 결과</h3>
+<ul>
+<li>모두 수고했습니다.</li>
+<li>회귀계수의 95% 신뢰구간은 <code>confint(lm(y~x))</code>로 구할 수 있으며 <code>t.test</code>와는 다릅니다.</li>
+<li>선형회귀분석의 진단은 4가지 가정인 LINE이 성립하는지 확인하는 작업으로 <code>plot(lm(y~x))</code>으로 확인해 볼 수 있습니다.
+<ul>
+<li>회귀선의 선형성 : 잔차의 분포는 설명변수에 따라 변하지 않고 <span class="math inline">\(\mathbb{E}[r|X] =0\)</span>을 만족하는가?</li>
+<li>잔차의 정규성</li>
+<li>잔차의 등분산성</li>
+<li>마지막으로 이상점, 영향점의 존재 및 양상</li>
+</ul></li>
+<li><strong>선형회귀분석의 진단은 F-검정, p-값, 회귀계수의 유의미성과는 무관하며, 기본적으로 회귀분석의 가정이 성립할 때에만 그것을 가정하고 얻어진 결론(F-검정, p-값, 회귀계수의 신뢰 구간 등)이 의미가 있습니다.</strong></li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th align="center">순번</th>
+<th align="center">1</th>
+<th align="center">2</th>
+<th align="center">3</th>
+<th align="center">4</th>
+<th align="center">총점</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">4</td>
+</tr>
+<tr class="even">
+<td align="center">3</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">3</td>
+</tr>
+<tr class="odd">
+<td align="center">9</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">3</td>
+</tr>
+<tr class="even">
+<td align="center">13</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">0.5</td>
+<td align="center">2.5</td>
+</tr>
+<tr class="odd">
+<td align="center">15</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">3</td>
+</tr>
+<tr class="even">
+<td align="center">23</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">3</td>
+</tr>
+<tr class="odd">
+<td align="center">25</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">4</td>
+</tr>
+<tr class="even">
+<td align="center">27</td>
+<td align="center">1</td>
+<td align="center">0.5</td>
+<td align="center">1</td>
+<td align="center">0.5</td>
+<td align="center">3</td>
+</tr>
+<tr class="odd">
+<td align="center">28</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">3</td>
+</tr>
+<tr class="even">
+<td align="center">30</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.8</td>
+<td align="center">3.8</td>
+</tr>
+<tr class="odd">
+<td align="center">32</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">3</td>
+</tr>
+<tr class="even">
+<td align="center">34</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.7</td>
+<td align="center">3.7</td>
+</tr>
+<tr class="odd">
+<td align="center">35</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0.7</td>
+<td align="center">3.7</td>
+</tr>
+<tr class="even">
+<td align="center">36</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">4</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 
