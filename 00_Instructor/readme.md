@@ -29,13 +29,13 @@
 |주   |날짜   |내용   |
 |:-:|:-:|---|
 |01   |09/07   |(개교기념일 휴강)   |
-|02   |09/14   |[과목 소개, git 설치, github 등](./00_Instructor/2018_09_12.html)  |
-|03 |09/21   |[R의 데이터 타입](https://github.com/kwhkim/stat-programming-01/blob/master/RClass02_.pdf), [R 마크다운](./00_Instructor/Class02_RMarkdown.html)   |
-|[04](./00_Instructor/Class03.html)   |09/28   |[데이터 읽어오기](./00_Instructor/Class02_ImportingData.html), [데이터 살펴보기](./00_Instructor/Class03.html)  |
-|05   |10/05   |[집단별 함수 적용](./00_Instructor/Class04.html)   |
-|06   |10/12   |R 그래픽스   |
-|07   |10/19   |R 프로그래밍   |
-|08   |10/26   |보충   |
+|02   |09/14   |[과목 소개, git 설치, github 등](./2018_09_12.html)  |
+|03 |09/21   |[R의 데이터 타입](https://github.com/kwhkim/stat-programming-01/blob/master/RClass02_.pdf), [R 마크다운](./Class02_RMarkdown.html)   |
+|[04](./Class03.html)   |09/28   |[데이터 읽어오기](./Class02_ImportingData.html), [데이터 살펴보기](./Class03.html)  |
+|05   |10/05   |[집단별 함수 적용](./Class04.html)   |
+|06   |10/12   |[`dplyr`/`join`/`tidyr` 활용](./Class05.html)   |
+|07   |10/19   |R 그래픽스   |
+|08   |10/26   |R 프로그래밍   |
 |09   |11/02   |중간고사   |
 |10   |11/09   |선형 회귀 모형   |
 |11   |11/16   |일반화 선형 모형, 혼합모형   |
