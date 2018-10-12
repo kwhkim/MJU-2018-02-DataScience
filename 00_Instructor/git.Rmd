@@ -1,0 +1,65 @@
+---
+title: "git, 짧은 소개"
+output: html_notebook
+---
+
+# 주요 명령어
+
+* `git init .` : 초기화
+
+* `git add -A .`/`git commit` : 커밋 준비/커밋
+
+* `git status` : 현재 상태
+
+* `git log` : 이력(커밋내용)
+
+* `git diff` : 차이 확인
+
+* `git checkout` : 이전 화일 내용 확인
+
+* `git config --global user.name "..."` / `git config --local user.name "..."` : git id 설정(global/local)
+
+* `git config --list` : git 설정 확인
+
+* `git blame` : 현재 소스의 최종 작성자 확인
+
+# 작업 순서
+
+1. (선택사항) 해당 폴더에 대해 id 설정(모든 폴더에 대해 id 설정은 `local` -> `global`로 수정한다.)
+
+```
+git config --local user.name <...>
+```
+
+2. 작업을 할 폴더(디렉토리)로 가서 초기화한다.
+
+```
+git init .
+```
+
+3. 작업을 한다(화일이 생성된다).
+
+4. 작업 내용을 모두 커밋한다(이력 관리를 위해 저장한다).
+
+```
+git add -A .
+git commit
+```
+
+5. 2-3을 반복한다.
+
+6. 이력을 확인하는 방법들
+    - `git log` : 커밋 로그
+    - `git blame` : 현재 소스의 최종 작성자 확인
+    - `git checkout` : 이전 화일 내용 확인
+    - `git status` : 현재 상태 확인. 마지막 커밋 이후 수정된 사항 등.
+    
+    
+---
+```
+function lazygit() {
+    git add .
+    git commit -a -m "$1"
+    git push
+}
+```
