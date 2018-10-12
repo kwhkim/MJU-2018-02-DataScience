@@ -5,7 +5,7 @@ output: html_notebook
 
 # 주요 명령어
 
-* `git init .` : 초기화
+* `git init .` : 초기화aslkj;asdkf;aksjd;f
 
 * `git add -A .`/`git commit` : 커밋 준비/커밋
 
