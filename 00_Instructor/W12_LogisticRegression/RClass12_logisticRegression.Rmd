@@ -64,7 +64,7 @@ summary(Wells)
 
 ```{r}
 library(ggplot2)
-ggplot(data=Wells) + geom_point(aes(x=distance, y=switch), alpha=0.2)
+ggplot(data=Wells) + geom_point(aes(x=distance, y=switch), alpha=0.1)
 ggplot(data=Wells) + geom_jitter(aes(x=distance, y=switch), alpha=0.2) 
 ```
 
@@ -80,7 +80,7 @@ Wells <-
 ggplot(data=Wells, aes(x=distCut, col=switch, fill=switch)) + geom_bar()
 ggplot(data=Wells, aes(x=distCut, col=switch, fill=switch)) + geom_bar(position = "fill" )
 ggplot(data=Wells, aes(x=distCut, col=switch, fill=switch)) + geom_bar(position = "fill" ) + 
-  geom_rug(aes(x=distCut, y=0.5), position=position_jitter(width=0.2), alpha=0.02, sides='b', col='black')
+  geom_rug(aes(x=distCut, y=0.5), position=position_jitter(width=0.2),    alpha=0.02, sides='b', col='black')
 ```
 
 ```{r}
@@ -288,7 +288,7 @@ summary(fit2)
 
 #plot(allEffects(fit1), type='rescale')
 plot(allEffects(fit2), type='response')
-plot(allEffects(fit2), type='response', multiline=TRUEd)
+plot(allEffects(fit2), type='response', multiline=TRUE)
 #plot(allEffects(fit1), type='link')
 
 plot(effect('Age*Housing.Rent', fit2),  type='response')
