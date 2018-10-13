@@ -81,6 +81,16 @@ plot(tmodel4, main='Decision Tree: switch ~ .')
 text(tmodel4)
 ```
 
+* 의사결정나무(decision tree)
+    - 결과 변수 예측에 가장 도움이 되는 예측 변수 분리을 재귀적으로 찾아내는 방법
+    - 노드(Node) : 예측 변수에 값에 따라 결과 예측 값이 분리(split)되는 지점(뿌리노드, 잎노드).
+    - 특징
+        - 해석하기 편리하다.
+        - 그리디(greedy) 알고리즘을 사용하며, 재귀적이다.
+        - 변수 선택(Variable Selection)이 자동으로 이루어진다.
+        - 결측치에 대해 따로 신경 쓸 필요가 없다.
+        - 방법에 따라 과적합되기 쉽다.
+
 * 로지스틱 회귀 분석과 비교
 
 ```{r}
@@ -117,16 +127,15 @@ confusionMatrix(predL5, Wells$switch, positive='yes')
 # minbucket : 최종 노드의 최소 관찰 수
 # cp : 복잡도 모수(complexity parameter). 분기에 필요한 적합도 증가
 # maxdepth : 최대 깊이
+library(rpart.plot)
 data(Wells, package='carData')
 fit0 <- rpart(switch ~ ., data=Wells)
+summary(fit0)
 rpart.plot(fit0)
 fit1 <- rpart(switch ~ ., data=Wells, control = rpart.control(maxdepth=2))
 rpart.plot(fit1)
-fit2 <- rpart(switch ~ ., data=Wells, control = rpart.control(maxdepth=2, cp=0, minsplit=1, minbucket=1))
-rpart.plot(fit2)
 fit3 <- rpart(switch ~ ., data=Wells, control = rpart.control(cp=0.005, minsplit=20, minbucket=7))
 rpart.plot(fit3)
-summary(fit)
 ```
 
 ### 예 : `GermanCredit` 데이터
@@ -311,7 +320,4 @@ iTrain <- iTrains[[1]]
     - 크기(표본 크기)
     - 정확성
     - 대표성
-    
-
-
 
