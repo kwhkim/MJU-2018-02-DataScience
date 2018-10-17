@@ -1,0 +1,85 @@
+---
+title: "Homework3"
+author: "홍영화"
+date: "2018년 10월 17일"
+output: html_document
+---
+
+##가계부채에 영향을 미치는 요인 분석
+올 1분기 가계신용은 1468조원으로 1500조 돌파를 앞두고 있다. 윤석헌 금융감독원장도 2016년 교수시절 한 강연장에서 2018~2019년 가계부채로 한국경제에 큰 위기가 올 가능성이 있다고 경고 한 바 있다. 그는 "중요한 문제는 부채를 갚느라 부담스러워 소비를 못한다는 점"이라며 "소비를 못하니 기업 활동이 위축되고 일자리 창출은 안 되고 장사는 더 안 되고 빚내서 빚을 갚아야 되니 부채는 자꾸 쌓여간다"고 설명했다. 즉 해결하지 못한다면 경제는 시들해져 국가 경제를 위협하는 수준에 달한다는 것이다.
+
+##데이터 출처: 한국은행 경제통계시스템
+
+###데이터 파일 불러오기
+```{r, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+library(readxl)
+
+house_debt_raw <- read_excel("1.예금취급기관의 주택담보대출.xlsx")
+house_price_raw <- read_excel("3.주택매매가격종합지수.xlsx")
+
+
+```
+
+###데이터 전처리 하기
+```{r, message=FALSE, warning=FALSE}
+View(house_debt_raw)
+table(is.na(house_debt_raw$mortgage)) #결측치 없음
+
+
+View(house_price_raw)
+table(is.na(house_price_raw$houseprice)) #결측치 없음
+```
+
+###그룹함수 사용하기
+```{r}
+summary(house_debt_raw$mortgage)
+
+mortgage_1 <- house_debt_raw %>%
+  select(mortgage) %>% 
+  filter(mortgage <= median(mortgage))    #중앙값보다 작은 그룹
+mortgage_2 <- house_debt_raw %>% 
+  select(mortgage) %>% 
+  filter(mortgage > median(mortgage))    #중앙값보다 큰 그룹
+
+min(mortgage_1$mortgage)
+max(mortgage_1$mortgage)
+mean(mortgage_1$mortgage)
+sd(mortgage_1$mortgage)
+boxplot(mortgage_1$mortgage)#최소값 꼬리가 약간 더 길다. 
+```
+
+```{r}
+min(mortgage_2$mortgage)
+max(mortgage_2$mortgage)
+mean(mortgage_2$mortgage)
+sd(mortgage_2$mortgage)  #앞 그룹보다 편차가 크다.
+boxplot(mortgage_2$mortgage) #최대값 꼬리가 약간 더 길다.
+
+```
+
+
+###데이터 합치기
+```{r}
+df1 <- data.frame(house_debt_raw$Classification, house_debt_raw$mortgage, house_price_raw$houseprice) #새로운 df만들기
+names(df1)<- c('date','mortgage','houseprice') #컬럼명 바꾸기
+View(df1)
+
+ggplot(data=df1, aes(x=date, y=mortgage, group=1)) +
+  geom_line() #시계열 그래프
+
+```
+
+
+###가로형,세로형 바꾸기
+```{r}
+df2 <- t(df1)
+View(df2)
+
+```
+ 
+
+
+ 
+
