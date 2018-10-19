@@ -1,0 +1,75 @@
+---
+title: "25_장민지_과제3(1019)"
+author: "Minjee Jang"
+date: "2018년 10월 19일"
+output: html_document
+---
+```{r}
+library(dplyr)
+library(tidyr)
+```
+
+```{r}
+crime_raw<-read.csv("crime.csv")
+cctv_raw <- read.csv("cctv.csv")
+cr <- crime_raw
+cc <- cctv_raw
+```
+
+-
+
+## 1.summary 
+
+```{r}
+summary(cr)
+summary(cc)
+```
+
+```{r}
+library(dplyr)
+df <- left_join(cc,cr, by = "자치구")  
+df
+
+df <- df%>%  
+ select(자치구,합계,소계,방범용)  
+summary(df$소계)  
+min(df$소계)  
+max(df$소계)  
+mean(df$소계)  
+sd(df$소계)  
+  
+ 
+View(df)
+```
+
+##이를 통해 용도에 관계없이 전체 CCTV가 범죄예방에 도움이 되는 것으로 판단된다.
+
+```{r}
+library(dplyr) 
+library(tidyr) 
+
+df$자치구 = rownames(df); rownames(df) = NULL
+df %>% select(자치구,합계,소계,방범용) -> df01
+head(df01)
+
+df01 %>% gather(key='feature',value='value',합계,소계,방범용) -> dfLong
+head(dfLong)
+
+dfLong %>% spread(key='feature',value='value') -> df02
+head(df02)
+
+all.equal(df01,df02)
+
+
+
+```
+
+
+## CCTV가 많은 지역일수록 범죄발생 횟수가 적고 CCTV가 적은 지역일 수록 범죄 발생횟수가 높음을 발견하였다.
+
+-
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
