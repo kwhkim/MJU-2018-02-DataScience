@@ -68,8 +68,5 @@ all.equal(df01,df02)
 ## CCTV가 많은 지역일수록 범죄발생 횟수가 적고 CCTV가 적은 지역일 수록 범죄 발생횟수가 높음을 발견하였다.
 
 -
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 
