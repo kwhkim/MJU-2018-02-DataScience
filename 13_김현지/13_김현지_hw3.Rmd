@@ -1,0 +1,106 @@
+---
+title: "hw_3"
+author: "HJ Kim"
+date: "2018년 10월 19일"
+output: html_document
+---
+
+1. 관심 자료에 대해 summary를 하고, 집단별로 나눠서 min, max, mean, sd를 구해 보세요.
+
+```{r warning=FALSE}
+library(dplyr)
+library(readxl)
+
+old <- read_excel("old.xlsx", col_names = T)
+
+summary(old)
+
+data <- old
+
+data <- rename(data, year = '기간',
+               Gu = '자치구',
+               place_sum = '시설합계',
+               place1 = '노인복지관 시설수',
+               num_place1 = '노인복지관 종사자수',
+               place2 = '경로당',
+               place3 = '노인교실')
+
+data
+
+data_1 <- data %>% 
+  group_by(Gu) %>% 
+  summarise(min_place3 = min(place3),
+            max_place3 = max(place3),
+            mean_place3 = mean(place3),
+            sd_place3 = sd(place3))
+
+View(data_1)
+```
+
+2. 집단별로 함수를 적용하는 방법을 활용하여 자료에서 새로운 사실을 발견해 보세요.
+
+```{r warning=FALSE}
+library(ggplot2)
+
+data_new <- data %>% 
+  select(year, Gu, place1, place2, place3) %>% 
+  group_by(year, Gu) %>% 
+  summarise(sum_place = sum(place1, place2, place3))
+  
+View(data_new)
+
+
+ggplot(data=data_new, mapping=aes(x=Gu, y=sum_place, fill=year)) + geom_col()+coord_flip()
+
+```
+
+해가 지나도 구별 노인시설의 총합은 거의 변함이 없음을 알 수 있다.
+
+
+3. 두 개 이상의 자료를 통합(join)해서 하나의 큰 자료를 만들어 보세요.
+
+```{r warning=FALSE}
+
+new_old <- read_excel("old_2017.xlsx", col_names = T)
+
+data_o <- new_old
+
+data_o <- rename(data_o, Gu = '자치구',
+                 place_sum = '시설합계',
+                 place1 = '노인복지관 시설수',
+                 num_place1 = '노인복지관 종사자수',
+                 place2 = '경로당',
+                 place3 = '노인교실')
+
+movie <- read_excel("movie_2017.xlsx", col_names = T)
+
+data_m <- movie
+
+View(data_m)
+data_m <- rename(data_m, Gu = '자치구',
+                 num = '개소수',
+                 screen = '스크린수',
+                 seat = '좌석수')
+
+new_data <- left_join(data_o, data_m, by = "Gu")
+
+View(new_data)
+
+```
+
+4. 이 자료를 가로형, 세로형으로 형태를 바꿔 보세요.
+
+```{r warning=FALSE}
+
+library(reshape2)
+
+# 세로형
+long_data <- melt(new_data, measure.vars = 7:9, variable.name='theater', value.name='number')
+
+View(long_data)
+
+# 가로형
+wide_data <- dcast(long_data, Gu+place_sum+place1+num_place1+place2+place3~theater)
+
+View(wide_data)
+```
