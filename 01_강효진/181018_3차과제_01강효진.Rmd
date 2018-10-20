@@ -1,0 +1,120 @@
+---
+title: "181018_homework"
+author: "강효진"
+date: "2018년 10월 18일"
+output: html_document
+---
+* 데이터 : 서울시 보육시설 동별 통계 및 서울시 어린이 보호구역 통계
+
+1. 관심 자료에 대해 summary를 하고, 집단별로 나눠서 min, max, mean, sd를 구해 보세요.
+ * 데이터 전처리
+```{r message=FALSE, warning=FALSE}
+library(readxl)
+library(dplyr)
+
+#데이터 불러오기
+facility <- read_excel("서울시 보육시설 동별 통계.xlsx")
+protection <- read_excel("서울시 어린이 보호구역 지정 현황.xlsx")
+
+#변수명 바꾸기 (함수 실행시 오류 예방)
+facility <- rename(facility, "법인단체" = "법인·단체 등")
+
+#변수타입 문자형에서 숫자형으로 전환
+facility <- transform(facility, 국공립 = as.numeric(국공립), 
+          사회복지법인 = as.numeric(사회복지법인), 
+          법인단체 = as.numeric(법인단체),
+          민간 = as.numeric(민간), 
+          가정 = as.numeric(가정), 
+          부모협동 = as.numeric(부모협동), 
+          직장 = as.numeric(직장))
+
+#0이 결측치로 처리되는 문제 해결
+facility[is.na(facility[, "국공립"]), "국공립"] <- 0
+facility[is.na(facility[, "사회복지법인"]), "사회복지법인"] <- 0
+facility[is.na(facility[, "법인단체"]), "법인단체"] <- 0
+facility[is.na(facility[, "민간"]), "민간"] <- 0
+facility[is.na(facility[, "가정"]), "가정"] <- 0
+facility[is.na(facility[, "부모협동"]), "부모협동"] <- 0
+facility[is.na(facility[, "직장"]), "직장"] <- 0
+
+head(facility)
+```
+
+ * Summary / max / min / mean / sd
+```{r message=FALSE, warning=FALSE}
+summary(facility)
+
+facility %>%
+  group_by(자치구) %>%
+  summarise(mean = mean(국공립)) %>%
+  arrange(desc(mean)) %>%
+  head(5)
+
+facility %>%
+  group_by(자치구) %>%
+  summarise(max = max(국공립)) %>%
+  arrange(desc(max)) %>%
+  head(5)
+
+facility %>%
+  group_by(자치구) %>%
+  summarise(min = min(국공립)) %>%
+  arrange(desc(min)) %>%
+  head(5)
+
+facility %>%
+  group_by(자치구) %>%
+  summarise(sd = sd(국공립)) %>%
+  arrange(desc(sd)) %>%
+  head(5)
+```
+ 
+2. 집단별로 함수를 적용하는 방법을 활용하여 자료에서 새로운 사실을 발견해 보세요.
+```{r message=FALSE, warning=FALSE}
+#자치구별 분류, 보육시설 수를 모두 더하여 총계열을 만든 후, 지역별로 확인
+facility <- facility %>%
+  mutate(tot_sum = 국공립+사회복지법인+법인단체+민간+가정+부모협동+직장)
+
+facility %>%
+  group_by(자치구) %>%
+  arrange(desc(tot_sum)) %>%
+  head(5)
+#자치구별 보육시설 수의 총합을 알 수 있음(많은 비중을 차지하고 있는 국공립, 가정 보육시설 순위와 다르게 나타나는 부분이 있음)
+```
+
+3. 두 개 이상의 자료를 통합(join)해서 하나의 큰 자료를 만들어 보세요.
+```{r}
+#보호구역 데이터의 전처리 과정
+data_p <- protection %>%
+  group_by(시군구) %>%
+  summarise(n = n()) #원데이터에는 보호구역의 수가 따로 나와있지 않기에, 빈도함수를 통해 보호구역 수를 알아봄
+
+#데이터를 통합하기 위해 열 이름을 통일
+data_p <- rename(data_p, "자치구" = "시군구")
+
+#데이터 통합
+tot_data <- full_join(facility , data_p , by="자치구")
+
+#열이름을 알기쉽게 바꿈
+tot_data <- rename(tot_data, "보육시설총계" = "tot_sum",
+                   "보호구역총계" = "n")
+
+head(tot_data)
+```
+
+4. 이 자료를 가로형, 세로형으로 형태를 바꿔 보세요.
+```{r}
+library(tidyr)
+
+#세로형 데이터
+longform <- tot_data %>%
+  gather(보육시설, 보호구역총계, 국공립:직장, factor_key=TRUE)
+head(longform)
+
+#가로형 데이터
+wideform <- spread(longform, 보육시설, 보호구역총계)
+head(wideform)
+```
+
+5. 위의 방법을 활용하여 자료에서 새로운 사실을 발견해 보세요.
+ - 어떠한 지역의 보육시설총계와 관련없이 보육시설의 종류에 따라 어린이 보호구역의 수가 다르다는 것을 알 수 있다.
