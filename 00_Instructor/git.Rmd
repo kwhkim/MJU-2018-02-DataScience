@@ -21,6 +21,8 @@ output: html_notebook
 
 * `git config --list` : git 설정 확인
 
+* `git config credential.helper store` : git user.name, password 저장, [참고](https://stackoverflow.com/questions/35942754/how-to-save-username-and-password-in-git)
+
 * `git blame` : 현재 소스의 최종 작성자 확인
 
 # 작업 순서
@@ -42,7 +44,7 @@ git init .
 4. 작업 내용을 모두 커밋한다(이력 관리를 위해 저장한다).
 
 ```
-git add -A .
+git add -A . # <-> git rm
 git commit
 ```
 
@@ -53,9 +55,101 @@ git commit
     - `git blame` : 현재 소스의 최종 작성자 확인
     - `git checkout` : 이전 화일 내용 확인
     - `git status` : 현재 상태 확인. 마지막 커밋 이후 수정된 사항 등.
-    
-    
+
+## 마지막 커밋을 복원하기
+```
+git reset --hard HEAD  
+git clean -fd  # delete untracked files, but deleting this way, you can not restore files from Recycle Bin...!!!
+git clean -fdx # delete untracked files and files listed in .gitignore
+```
+
+* [HEAD](https://git-scm.com/book/ko/v2/Git-%EB%8F%84%EA%B5%AC-Reset-%EB%AA%85%ED%99%95%ED%9E%88-%EC%95%8C%EA%B3%A0-%EA%B0%80%EA%B8%B0)의 의미 : HEAD는 현재 브랜치를 가리키는 포인터이며, 브랜치는 브랜치에 담긴 커밋 중 가장 마지막 커밋을 가리킨다. 지금의 HEAD가 가리키는 커밋은 바로 다음 커밋의 부모가 된다. 단순하게 생각하면 HEAD는 현재 브랜치 마지막 커밋의 스냅샷이다.
+
 ---
+
+## 충돌 처리
+### `git push`가 실패할 경우, `git pull`을 실행한다. `git pull`도 충돌이 발생할 경우
+
+1. 충돌이 일어나면 다음과 같은 메세지가 출력된다.
+```
+Auto-merging <filename.txt>
+CONFLICT (content): Merge conflict in <filename.txt>
+Automatic merge failed; fix conflicts and then commit the result.
+```
+2. 충돌이 일어난 화일을 수정한다.
+3. 다음을 실행한다.
+```
+git add 
+git commit
+git pull
+```
+
+[참조](https://backlog.com/git-tutorial/kr/intro/intro5_1.html)
+
+### `git pull`에서 발생할 수 있는 다른 문제
+
+1. 다음의 메세지 발생할 때,
+```
+error: unable to resolve reference refs/remotes/origin/...
+```
+
+2. 다음을 실행한다.
+```
+git gc --prune=now
+git remote prune origin
+```
+[참고: stackoverflow](https://stackoverflow.com/questions/2998832/git-pull-fails-unable-to-resolve-reference-unable-to-update-local-ref)
+
+
+### `git merge`에서 충돌이 발생할 경우
+
+* `git pull`의 충돌과 동일하게 처리한다. `git pull` = `git fetch` + `git merge`
+* `git fetch`를 하면 `git checkout FETCH_HEAD`로 체크아웃할 수 있다.
+
+### `git rebase`에서 충돌이 발생할 경우
+
+* 충돌을 해결 한 후
+```
+git add
+git rebase --continue
+```
+
+* `git rebase`를 취소할 경우: `git rebase --abort`
+
+---
+
+## 브랜치 관리
+### 새로운 브랜치 만들기
+```
+git checkout -b <BRANCH_NAME>
+```
+
+### 원격 저장소(remote repository) `origin` 에 새로운 이름으로 PUSH하기
+```
+git push -u origin <BRANCH_NAME>
+```
+
+### 원격 저장소의 브랜치 불러오기
+```
+git checkout --track origin/<BRANCH_NAME>
+```
+
+### 원격 저장소 관련
+```
+git remote
+git remote -v
+
+git remote add <name> <url>
+git remote rm <name>
+git remote rename <oldname> <newname>
+```
+
+* <https://www.git-tower.com/learn/git/faq/track-remote-upstream-branch>
+
+---
+## 참고
+
+* `lazygit()`
 ```
 function lazygit() {
     git add .
@@ -63,3 +157,13 @@ function lazygit() {
     git push
 }
 ```
+
+* [참고자료: Version control with RStudio and Github](https://aberdeenstudygroup.github.io/studyGroup/lessons/SG-T1-GitHubVersionControl/VersionControl/)
+
+* 빨리감기 병합(fast-forwad merge) : 병합할 브랜치가 현재 브랜치의 자식인 경우?
+
+* [Fun with keeping local changes around](https://gitster.livejournal.com/29060.html)
+
+* [How to undo anything with Git](https://blog.github.com/2015-06-08-how-to-undo-almost-anything-with-git/)
+
+* [Be a git pro in just one blog](https://itnext.io/become-a-git-pro-in-just-one-blog-a-thorough-guide-to-git-architecture-and-command-line-interface-93fbe9bdb395)

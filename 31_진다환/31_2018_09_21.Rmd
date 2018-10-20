@@ -1,0 +1,39 @@
+---
+title: "국내금융시장일일동향"
+output: html_document
+---
+
+
+_출처_ 
+**공공데이터포털**
+[링크](https://www.data.go.kr/)
+
+---
+
+_관련사진1_ ![링크](https://pds.joins.com/news/component/newsis/201612/14/NISI20161214_0012496615_web.jpg)
+
+_관련사진2_![링크](http://banker.kfb.or.kr/201708/images/s0302_img01.png)
+
+_관련사진3_![링크](http://www.bikorea.net/news/photo/201801/19089_9952_2257.jpg)
+
+
+---
+
+**데이터를 선택한이유**
+
+-전세계적인 데이터와 국내 데이터의 상관관계를 찾기 위한 전 단계입니다
+
+-국내의 금융시장을 파악하면서 앞으로의 기대를 생각할 수 있습니다
+
+---
+
+**전문지식**
+
+_현재국내의 일일금융동향 사례들_<http://www.nspna.com/news/?mode=view&newsid=273178>
+
+---
+
+
+**데이터분석의 방향**
+
+-과거부터 현재까지 동향을 모아서 금융시장의 추세를 분석하려고 합니다
