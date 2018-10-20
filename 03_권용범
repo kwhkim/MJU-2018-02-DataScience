@@ -50,4 +50,3 @@ knitr::opts_chunk$set(echo = TRUE)
 *선수를 측정하는 새로운 변수(Ex. Runs Created)를 작성한 후 scatter plot, 다양한 통계기법을 통해서 유격수, 내야수를 서로 비교한다.
 
 
-

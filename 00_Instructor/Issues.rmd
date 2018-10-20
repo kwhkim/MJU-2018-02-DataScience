@@ -1,0 +1,28 @@
+---
+title: "Issues"
+author: "KwH Kim"
+date: "2018년 10월 11일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## `readme.md` Page Build Error
+
+The email says,
+
+---
+The page build failed for the `master` branch with the following error:
+
+The value '"2018년 9월 27일"' was passed to a date-related filter that expects valid dates in `/_layouts/default.html` or one of its layouts. For more information, see https://help.github.com/articles/page-build-failed-date-is-not-a-valid-datetime/.
+
+For information on troubleshooting Jekyll see:
+
+  https://help.github.com/articles/troubleshooting-jekyll-builds
+
+If you have any questions you can contact us by replying to this email.
+---
+
+
