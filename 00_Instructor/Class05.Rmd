@@ -1,0 +1,110 @@
+---
+title: "Class05"
+author: "김권현"
+date: "2018년 10월 11일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 오늘의 일정
+
+1. `dplyr` 패키지를 활용한 데이터 가공
+```
+mutate/select/filter - group_by - mutate - summarise/do - arrange
+```
+2. 여러가지 `join`
+
+3. 가로형/세로형(wide-form/long-form) 데이터의 전환
+
+---
+
+### 1. `dplyr` 패키지를 활용한 데이터 가공
+
+* [강의 자료](MJU05_dplyr.pdf)
+
+---
+
+### 2. 여러가지 `join`
+
+* [Animation](https://github.com/gadenbuie/tidyexplain)
+
+* [R for Data Science](http://r4ds.had.co.nz/relational-data.html#mutating-joins)
+
+```{r}
+options(stringsAsFactors=F)
+
+dfCustomer <- data.frame(
+  id = c(1,2,3,4,5),
+  name = c("김희선","박보검","설현","김수현","전지현"),
+  addr = c("서울시","부산시","인천시","강릉시","목포시"))
+
+dfPurchase <- data.frame(
+  name = c("김희선","박보검","김희선","설현","김수현","박보검"),
+  product = c("삼푸","텔레비전","통닭","핸드폰","바지","삼푸"))
+
+dfProduct <- data.frame(
+  product = c("삼푸","텔레비전","통닭","핸드폰","바지","PC","연필"),
+  price =c(13800, 560000,20000,250000,80000,1380000,2000))
+
+
+library(dplyr)
+inner_join(dfCustomer , dfPurchase , by="name")
+full_join(dfCustomer , dfPurchase , by="name")
+left_join(dfCustomer , dfPurchase , by="name")
+right_join(dfCustomer , dfPurchase , by="name")
+
+
+inner_join(dfPurchase , dfProduct , by="product")
+full_join(dfPurchase , dfProduct , by="product")
+left_join(dfPurchase , dfProduct , by="product")
+right_join(dfPurchase , dfProduct , by="product")
+
+#Filtering Join
+semi_join(dfProduct , dfPurchase)
+anti_join(dfProduct , dfPurchase)
+
+# Purchase data
+df1 <- inner_join(dfCustomer , dfPurchase , by="name")
+df2 <- left_join(df1, dfProduct , by="product")
+
+# Product data
+left_join(dfProduct , dfPurchase , by="product")
+```
+
+---
+
+### 3. 가로형/세로형(wide-form/long-form) 데이터의 전환
+
+* [참고 자료](./R_wide long_published160404.pdf)
+
+* `tidyr::gather`, `tidyr::spread`
+```{r}
+library(dplyr)
+library(tidyr)
+mtcars$name = rownames(mtcars); rownames(mtcars) = NULL
+mtcars %>% select(name, mpg, cyl, disp) -> mtcars01
+head(mtcars01)
+
+mtcars01 %>% gather(key='feature', value='value', mpg, cyl, disp) -> mtcarsLong
+head(mtcarsLong)
+
+mtcarsLong %>% spread(key='feature', value='value') -> mtcars02
+head(mtcars02)
+
+all.equal(mtcars01, mtcars02)
+```
+
+----
+
+### 과제(마감: 10-19 자정)
+
+1. 관심 자료에 대해 `summary`를 하고, 집단별로 나눠서 `min`, `max`, `mean`, `sd`를 구해 보세요.
+2. 집단별로 함수를 적용하는 방법을 활용하여 자료에서 새로운 사실을 발견해 보세요.
+3. 두 개 이상의 자료를 통합(join)해서 하나의 큰 자료를 만들어 보세요.
+4. 이 자료를 가로형, 세로형으로 형태를 바꿔 보세요.
+5. 위의 방법을 활용하여 자료에서 새로운 사실을 발견해 보세요.
+
+

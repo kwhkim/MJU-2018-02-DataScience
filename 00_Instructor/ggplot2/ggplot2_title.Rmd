@@ -1,0 +1,82 @@
+---
+title: "ggplot2_title"
+author: "KwH Kim"
+date: "2018년 10월 18일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(fig.width=4)
+knitr::opts_chunk$set(fig.height=3)
+library(ggplot2)
+library(dplyr)
+```
+
+## Key components of every plot
+
+1. Data
+
+2. Aesthetic mapping
+    
+3. Geoms
+        
+4. Auxillary lines
+
+5. Coordinate System & Zooming
+
+6. Legends
+    
+7. **Title, subtitle, caption and themes**
+	- title : `labs(title='  ')`
+	- subtitle : `labs(subtitle='  ')`
+	- caption : `labs(cpation='  ')`
+	- themes 
+	    - `+ theme_bw()`
+  		- `+ theme_gray()`
+  		- `+ theme_dark()`
+  		- `+ theme_classic()`
+  		- `+ theme_light()`
+  		- `+ theme_linedraw()`
+  		- `+ theme_minimal()`
+  		- `+ theme_void()`
+		
+## Title, subtitle, and caption
+
+```{r, collapse=T}
+t <- ggplot(mpg, aes(cty, hwy, color=cyl)) + geom_point() 
+t + labs(title='Fuel economy data')
+t + labs(title='Fuel Economy Data',
+         subtitle='from 1999 and 2008 for 38 popular models of car')
+t + labs(title='Fuel Economy Data',
+         subtitle='from 1999 and 2008 for 38 popular models of car',
+         caption='Fig. x. This dataset contains a subset of the fuel economy data that the EPA makes available on http://fueleconomy.gov. It contains only models which had a new release every year between 1999 and 2008 - this was used as a proxy for the popularity of the car.')
+```
+
+## Themes
+```{r, collapse=T}
+t <- ggplot(mpg, aes(cty, hwy, color=cyl)) + geom_point() 
+t2 <- t + 
+  labs(title='Fuel Economy Data',
+       subtitle='from 1999 and 2008 for 38 popular models of car',
+caption='Fig. x. This dataset contains a subset of the fuel economy data 
+that the EPA makes available on http://fueleconomy.gov. 
+It contains only models which had a new release every year 
+between 1999 and 2008 
+- this was used as a proxy for the popularity of the car.')
+t2 + theme_bw()
+t2 + theme_gray()
+t2 + theme_dark()
+t2 + theme_classic()
+t2 + theme_light()
+t2 + theme_linedraw()
+t2 + theme_minimal()
+t2 + theme_void() 
+```
+
+```{r, colllapse=T}
+t2 + theme(plot.caption = element_text(hjust = 0))
+t2 + theme(plot.caption = element_text(hjust = 0.5))
+t2 + theme(plot.caption = element_text(hjust = 1))
+t2 + theme(plot.caption = element_text(lineheight=.8, face='bold'))
+```

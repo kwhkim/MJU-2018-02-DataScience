@@ -90,6 +90,9 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
 }
@@ -143,6 +146,490 @@ $(document).ready(function () {
 <ul>
 <li><p>수업자료 및 과제는 R Markdown을 활용함을 기본으로 한다.</p></li>
 <li><p>수강생은 자신의 github id를 만들고, 수업 레포지토리를 fork해서 자신의 레포지토리를 운영한다. 과제 등을 자신의 repository(자신만의 폴더)에 commit-push한 후, pull request를 넣어서 수업 레포지토리에 합친다(merge).</p></li>
+</ul>
+</div>
+<div id="-" class="section level2">
+<h2>강의 계획</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="center">주</th>
+<th align="center">날짜</th>
+<th>내용</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">01</td>
+<td align="center">09/07</td>
+<td>(개교기념일 휴강)</td>
+</tr>
+<tr class="even">
+<td align="center">02</td>
+<td align="center">09/14</td>
+<td><a href="./00_Instructor/2018_09_12.html">과목 소개, git 설치, github 등</a></td>
+</tr>
+<tr class="odd">
+<td align="center">03</td>
+<td align="center">09/21</td>
+<td><a href="https://github.com/kwhkim/stat-programming-01/blob/master/RClass02_.pdf">R의 데이터 타입</a>, <a href="./00_Instructor/Class02_RMarkdown.html">R 마크다운</a></td>
+</tr>
+<tr class="even">
+<td align="center"><a href="./00_Instructor/Class03.html">04</a></td>
+<td align="center">09/28</td>
+<td><a href="./00_Instructor/Class02_ImportingData.html">데이터 읽어오기</a>, <a href="./00_Instructor/Class03.html">데이터 살펴보기</a></td>
+</tr>
+<tr class="odd">
+<td align="center">05</td>
+<td align="center">10/05</td>
+<td>데이터 전처리2</td>
+</tr>
+<tr class="even">
+<td align="center">06</td>
+<td align="center">10/12</td>
+<td>R 그래픽스</td>
+</tr>
+<tr class="odd">
+<td align="center">07</td>
+<td align="center">10/19</td>
+<td>R 프로그래밍</td>
+</tr>
+<tr class="even">
+<td align="center">08</td>
+<td align="center">10/26</td>
+<td>보충</td>
+</tr>
+<tr class="odd">
+<td align="center">09</td>
+<td align="center">11/02</td>
+<td>중간고사</td>
+</tr>
+<tr class="even">
+<td align="center">10</td>
+<td align="center">11/09</td>
+<td>선형 회귀 모형</td>
+</tr>
+<tr class="odd">
+<td align="center">11</td>
+<td align="center">11/16</td>
+<td>일반화 선형 모형, 혼합모형</td>
+</tr>
+<tr class="even">
+<td align="center">12</td>
+<td align="center">11/23</td>
+<td>주성분분석, 요인분석, 문항반응이론</td>
+</tr>
+<tr class="odd">
+<td align="center">13</td>
+<td align="center">11/30</td>
+<td>경로분석, 구조방정식모형</td>
+</tr>
+<tr class="even">
+<td align="center">14</td>
+<td align="center">12/07</td>
+<td>텍스트 마이닝</td>
+</tr>
+<tr class="odd">
+<td align="center">15</td>
+<td align="center">12/14</td>
+<td>기말고사</td>
+</tr>
+<tr class="even">
+<td align="center">16</td>
+<td align="center">12/21</td>
+<td>프로젝트 발표</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="-" class="section level2">
+<h2>과제 채점</h2>
+<table>
+<thead>
+<tr class="header">
+<th align="center">순번</th>
+<th align="center">과제1(9/21)</th>
+<th align="center">과제2(9/29)</th>
+<th align="center">과제3</th>
+<th align="center">과제4</th>
+<th align="center">과제5</th>
+<th align="center">과제6</th>
+<th align="center"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">01</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">02</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">03</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">04</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">05</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">06</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">07</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">08</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">09</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">10</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">11</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">12</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">13</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">14</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">15</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">16</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">17</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">18</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">19</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">20</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">21</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">22</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">23</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">24</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">25</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">26</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">27</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">28</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">29</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">30</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">31</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">32</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">33</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">34</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">35</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">36</td>
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>과제1(9/21)</strong>
+<ul>
+<li>많은 주제가 흥미로웠습니다.</li>
+<li>데이터를 통해 새로운 지식을 창출하거나 가설을 뒷받침하기 위해서 어떤 분석 방법을 쓸 수 있을지 생각해보세요.</li>
+<li><p>특히 데이터가 엄청나게 많지 않은 이상 데이터 분석을 위해서 관련 분야의 지식(domain knowledge)가 중요한 역할을 합니다.</p></li>
+<li>아이디가 yeongbi인 학생은 “자신의 순번_이름”의 폴더를 만든 후 그 폴더 안에 과제를 제출하세요.</li>
+<li>순번 10번 학생은 내용이 없습니다. 내용을 확인 후 다음 수업 전까지 과제를 제출하세요.</li>
+<li><p>순번 16번 학생은 pull request를 close했는데, 과제를 .txt 화일로 만들어서 다시 제출하기 바랍니다.</p></li>
+</ul></li>
 </ul>
 </div>
 </div>

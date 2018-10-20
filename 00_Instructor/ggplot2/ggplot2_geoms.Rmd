@@ -1,0 +1,136 @@
+---
+title: "ggplot2_geoms"
+author: "KwH Kim"
+date: "2018년 10월 18일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(fig.height=3)
+knitr::opts_chunk$set(fig.width=4)
+library(ggplot2)
+library(dplyr)
+```
+
+## 3 key components of every plot
+1. Data
+2. Aesthetic mapping(with scale)
+3. **Geoms**
+    - one instance geoms (ex. `point`, `jitter`, `rug`, `col`, `label`, `text`)
+    - summary geoms 
+        - 1 variable distribution : `density`, `histogram`, `barplot`
+        - 1 variable distribution conditional on another variable : `boxplot`, `violin`
+        - 2 variable distribution : `density2d`, `bin2d`, `hex`
+        - model : `smooth`, `quantile`
+
+### **Geoms**(mostly from ggplot2 cheatsheet)
+
+#### One Variable - Continous
+```{r collapse=T}
+c <- ggplot(mpg, aes(hwy)); c2 <- ggplot(mpg)
+c + geom_area(stat = "bin")
+c + geom_density(kernel = "gaussian")
+c + geom_dotplot()
+c + geom_freqpoly()
+c + geom_histogram(binwidth = 5) 
+c2 + geom_qq(aes(sample=hwy))
+```
+
+#### One Variable - Discrete
+```{r, collapse =  T}
+d <- ggplot(mpg, aes(fl))
+d + geom_bar() 
+```
+
+### Two Variables - x=continous, y=continuous
+```{r, collapse = T}
+e <- ggplot(mpg, aes(cty, hwy))
+e + geom_label(aes(label = cty), nudge_x = 1, nudge_y = 1, check_overlap = TRUE)
+e + geom_jitter(height = 2, width = 2) 
+e + geom_point()
+e + geom_quantile()
+e + geom_rug(sides = "bl")
+e + geom_smooth(method = lm)
+e + geom_text(aes(label = cty), nudge_x = 1, nudge_y = 1, check_overlap = TRUE)
+```
+
+```{r}
+e + geom_jitter(height=2, width=2, alpha=0.5, size=2) +
+  geom_quantile(quantiles=c(0.05, 0.95)) + 
+  geom_rug(sides = 'tr') +  # top, bottom, left, right
+  geom_smooth(method=lm, size=2) 
+# how to remove se of a regression line?
+```
+
+```{r}
+e + geom_jitter(height=2, width=2, alpha=0.5, size=2) +
+  geom_rug(sides = 'tr') +  # top, bottom, left, right
+  geom_quantile(method='rqss')
+# how to set quantiles to be 0.05, 0.5, 0.95?
+# how to change the smoothness?
+```
+
+* [More information about `geom_quantile`](https://ggplot2.tidyverse.org/reference/geom_quantile.html)
+* [More information about `geom_smooth`](https://stats.idre.ucla.edu/r/faq/how-can-i-explore-different-smooths-in-ggplot2/)
+
+### Two Variables - x=discrete, y=continuous
+
+```{r collapse=T, error=T}
+f <- ggplot(mpg, aes(class, hwy))
+f + geom_col()
+f + geom_bar()
+f + geom_boxplot(alpha=0.5)
+f + geom_dotplot(binaxis = "y", stackdir = "center")
+f + geom_dotplot(binaxis = "y", stackdir = "center", bins=60)
+f + geom_violin(scale = "area")
+```
+
+```{r collapse=T, error=T}
+f <- ggplot(mpg, aes(class, hwy))
+f + geom_boxplot(alpha=0.5) + 
+  geom_dotplot(binaxis = "y", stackdir = "center", binwidth=1, alpha=0.5)
+f + geom_jitter(alpha=0.5, width=0.1, height=0.1) + geom_boxplot(alpha=0.5)
+```
+
+### Two Variables - x=discrete, y=discrete
+
+```{r}
+g <- ggplot(diamonds, aes(cut, color))
+g + geom_count()
+g + geom_jitter()
+# How to overcome overplot? 1. alpha 2. smaller points
+```
+
+### bivariate distribution
+```{r, error=F}
+h <- ggplot(diamonds, aes(carat, price))
+h + geom_bin2d(binwidth = c(0.25, 500)) 
+h + geom_density2d()
+h + geom_hex()
+h + geom_point(alpha=0.2) + 
+  stat_ellipse(level=0.95, col="red") + 
+  stat_ellipse(level=0.01, col="red", size=3)
+```
+
+```{r, error=F}
+h2 <- ggplot(diamonds, aes(carat, color))
+h2 + geom_bin2d()
+h2 + geom_density2d()
+h2 + geom_hex() # is this correct?
+
+h3 <- ggplot(diamonds, aes(cut, color))
+h3 + geom_bin2d()
+h3 + geom_density2d()
+h3 + geom_hex() # is this correct?
+```
+
+### Maps
+
+```{r}
+data <- data.frame(murder = USArrests$Murder,
+                   state = tolower(rownames(USArrests)))
+map <- map_data("state")
+k <- ggplot(data, aes(fill = murder))
+k + geom_map(aes(map_id = state), map = map) + expand_limits(x = map$long, y = map$lat)
+```
