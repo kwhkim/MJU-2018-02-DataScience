@@ -1,7 +1,10 @@
 ---
-author : " 정호윤 "
---- 
-
+title: "assignment_3"
+author: "정호윤"
+date: "2018_10_18"
+output: html_document 
+---
+  
 # 선정한 주제
  **가계부채에 영향을 미치는 결정요인 분석**
   _ `가계부채를 결정짓는 독립변수에 대한 거시적 분석` _ 
@@ -18,13 +21,6 @@ author : " 정호윤 "
  
  - 분기별 분석으로 10년 치 데이터를 5년씩 나누어서 분석하는 것이 효과적일 것이라 생각한다. (추세에 대한 이해를 위해)
  
- *[종합]'집값 폭등'에 은행 가계대출 5.9조 급증…올해 최대폭
-![](https://pds.joins.com/news/component/newsis/201809/12/NISI20180912_0000200312_web.jpg)
-
-![](https://pbs.twimg.com/media/DmSf_eqUUAEisQd.jpg)
-![](https://pbs.twimg.com/media/DmSf_ewU0AACqIM.png)
-
-
 * 변수를 잘 설정하여 회귀분석을 R에서 구현해야 하는 것이 분석의 목표일 것 같다.
 * 위와 같은 주제와 관련한 다양한 논문을 참조하여 분석하기로 한다.
 
@@ -34,4 +30,81 @@ author : " 정호윤 "
 | 연도  | 2016  |2017   |2017 2/4 |2017 3/4   |2017 4/4   |2018 1/4   |2018 2/4   |
 |---|---|---|---|---|---|---|---|
 | 가계신용  |1,342.5|1,450.8|1,387.9| 1,419.3|1,450.8|1,468.2|1,493.2|
+
+## 데이터 불러오기
+
+```{r, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+library(readxl)
+housedebt_raw <- read_excel("1.예금취급기관의 주택담보대출.xlsx")
+houserates_raw <- read_excel("2.예금은행 가중평균금리(주택담보대출(월)).xlsx")
+```
+
+
+## 데이터 전처리 과정
+
+
+```{r, warning=FALSE}
+View(housedebt_raw)
+table(is.na(housedebt_raw$mortgage)) 
+
+View(houserates_raw)
+table(is.na(houserates_raw$rates))
+
+#둘다 결측치가 없음을 확인할 수 있다.
+
+```
+
+## 관심 자료에 관한 요약
+
+```{r}
+#주택담보대출에 관한 요약
+summary(housedebt_raw$mortgage)
+
+#주택담보대출금리에 관한 요약
+summary(houserates_raw$rates)
+```
+
+## 집단별로 함수를 적용하는 방법 활용.
+
+```{r, warning=FALSE}
+hd1 <- housedebt_raw[1:60,] #시계열 분석을 위해 나눈다. <2008~2012년도>
+
+head(hd1)
+summary(hd1$mortgage)
+
+hd2 <- housedebt_raw[61:120,] # <2013~2017년도>
+
+head(hd2)
+summary(hd2$mortgage)
+
+# 최솟값, 중간값, 최댓값과 4분위수 모두 2013년 이후 `hd2'의 값이 높음을 확인.
+
+```
+
+
+## 그래프로 확인해 본다.
+
+```{r}
+boxplot(hd1$mortgage)
+boxplot(hd2$mortgage)
+```
+
+## 데이터를 합쳐서 비교해 본다.
+
+```{r}
+df <- data.frame(hd1$Classification, hd1$mortgage, hd2$Classification, hd2$mortgage)
+names(df) <- c('term1','m8to12','term2','m13to17') # 컬럼의 이름을 설정함.
+View(df)
+
+line1 <- ggplot(data=df , aes(x=term1, y=m8to12, group=1)) + geom_line()
+line1
+line2 <- ggplot(data=df , aes(x=term2, y=m13to17, group=2)) +geom_line()
+line2
+
+# 최솟값, 중간값, 최댓값과 4분위수 모두 2013년 이후 `hd2'의 값이 높음을 확인할 수 있다.
+```
+
+
 
