@@ -96,9 +96,16 @@ library(tidyr)
 
 data %>%
   gather(key = 'feature', value = 'Value', Date, HomeTeam, AwayTeam, FTHG, FTAG, FTR, HTHG, HTAG, HTR, Referee, HS, AS, HST, AST, HF, AF, HC, AC, HY, AY, HR, AR) -> new_data
+
+data %>% gather(key='feature', value='value', FTHG:AR)
+
 head(new_data)
 
 ```
+
+## <span style="color:red">채점 사항</span>
+
+> Div, Date, HomeTeam, AwayTeam이 모두 하나의 경기를 식별하기 위한 정보이고, FTHG, FTAG, ...등은 모두 그 경에 대한 결과를 나타내고 있으므로, gather(key='feature', value='value', FTHG:AR)이 적절할 것입니다.
 
 #### 5. 위의 방법을 활용하여 자료에서 새로운 사실을 발견해 보세요.
 
@@ -119,4 +126,9 @@ View(data_new)
 
 
 ```
+
+
+## <span style="color:red">채점 사항</span>
+
+> 수고했습니다. 만약 결측치가 상당히 존재하는 데이터의 경우 가로형/세로형 변환을 통해 결측치의 패턴을 확인할 수 있습니다.
 

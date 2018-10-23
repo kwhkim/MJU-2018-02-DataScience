@@ -4,7 +4,9 @@
 #https://www.data.go.kr/dataset/3069956/fileData.do
 
 
-data <- read.csv("지역별_결혼이민자_현황_자료_2016년.csv")
+data <- read.csv("09_김세영/지역별_결혼이민자_현황_자료_2016년_.csv")
+#list.files("./09_김세영/")
+#list.files()
 View(data)
 head(data)
 dim(data)
@@ -61,6 +63,9 @@ data3 %>%
   summarise(live_min = min(live)) %>% 
   arrange(live_min)
 
+#### 채점사항: 여기서 최소값은 시도별 가장 작은 수의 시군구에 해당하는 값입니다.
+
+
 #시도별 외국인거주 현황 최대값 
 data3 %>% 
   group_by(sido) %>% 
@@ -80,6 +85,9 @@ data3 %>%
   summarise(sd_live = sd(live)) %>% 
   arrange(desc(sd_live))
 #대구광역시 달서구가 표준편차가 가장 크다.
+
+data3 %>% filter(sido=="대구광역시", sigungu=="달서구")
+#### 채점사항: 여기서 표준편차는 남자와 여자 거주자에 대해서 구한 표준편차입니다.
 
 
 ### 2. 집단별로 함수를 적용하는 방법을 활용하여 자료에서 새로운 사실을 발견해 보세요.
@@ -110,14 +118,15 @@ data3 %>%
 
 library(ggplot2)
 
-ggplot(data = data4, aes(x=reorder(sido, sum_live), y=sum_live, fill = gender)) + geom_col(position = "dodge") + coord_flip()
+ggplot(data = data4, aes(x=reorder(sido, sum_live), y=sum_live, fill = gender)) + geom_col(position = "dodge") + coord_flip() +
+  scale_fill_manual(values=c("blue", "red"))
 
 ggplot(data = data5, aes(x=reorder(sido, sum_rearChild), y=sum_rearChild, fill = gender)) + geom_col(position = "dodge") + coord_flip()
 
 ### 3. 두 개 이상의 자료를 통합(join)해서 하나의 큰 자료를 만들어 보세요.
 #2012년의 자료와 2016년의 지역별 결혼이민자 현황 자료를 통합하려 한다.
 
-data12 <- read.csv("지역별_결혼이민자_현황_2012년_.csv")
+data12 <- read.csv("09_김세영/지역별_결혼이민자_현황_2012년_.csv")
 str(data2012)
 View(data2012)
 
@@ -143,7 +152,7 @@ data12_4 <- data12_3 %>% filter(sigungu != '소계')
 
 View(data12_4)
 
-###
+
 
 dim(data3)
 dim(data12_4)
@@ -153,7 +162,8 @@ table(data12_4$sido)
 
 #두 DF이 행과 열의 개수가 다르다...
 #합치기 불가능
-left_join(data3, data12_4, by = sido)
+left_join(data3, data12_4, by = "sido")
+
 
 
 ########## 성별로 자료 나눈뒤 join해보기
@@ -167,6 +177,9 @@ data_fem <- data3 %>%
 
 left_join(data_m, data_fem, by = "sido")
 right_join(data_m, data_fem, by = "sido")
+
+### 채점 사항: join의 의미를 조금 잘못 이해했습니다. join은 한 행의 여러 컬럼이 서로 다른 data.frame으로 존재할 때 이들을
+### 합치는 것입니다. 
 
 ### 4. 이 자료를 가로형, 세로형으로 형태를 바꿔 보세요.
 
