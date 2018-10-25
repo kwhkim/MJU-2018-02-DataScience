@@ -35,7 +35,7 @@
 |05   |10/05   |[집단별 함수 적용](https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/Class04.html)   |
 |06   |10/12   |[`dplyr`/`join`/`tidyr` 활용](https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/Class05.html)   |
 |07   |10/19   |[R 그래픽스](https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/ggplot2/ggplot2.html)   |
-|08   |10/26   |R 프로그래밍   |
+|08   |10/26   |[R 프로그래밍](https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/control_and_functions.pdf)   |
 |09   |11/02   |중간고사   |
 |10   |11/09   |선형 회귀 모형   |
 |11   |11/16   |일반화 선형 모형, 혼합모형   |
