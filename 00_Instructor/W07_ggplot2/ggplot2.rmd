@@ -1,0 +1,110 @@
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+url0 <- 'https://htmlpreview.github.io/?https://github.com/kwhkim/MJU-2018-02-DataScience/blob/master/00_Instructor/W07_ggplot2/'
+htmlFiles <- c('ggplot2_aes',
+               'ggplot2_geoms',
+               'ggplot2_lines',
+               'ggplot2_coord',
+               'ggplot2_legend',
+               'ggplot2_title',
+               'ggplot2_summary')
+htmlUrl <- paste0(url0, htmlFiles, '.html')
+i=0
+```
+
+# ggplot (gg = grammar of graphics)
+
+### 3 key components of every plot
+1. **Data**
+2. [**Aesthetic mapping**](`r i=i+1; htmlUrl[i]`)
+3. [**Geoms**](`r i=i+1; htmlUrl[i]`)
+4. [**Auxillary lines**](`r i=i+1; htmlUrl[i]`)
+5. [**Coordinate System**](`r i=i+1; htmlUrl[i]`)
+6. [**Legends**](`r i=i+1; htmlUrl[i]`)
+7. [**Title, subtitle, caption and themes**](`r i=i+1; htmlUrl[i]`)
+
+* [**Summary**](`r i=i+1; htmlUrl[i]`)
+
+We will use `mpg` from package `ggplot2`.[^1]
+
+[^1]: engine displacement=배기량, 
+ 
+Example of basic scatter plots
+```{r, eval=F}
+ggplot(data, aes(x=  , y=   )) + geom_point()
+```
+
+Example of basic scatter plots with more aestheics mappings
+```{r, eval=F}
+ggplot(data, aes(x=  , y=   , col=  , size=  , shape=   )) + geom_point()
+```
+
+Example of basic scatter plot, more geoms
+```{r, eval=F}
+ggplot(data, aes(x=  , y=   , col=  , size=  , shape=   )) + 
+  geom_point() + 
+  geom_line()  
+```
+
+```{r, eval=F}
+ggplot(data, aes(x=  , y=   , col=  , size=  , shape=   )) + 
+  geom_point() + 
+  geom_line() +
+  geom_smooth(method='lm/glm/gam/loess/MASS::rlm', span=  , formula=  )
+```
+
+### When x is categorical,
+points can be overwritten, so we jitter or convert points to a box or a violin
+```{r, eval=F}
+ggplot(data, aes(x=  , y=  )) + geom_jitter()
+ggplot(data, aes(x=  , y=  , col=  , fill=  )) + geom_boxplot()
+ggplot(data, aes(x=  , y=  , col=  , fill=  )) + geom_violin()
+```
+
+If y is categorical and x is continuous, you can just flip the plot
+```{r, eval=F}
+ggplot(data, aes(x=  , y=  )) + coord_flip()
+```
+
+### Distribution of a continuous variable: **histograms** and **frequency polygons**
+```{r, eval=F}
+ggplot(data, aes(x=  )) + geom_historgram(bins=  , binwidth=  , breaks=  )
+ggplot(data, aes(x=  )) + geom_freqpoly(bins=  , binwidth=  , breaks=  )  
+```
+
+### Distrbution of a categorical variable: **bar chart**
+```{r, eval=F}
+ggplot(data, aes(x=  )) + geom_bar(col=  , fill= )
+```
+
+Examples
+```{r, error=T}
+ggplot(data, aes(x=  )) + geom_bar()
+ggplot(data, aes(x=  )) + geom_bar(aes(col=  ))
+ggplot(data, aes(x=  )) + geom_bar(aes(fill=  ))
+```
+
+Another bar chart
+```{r}
+data(mpg, package='ggplot2')
+dat <- table(mpg$manufacturer)
+df <- as.data.frame(dat)
+colnames(df) = c('name', 'n')
+ggplot(df, aes(x=name, y=n)) + geom_bar(stat='identity')
+```
+
+### 참고자료 
+
+* RStudio - Help - Cheatsheets - Data Visualization with ggplot2
+    
+* [R Bookdown](https://bookdown.org/)
+    - [Data Visualization](https://socviz.co/)
+    - [Fundamentals of Data Visualization](https://serialmentor.com/dataviz/)
+    - [R for Data Science](http://r4ds.had.co.nz/)
+* [ggplot2](https://github.com/hadley/ggplot2-book)
+* [Top 50 ggplot2 Visualizations](http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html)
+
+
+

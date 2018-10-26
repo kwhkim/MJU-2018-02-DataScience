@@ -1,0 +1,90 @@
+---
+title: "10/19 과제"
+author: "김희지"
+date: "2018년 10월 12일"
+output: html_document
+---
+
+```{r}
+library(dplyr)
+library(readxl)
+library(tidyr)
+```
+
+
+### 1.공공자전거대여소정보
+```{r}
+station <- read_excel("공공자전거대여소정보.xlsx")
+summary(station)
+
+```
+
+### 2.서울특별시 공공자전거 이용정보(일별)
+```{r}
+daily_rent171 <- read.csv("2017년_자전거이용통계_일_1.csv", na.strings = "")
+daily_rent172 <- read.csv("2017년_자전거이용통계_일_2.csv", na.strings = "")
+daily_rent173 <- read.csv("2017년_자전거이용통계_일_3.csv", na.strings = "")
+rent <- bind_rows(daily_rent171, daily_rent172)
+rent <- bind_rows(rent, daily_rent173)
+
+summary(rent)
+```
+
+### 두 자료 합치기 & class확인
+```{r}
+names(station) <- c("gu", "num", "station", "address", "holder", "lat", "long")
+names(rent) <- c("date", "num", "station", "member", "gender", "age", "use",
+                 "mmt", "carbon", "dist", "time")
+station <- station[,-3]
+sapply(station, class)
+sapply(rent, class)
+station$num <- as.character(station$num)
+total <- left_join(rent, station, by = "num")
+```
+
+#### 집단별 min, max, mean, sd
+(1) 성  
+```{r}
+total %>% group_by(gender) %>% 
+  summarise(min_dist = min(dist), max_dist = max(dist), mean_dist = mean(dist), sd_dist = sd(dist),
+            min_time = min(time), max_time = max(time), mean_time = max(time), sd_time = sd(time))   #성별로 그룹
+```
+-> 평균적으로 남성이 여성보다 자전거를 더 오래 타며, 이동거리도 더 길다.   
+
+(2) 연령  
+```{r}
+total %>% group_by(age) %>%
+  summarise(min_dist = min(dist), max_dist = max(dist), mean_dist = mean(dist), sd_dist = sd(dist),
+            min_time = min(time), max_time = max(time), mean_time = max(time), sd_time = sd(time))   #연령대로 그룹
+```
+-> 20대의 평균 이동거리와 평균 사용시간이 매우 높것을 보아 다른 연령대보다 따릉이를 더 많이 활용하있음을 알 수 있다. 연령층이 높아질 수록 이용을 덜 하고 있음을 보인다.  
+  
+(3) 구
+```{r}
+total %>% group_by(gu) %>%
+  summarise(min_dist = min(dist), max_dist = max(dist), mean_dist = mean(dist), sd_dist = sd(dist),
+            min_time = min(time), max_time = max(time), mean_time = max(time), sd_time = sd(time))   #구로 그룹
+
+```
+
+#### 성별로 그룹화 한 자료를 가로형, 세로형
+(1) gather()
+```{r}
+tog <- total %>% group_by(gender) %>%
+  summarise(min_dist = min(dist), max_dist = max(dist), mean_dist = mean(dist), sd_dist = sd(dist),
+            min_time = min(time), max_time = max(time), mean_time = max(time), sd_time = sd(time)) 
+
+tog <- tog %>% gather(key = 'exp', value = 'result', min_dist, max_dist, mean_dist, sd_dist,
+               min_time, max_time, mean_time, sd_time) 
+tog
+```
+(2) spread()
+```{r}
+tog %>% spread(key = "exp", value = "result")
+```
+
+
+## <span style="color:red">채점 사항</span>
+
+> 다음에는 데이터 화일을 internet에서 다운 받던지, commit에 포함해서 knit가 가능하도록 하길 바랍니다.
+

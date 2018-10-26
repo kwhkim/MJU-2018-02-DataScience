@@ -1,0 +1,106 @@
+---
+title: "3차 과제"
+author: "knock"
+date: "2018년 10월 19일"
+output: html_document
+---
+
+#### 벤처기업 생태조사 : 신생기업 자본에 영향을 미치는 요인 분석
+
+ 
+ 누군가는 현재를 '살면서 반드시 한 번은 창업을 해야만 살아남을 수 있는 시대'라고 말한다. 학교에서는 취업특강 못지 않게 창업특강이 존재한다. 이전 정권부터 창업에 대한 정부의 관심과 지원이 꾸준히 상승하면서 창업에 대한 인식이 많이 좋아진 지금, 창업을 시작한지 얼마 안 된 벤처기업들, 흔히 신생기업이라고 불리는 기업의 실태를 조사하면서 창업의 현주소를 알아보고자 한다.
+ 그렇다면 기업의 실태는 어떻게 조사할 수 있을까? 많은 조사 방법이 있겠지만, 본문에서는 자본을 중심으로 확인하고자 한다. 한 기업에 있어서 자본력은 그 기업의 현재 가치를 상당부분 설명해 줄 수 있는 가장 큰 요소이다. 따라서 자본 중 자산의 비중 및 부채의 비중이 어떻게 되는 지, 매출액 대비 당기순이익은 어느정도 되는 지 등을 먼저 알아보고, 신생기업의 자본 규모를 분류하여 어떤 요인이 자본의 크기에 영향을 미쳤는지 분석하고자 한다.
+ 먼저 분석에 쓰인 자료는 중소벤처기업부에서 제공하는 '벤처기업정밀실태조사 보고서'를 이용하였으며 기준 연도는 2017년이다.
+ 
+```{r, eval=FALSE}
+library(dplyr)
+startup_raw <- read.csv("2017년_벤처기업정밀실태조사.csv")
+startup_raw %>% head %>% View
+```
+ 
+ 다음으로 원자료를 가공할 데이터 테이블로 옮기고 변수 명을 읽기 쉽게 바꾸어 준다. 원자료에는 창업연도만 있고 업력은 나와있지 않으므로 2017년을 기준으로 5년 이하 업력의 기업은 신생기업으로, 6년 이상 업력의 기업은 기성기업으로 표시한다. 다만, 업력이 4~5년인 기업들은 흔히 '데스 밸리(죽음의 계곡)'라는 구간에 진입한 기업으로, 생산성 저하의 문제를 겪는 기간에 있으므로 정밀한 분석을 위해 업력이 3년 이하인 기업과 구분한다.
+ 
+```{r, eval=FALSE}
+startup <- startup_raw
+startup <- rename(startup,
+                  edu_lvl = B2.4..창업.당시.창업주.최종학력,
+                  asset = D2.1..2016년.자산.백만원. ,
+                  debt = D2.2..2016년.부채.백만원. ,
+                  capital = D2.3..2016년.자본.백만원. ,
+                  major1 = B2.4.1..창업.당시.창업주.전공.대졸.전문학사. ,
+                  year = A2.1..창업년도)
+
+startup$years <- ifelse(2017 - startup$year <= 3, "3년이하기업",
+                        ifelse (2017 - startup$year >= 6, "기성기업", "4_5년기업"))
+
+table(startup$years)
+```
+ 
+ 
+ 다음으로 전체 자료 요약을 한 눈에 볼 수 있으면 좋겠으나, 자료가 크기 때문에 구하고자 하는 값들을 select하여 요약해보면 다음과 같다.
+ 
+```{r, warning=FALSE, message=FALSE}
+startup4summ <- startup %>%
+  select(edu_lvl, asset, debt, capital, years)
+  
+summary(startup4summ)
+head(startup4summ)
+min(startup4summ$asset)
+mean(startup4summ$asset)
+max(startup4summ$asset)
+sd(startup4summ$asset)
+```
+ 
+ 
+ 다음으로 기업을 3단위로 분류하고 자산의 평균을 살펴보면 다음과 같다.
+ 
+```{r, warning=FALSE, message=FALSE}
+asset <- startup %>% 
+  group_by(years) %>% 
+  summarise(mean_asset = mean(asset))
+asset
+```
+ 
+ 같은 방식으로 자산에서 부채와 부채의 비중을 살펴보면 다음과 같다.
+ (자본도 살펴 볼 계획이었으나 capital이 Rscript에서 읽히지 않고 오류가 떠서 우선 부채만 살펴보도록 하겠습니다.)
+
+```{r, warning=FALSE, message=FALSE}
+
+debt <- startup %>% 
+  group_by(years) %>% 
+  summarise(mean_debt = mean(debt))
+debt
+
+
+debt_percent <- startup %>% 
+  group_by(years) %>% 
+  summarise(debt_per = mean(debt)/mean(asset)*100)
+debt_percent
+```
+
+ 만들어진 데이터들로 join 또는 가로형/세로형 데이터 전환을 해보면 다음과 같다.
+ 
+```{r, warning=FALSE, message=FALSE}
+# Join
+left_join(asset, debt, by = "years")    # years값이 일치해서 full_join도 같은 값이 나온다.
+union_all(asset, debt_percent, by = "years")
+
+# Wide/Long
+library(tidyr)
+
+all <- startup %>% 
+  group_by(years) %>% 
+  summarise(mean_asset = mean(asset),
+            mean_debt = mean(debt),
+            debt_per = mean(debt)/mean(asset)*100)
+all
+
+all %>% gather(key = "key",
+               value = "value",
+               mean_asset, mean_debt, debt_per)
+```
+ 
+
+
+ 앞서 전체 기업을 살펴본 바로는 평균 자산이 17,260.24(단위 : 백만원)으로 나타나면서 전체적인 자산이 상당히 안정적으로 보였으나, 기업을 분류하고 보았을 때에는 그 차이가 신생기업이 약 5,500이고, 기성기업이 19,431로 큰 격차를 보이고 있음을 알 수 있다. 또한 앞에서 언급한 '데스 밸리' 구간이라고 가정할 수 있는 업력 4~5년차 기업들의 평균 자산이 3년 이하 신생기업들보다 오히려 떨어지는 것을 확인할 수 있었다. 아울러 자산에서 부채의 비중도 4~5년 기업들이 더 크게 갖는 것을 확인할 수 있다.
+

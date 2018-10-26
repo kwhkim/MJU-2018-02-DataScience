@@ -1,0 +1,69 @@
+---
+title: "homework"
+author: "권정환"
+date: "2018년 10월 19일"
+output: html_document
+---
+
+
+#SUMMARY
+ 
+```{r}
+library(dplyr)
+data01 <- read.csv("C://Users//user//Documents//R//도로교통공단_전국_사망교통사고_2017.csv") 
+tb01 = as_tibble(data01)
+tb01 %>% group_by(state) %>% summarise(mean(death), min(death), max(death), sd(death))
+```
+
+```{r}
+library(dplyr)
+data02 <- read.csv("C://Users//user//Documents//R//사망교통사고.csv")
+tb02 = as_tibble(data02)
+tb02 %>% group_by(state) %>% summarise(mean(death), min(death), max(death), sd(death))
+
+```
+
+
+**알게 된 새로운 사실**
+
+-지역별 교통사고 사건 당 평균 사망자수는 1명이다.
+
+-2017년 지역별 교통사고 평균 사망자수가 제주에서 평균과 최솟값이 가장 높았다.
+  
+
+#JOIN
+
+```{r}
+options(max.print=99999)
+library(dplyr)
+data03 <- left_join(data01, data02, by = "state")
+head(data03)
+
+```
+
+#가로형_세로형
+
+```{r}
+options(max.print=99999)
+library(dplyr)
+library(tidyr)
+data03$state = rownames(data03); rownames(data03) = NULL
+data03 %>% select(state, death.x, death.y) -> accident01
+head(accident01)
+
+accident01 %>% gather(key='feature', value='value', death.x, death.y) -> accidentLong
+head(accidentLong)
+
+accidentLong %>% spread(key='feature', value='value') -> accident02
+head(accident02)
+
+all.equal(accident01, accident02)
+```
+
+
+## <span style="color:red">채점 사항</span>
+
+> .rmd 를 knit할 수 없으며, .html도 없습니다.
+> gather를 사용하는 방법은 맞았지만 death.x와 death.y를 gather하는 이유를 알 수가 없습니다.
+> death.x와 death.y는 join의 결과로 이루어진 것이라면 동일한 값이여야 합니다.
+> 그렇지 않다면 다른 의미를 가진 값입니다.
