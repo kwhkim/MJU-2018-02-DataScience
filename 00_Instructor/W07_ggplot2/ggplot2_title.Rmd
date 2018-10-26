@@ -80,3 +80,10 @@ t2 + theme(plot.caption = element_text(hjust = 0.5))
 t2 + theme(plot.caption = element_text(hjust = 1))
 t2 + theme(plot.caption = element_text(lineheight=.8, face='bold'))
 ```
+
+---
+
+### References
+
+* [More about theme](https://ggplot2.tidyverse.org/reference/theme.html)
+* [Rotating and spacing axis labels in ggplot2](https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2)
