@@ -1,0 +1,714 @@
+---
+title: "MidtermTest_유학생분석"
+author: "09_김세영 32_최윤정"
+date: "2018년 11월 02일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+![](https://bit.ly/2OkjFaY)
+
+
+출처 : https://post.naver.com/viewer/postView.nhn?volumeNo=9497662&memberNo=4644887
+
+---
+
+## **선정 데이터 **
+*** 
+#####- 법무부_유학생관리정보 데이터 --> **법무부 국적 및 체류자격별 유학생 관련 현황 2017년 데이터**
+#####- 출처 : [공공데이터포털](https://www.data.go.kr/dataset/3069982/fileData.do)
+
+## **데이터 설명**
+*** 
+
+#####- 2017년 기준 유학생의 국적과 체류자격(비자)별 데이터를 담고 있음
+#####- 체류자격은 크게 D-2와 D-4로 나뉨 
+
+#####- **한국유학비자 D-2** : 고등교육법 규정에 의해 설립된 전문대학, 대학, 대학원 또는 특별법 규정에 의해 설립된 전문대학 이상의 학술기관에서 정규과정의 교육을 받거나 특정의 연구를 하고자 할 때 받는 비자
+
+- D-2-1 전문학사
+- D-2-2 학사유학
+- D-2-3 석사유학
+- D-2-4 박사유학
+- D-2-5 연구유학
+- D-2-6 교환학생
+- D-2-7 일-학습연계 유학
+- D-2-8 단기유학
+
+#####- **한국 어학연수비자  D-4** : 한국어 능력의 부족으로 유학(D-2)비자 발급에 어려움을 느끼는 외국인학생이 발급받는 비자 
+
+- D-4-1 대학부설어학원연수
+- D-4-7 외국어연수
+
+
+# **분석 과정**
+
+## **1. 데이터 파악하기**
+***
+####데이터 불러오기 
+
+```{r}
+student <- read.csv("법무부_국적_및_체류자격별_유학생_관련_현황_2017년_.csv")
+```
+
+####데이터 확인하기 
+
+```{r}
+head(student)
+dim(student)
+str(student)
+```
+
+
+####결측치는 존재하지 않음 
+```{r}
+table(is.na(student))
+```
+
+
+## **2. 데이터 전처리**
+***
+####**1) 변수명 변경하기**
+
+####dplyr패키지를 설치하여 rename함수를 사용하여 변수 명을 변경함 
+```{r message=FALSE, warning=TRUE}
+library(dplyr)
+
+stu1 <- rename(student, nation = "국적명",
+               gender = "성별",
+               college = "전문학사.D.2.1.",
+               univ = "학사유학.D.2.2.",
+               master = "석사유학.D.2.3.",
+               doctorate = "박사유학.D.2.4.",
+               research = "연구유학.D.2.5.",
+               exchange = "교환학생.D.2.6.",
+               jobstudy = "일.학습연계.유학.D.2.7.",
+               short = "단기유학.D.2.8.",
+               language = "대학부설어학원연수.D.4.1.",
+               foreignLang = "외국어연수.D.4.7.")
+head(stu1)
+str(stu1)
+```
+---
+
+#### **2) factor형을 numeric으로 변경하기**
+
+```{r}
+library(dplyr)
+
+stu2 <- stu1 %>% mutate(univ = as.numeric(gsub(",","",univ)),
+                        master = as.numeric(gsub(",","",master)),
+                        doctorate = as.numeric(gsub(",","",doctorate)),
+                        exchange = as.numeric(gsub(",","",exchange)),
+                        language = as.numeric(gsub(",","",language)))
+
+str(stu2)              
+
+```
+
+***
+# **분석에 사용할 최종 데이터 : stu2**
+***
+
+## **3. 데이터 분석 시작**
+***
+
+### **1) 기본통계**
+
+---
+
+####기본 통계량 살펴보기
+```{r}
+summary(stu2)
+```
+
+####기본통계기법을 사용하여 **학사유학생**(4년제 대학교로 유학을 온 것)과 **교환학생**(본 국가에서 대학을 다니고 있는데, 한국의 대학으로 교환학생 온 학생)의 수를 비교하기 
+```{r}
+#학사유학생
+min(stu2$univ); max(stu2$univ) ; mean(stu2$univ);sd(stu2$univ)
+
+#교환학생
+min(stu2$exchange);max(stu2$exchange);mean(stu2$exchange);sd(stu2$exchange)
+ 
+```
+#### 학사유학생이 교환학생보다 최댓값, 평균, 표준편차가 모두 큰것을 볼 수 있음 
+
+---
+
+### **2) 성별 유학생 현황**
+
+---
+
+####성별로 비자별 유학생 수를 모두 더한 총유학생 수를 구하기 
+```{r}
+library(dplyr)
+
+gender <- stu2 %>% 
+  group_by(gender) %>% 
+  summarise(a = sum(college),
+            b = sum(univ),
+            c = sum(master),
+            d = sum(doctorate),
+            e = sum(research),
+            f = sum(exchange),
+            g = sum(jobstudy),
+            h = sum(short),
+            i = sum(language),
+            j = sum(foreignLang)) %>% 
+  mutate(sumgender = a+b+c+d+e+f+g+h+i+j)
+
+gen_all <- gender$sumgender
+```
+
+
+####row명 삽입하기
+```{r}
+gen_a <- data.frame(gen_all, row.names = c("male", "female"))
+
+gen_a
+```
+
+
+####행렬 전환하는 함수 transepose를 사용하여 그래프로 표현하기  
+```{r}
+gen_a <- t(gen_a)
+gen_a
+
+barplot(gen_a,ylim=c(0,80000), main='성별 유학생 현황', xlab='성별', ylab='학생 수', col='gray')
+```
+
+####여학생이 남학생보다 약 1만4천명정도 더 많은 것으로 나타남 
+
+
+---
+
+### **3) 국가별 남녀 유학생 현황**
+
+---
+
+####국가, 성별로 그룹을 만든 뒤 비자별 유학생 수를 모두 더한 총유학생 수를 구하기 
+```{r}
+library(dplyr)
+
+data <- stu2 %>% 
+  group_by(nation, gender) %>% 
+  mutate(sum_all = sum(college+univ+master+doctorate+research+exchange+jobstudy+short+language+foreignLang)) %>% select(nation, gender, sum_all) %>% 
+  arrange(desc(sum_all)) %>% 
+  head(30)
+
+data
+```
+
+####그래프로 표현하기 
+```{r}
+library(ggplot2)
+
+ggplot(data = data, aes(x=reorder(nation, sum_all), y=sum_all, fill = gender)) + geom_col(position = "dodge") + coord_flip() + labs(title='국가별 남녀 유학생 현황', x='유학생 수', y='국가', caption='2017년도에는 중국 > 베트남 > 몽골 > 우주베키스탄 > 파키스탄 > 
+        일본 > 타이완 > 방글라데시 > 네팔 ... 순으로 유학생의 수가 많다.
+                                                                                                                                   중국과 몽골은 여성 유학생이 많으며, 베트남은 남성 유학생이 많다.') + scale_fill_manual(values = c("sky blue", "pink"), name="성별", labels=c("남성", "여성")) + theme_classic()
+
+```
+
+####- 중국, 베트남, 몽골순으로 유학생의 수가 많음
+
+####- 중국과 몽골은 여성 유학생이 많고, 베트남은 남성 유학생이 더 많음 
+
+
+---
+
+### **4) 비자유형별 남녀 유학생 현황**
+
+---
+
+####성별로 비자별 유학생수 합계를 구하기 
+```{r}
+library(dplyr)
+
+a <- stu2 %>% 
+  group_by(gender) %>% 
+  summarise(a = sum(college),
+            b = sum(univ),
+            c = sum(master),
+            d = sum(doctorate),
+            e = sum(research),
+            f = sum(exchange),
+            g = sum(jobstudy),
+            h = sum(short),
+            i = sum(language),
+            j = sum(foreignLang)) %>% 
+  select(-gender)
+
+a
+
+```
+
+####row명 삽입하기
+```{r}
+rownames(a) <- c("male","female")
+
+a
+```
+
+####행렬 전환하는 함수 transepose를 사용하여 그래프로 표현하기  
+```{r}
+b <- t(a)
+
+b 
+
+barplot(b,col=rainbow(10), main ="비자유형별 남녀 유학생 현황" , xlab="성별", ylab="비자유형", ylim=c(0,80000), xlim=c(0,4))
+
+legend(2.7,80000 ,c("college","univ","master","doctorate","research","exchange","jobstudy","short","language","foreignLang"),cex=0.8, fill=rainbow(nrow(b)))
+
+```
+
+####- 남학생은 대학 부설어학원 연수(어학당)의 유형이 가장 많음
+
+####- 두번째로 많은 유형은 학사유학(4년제 대학교)
+
+####- 여학생의 경우는 그 반대임
+
+####- 남녀 모두 위의 두 집단이 그래프의 2/3이상을 차지함
+
+
+
+
+---
+
+### **5) 체류자격별(D2 vs D4) 남녀 유학생 현황**
+
+---
+
+#####- 체류자격을 한국유학비자(D-2)와 한국 어학연수비자(D-4)로 구분하여 유학생 수를 비교하기
+
+#####- 각 체류자격별, 성별로 어떤 국가의 유학생수가 많은지 파악하기 
+
+#####- 국가, 성별로 그룹화 한 뒤 여성데이터와 남성 데이터에서로 각각 나누기
+
+####-각 성별로 기존의 비자에서 D2와 D4 체류자격으로 새로운 변수를 생성하여 체류자격별 유학생 수를 구하기 
+
+####- 상위 10개의 국가만 추출하여 그래프로 표현하기  
+```{r}
+library(dplyr)
+
+f_d2 <- stu2 %>% 
+  group_by(nation, gender) %>% 
+  filter(gender == '여') %>% 
+  mutate(D2 = sum(college:short)) %>% 
+  select(nation, gender, D2) %>% 
+  arrange(desc(D2)) %>% 
+  head(10)
+
+f_d2
+
+f_d4 <- stu2 %>% 
+  group_by(nation, gender) %>% 
+  filter(gender == '여') %>% 
+  mutate(D4 = sum(language, foreignLang)) %>% 
+  select(nation, gender, D4) %>% 
+  arrange(desc(D4)) %>% 
+  head(10)
+
+f_d4
+
+m_d2 <- stu2 %>% 
+  group_by(nation, gender) %>% 
+  filter(gender == '남') %>% 
+  mutate(D2 = sum(college:short)) %>% 
+  select(nation, gender, D2) %>% 
+  arrange(desc(D2)) %>% 
+  head(10)
+
+m_d2
+
+m_d4 <- stu2 %>% 
+  group_by(nation, gender) %>% 
+  filter(gender == '남') %>% 
+  mutate(D4 = sum(language, foreignLang)) %>% 
+  select(nation, gender, D4) %>% 
+  arrange(desc(D4)) %>% 
+  head(10)
+
+m_d4
+```
+
+
+####그래프로 표현하기 
+```{r}
+library(ggplot2)
+
+ggplot(data = f_d2, aes(x=reorder(nation, D2), y=D2, fill = visa)) + geom_col(position = "dodge", aes(fill = nation)) + coord_flip() + labs(title = '국가별 D2자격 현황', x='국가', y='학생 수', subtitle='한국유학비자 D-2체류자격을 보유한 여성 유학생', caption='2017년도에는
+               중국 > 베트남 > 미국 > 싱가포르 > 몽골 >일본 >
+                말레이시아 > 러시아 > 인도네시아 > 우즈베키스탄 순으로
+              한국유학비자 D-2 체류자격을 보유한 여성 유학생이 많다.
+              중국, 베트남이 여성 D-2 체류자격 유학생의 대부분을 차지한다.') + scale_fill_manual(values=rainbow(10), name="국가") + theme_classic()
+
+ggplot(data = m_d2, aes(x=reorder(nation,  D2), y=D2)) + geom_col(position = "dodge", aes(fill = nation)) + coord_flip() + labs(title = '국가별 D2자격 현황', x='국가', y='학생 수', subtitle='한국유학비자 D-2체류자격을 보유한 남성 유학생', caption='2017년도에는
+중국 > 베트남 > 우즈베키스탄 > 싱가포르 > 말레이시아
+몽골 > 미국 > 스리랑카 > 인도 > 한국계 중국인 순으로
+한국유학비자 D-2 체류자격을 보유한 남성 유학생이 많다.
+중국, 베트남이 남성 D-2 체류자격 유학생의 대부분을 차지한다.') + scale_fill_manual(values=rainbow(10), name="국가") + theme_classic()
+
+ggplot(data = f_d4, aes(x=reorder(nation, D4), y=D4)) + geom_col(position = "dodge", aes(fill = nation)) + coord_flip()  + labs(title = '국가별 D4자격 현황', x='국가', y='학생 수', subtitle='한국 어학연수비자 D-4체류자격을 보유한 여성 유학생', caption='2017년도에는
+베트남 > 중국 > 몽골 > 일본 > 타이완 >
+홍콩 > 우즈베키스탄 > 러시아 > 태국 > 인도네시아 순으로
+한국 어학연수비자 D-4 체류자격을 보유한 여성 유학생이 많다.') + scale_fill_manual(values=rainbow(10), name="국가") + theme_classic()
+
+ggplot(data = m_d4, aes(x=reorder(nation, D4), y=D4)) + geom_col(position = "dodge", aes(fill = nation)) + coord_flip() + labs(title = '국가별 D4자격 현황', x='국가', y='학생 수', subtitle='한국 어학연수비자 D-4체류자격을 보유한 남성  유학생', caption='2017년도에는
+베트남 > 중국 > 우즈베키스탄 > 몽골 > 인도 >
+스리랑카 > 네팔 > 일본 > 미얀마 > 파키스탄 순으로
+한국 어학연수비자 D-4 체류자격을 보유한 남성 유학생이 많다.') + scale_fill_manual(values=rainbow(10), name="국가") + theme_classic()
+
+```
+
+---
+
+#### **그래프 한 번에 보기**
+
+![](https://bit.ly/2P1gsCx)
+
+---
+
+####- 한국유학비자(D2)체류자격은 남녀 유학생 모두 중국 > 베트남 순으로 유학생 수가 많음
+
+####- 한국 어학연수비자(D4)체류자격에서 여성 유학생은 베트남 > 중국 > 몽골 > 일본 순으로 많고,  남성유학생은 베트남 > 중국 > 우즈베키스탄 > 몽골 순으로 유학생이 대부분을 차지함
+
+####- 체류자격, 성별 상관없이 중국, 베트남은 항상 유학생 수가 많은 것으로 나타남
+
+
+---
+
+### **6) 15,16,17년도 비자 유형별 유학생 수 변화**
+
+---
+
+####앞에서 다룬 2017년 유학생 데이터와 함께 '2016년 유학생 데이터'와 '2015년 유학생 데이터'의 국가별 유학생 비자 유형추출하기 
+
+####앞에서 다룬 2017년 유학생 데이터 다시 한 번 살펴보기 
+```{r}
+head(stu2)
+str(stu2)
+```
+
+
+####15, 16년 유학생 데이터와 공통되게 나타난 7개의 비자(전문학사, 학사유학, 석사유학, 박사유학, 연구유학, 교환학생, 대학부설어학원연수, 외국어연수)만 추출하여 각 비자별 유학생의 합을 구하기 
+```{r}
+stu2017 <- stu2 %>% 
+  select(nation, univ,master,doctorate,research,exchange,language,foreignLang) %>% 
+  group_by(nation) %>% 
+  summarise(un = sum(univ), ma = sum(master), do= sum(doctorate),re=sum(research),ex= sum(exchange), la=sum(language),fo=sum(foreignLang))
+
+str(stu2017)
+```
+
+---
+
+##2016년 데이터 불러오기
+
+```{r}
+stu16 <- read.csv("유학생관련_현황.csv")
+head(stu16)
+str(stu16)
+```
+
+####변수명과 데이터 타입 변경하기 
+```{r}
+stu016 <- rename(stu16, nation = '국적명',
+                 univ = '학사유학.D.2.2.',
+                 master = '석사유학.D.2.3.',
+                 doctorate = '박사유학.D.2.4.',
+                 research = '연구유학.D.2.5.',
+                 exchange = '교환학생.D.2.6.',
+                 language = '대학부설어학원연수.D',              
+                 foreignLang = '외국어연수.D.4.7.')
+
+stu0016 <- stu016 %>% mutate(univ = as.numeric(gsub(",","",univ)),
+                             master = as.numeric(gsub(",","",master)),
+                             doctorate = as.numeric(gsub(",","",doctorate)),
+                             exchange = as.numeric(gsub(",","",exchange)),
+                             language = as.numeric(gsub(",","",language)))
+
+str(stu0016)
+```
+
+####다른 데이터와 공통적으로 나타나는비자 7개를 추출하여 비자별 유학생 수 합계구하기 
+```{r}
+stu2016 <- stu0016 %>% 
+  select(nation, univ,master,doctorate,research,exchange, language, foreignLang) %>% 
+  group_by(nation) %>% 
+  summarise(un = sum(univ), ma = sum(master), do= sum(doctorate),re=sum(research),ex= sum(exchange), la=sum(language),fo=sum(foreignLang))
+
+head(stu2016)
+str(stu2016)
+```
+
+---
+
+##2015데이터 불러오기 
+
+```{r}
+stu15 <- read.csv("_2015년_국적_및_체류자격별_유학생_통계_자료.csv")
+head(stu15)
+str(stu15)
+```
+
+####변수명과 데이터 타입 변경하기
+```{r}
+stu015 <- rename(stu15, nation = '국적.및.지역',
+                 gender = '성별',
+                 univ = '학사유학.D.2.2.',
+                 master = '석사유학.D.2.3.',
+                 doctorate = '박사유학.D.2.4.',
+                 research = '연구유학.D.2.5.',
+                 exchange = '교환학생.D.2.6.',
+                 language = '대학부설어학원연수.D.4.1.',              
+                 foreignLang = '외국어연수.D.4.7.')
+
+stu0015 <- stu015 %>% mutate(univ = as.numeric(gsub(",","",univ)),
+                             master = as.numeric(gsub(",","",master)),
+                             doctorate = as.numeric(gsub(",","",doctorate)),
+                             exchange = as.numeric(gsub(",","",exchange)),
+                             language = as.numeric(gsub(",","",language)))
+str(stu0015)
+```
+
+####다른 데이터와 공통적으로 나타나는비자 7개를 추출하여 비자별 유학생 수 합계구하기
+```{r}
+stu2015 <- stu0015 %>% 
+  select(nation, univ,master,doctorate,research,exchange, language, foreignLang) %>% 
+  group_by(nation) %>% 
+  summarise(un = sum(univ), ma = sum(master), do= sum(doctorate),re=sum(research),ex= sum(exchange), la=sum(language),fo=sum(foreignLang))
+
+head(stu2015)
+str(stu2015)
+```
+
+####structure 구조 만들어서 3개 연도 비교하기 
+```{r}
+y2017 <- structure(list( visa= c("univ","master","doctorate","research","exchange","language","foreignLang"),
+                         y17= c(sum(stu2017$un),sum(stu2017$ma),sum(stu2017$do),sum(stu2017$re),sum(stu2017$ex),sum(stu2017$la), sum(stu2017$fo))),
+                   row.names = c(NA, 7L), class = "data.frame", 
+                   .Names = c("name", "y2017"))
+
+y2017
+
+
+y2016 <- structure(list( visa= c("univ","master","doctorate","research","exchange","language","foreignLang"),
+                         y16= c(sum(stu2016$un),sum(stu2016$ma),sum(stu2016$do),sum(stu2016$re),sum(stu2016$ex),sum(stu2016$la), sum(stu2016$fo))),
+                   
+                   row.names = c(NA, 7L), class = "data.frame", 
+                   .Names = c("name", "y2016"))
+
+y2016
+
+y2015 <- structure(list( visa= c("univ","master","doctorate","research","exchange","language","foreignLang"),
+                         y15= c(sum(stu2015$un),sum(stu2015$ma),sum(stu2015$do),sum(stu2015$re),sum(stu2015$ex),sum(stu2015$la), sum(stu2015$fo))),
+                   
+                   row.names = c(NA, 7L), class = "data.frame", 
+                   .Names = c("name", "y2015"))
+
+y2015
+```
+
+####join을 사용하여 데이터 합치기
+```{r}
+year1 <- full_join(y2015, y2016, by=c("name"))
+year1
+
+year2 <- full_join(year1, y2017, by=c("name"))
+year2
+```
+
+####그래프로 표현하기 위해 gather함수를 사용해서 데이터를 변경하기
+```{r}
+library(tidyr)
+year3 <- year2 %>%  gather("key", "value", y2015,y2016,y2017)
+year3
+```
+
+####그래프로 표현하기 
+```{r}
+library(ggplot2)
+
+ggplot(year3, aes(x=key, y=value, col=name, group=name)) + geom_point()+geom_line()+ labs(title = '15,16,17년도 체류자격 유형별 유학생 수 변화', x='년도', y='학생 수', caption="3개년도 합산한 데이터 분석 결과,
+             뚜렷한 변화를 보인 것은 그래프의 가장 위에 위치한
+             '학사유학'과 '대학부설어학원연수'의 유학생 수 이다.
+             ") + theme_classic()
+
+```
+
+####2015년부터 2017년까지 '연구학사'와 '외국어연수'의 유학생 수는 모두 0명임
+
+####교환학생의 수와 박사유학의 학생 수의 변화의 차이는 미미함.
+
+####그래프를 통해 가장 눈에 띄는 점은 학사유학의 학생 수와 대학부설어학원연수의 학생 수가 해마다 급격하게 증가하는 추이를 보인다는 것
+
+---
+
+# **번외. 대학별로 유학생 수를 담고 있는 데이터에서 명지대학교 유학생 현황을 파악하기**
+
+---
+
+##데이터 설명
+
+#### - 사용할 데이터 : **법무부 2018년 상반기 국내 유학중인 외국인유학생 관련자료**
+#### - 성별, 생년, 국적명, 체류자격, 학교명, 체류 시도, 체류 시군구 의 항목이 나와있는 데이터
+#### - 이 데이터에서 가장 중점적으로 다룰 데이터는  "명지대학교" 학생의 데이터 
+
+####데이터 불러오기 
+```{r}
+stu18 <- read.csv("법무부_2018년_상반기_국내_유학중인_외국인유학생_관련자료.csv")
+head(stu18)
+str(stu18)
+```
+
+####변수명 변경하기 
+```{r}
+library(dplyr)
+stu018 <- rename(stu18, 
+                 gender = '성별',
+                 age = '생년',
+                 nation = '국적명',
+                 visa = '체류자격',
+                 univName = '학교명',
+                 sido = '체류지.시도',
+                 sigungu = '체류지.시군구')
+```
+
+####데이터 파악하기 
+```{r}
+head(stu018)
+str(stu018)
+summary(stu018)
+```
+
+---
+
+###1) 2018 상반기에 어떤 국가의 유학생이 많은지 파악하기
+
+---
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+stu2018 <- stu018 %>% 
+  group_by(nation) %>% 
+  summarise(total = n()) %>% 
+  arrange(desc(total)) %>%  
+  head(10)
+
+g <- ggplot(stu2018, aes(x = reorder(nation, desc(total)), y = total, fill=nation)) + geom_bar(stat="identity") + labs(title = '2018년 상반기 국가별 유학생 현황', x='국가', y='학생 수') + theme_classic()
+
+g
+```
+
+####1순위: 중국, 2순위: 베트남, 3순위: 몽골 순으로 유학생 수가 많다.
+
+
+---
+
+###2) 2018 상반기 유학생 중 어느 학교가 유학생이 많은지 파악하기 
+
+---
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+stu018.0 <- stu018 %>% 
+  group_by(univName) %>% 
+  summarise(total = n()) %>% 
+  arrange(desc(total)) %>% 
+  head(20)
+
+g0 <- ggplot(stu018.0, aes(x = reorder(univName, desc(total)), y = total, fill = univName)) + geom_bar(stat = 'identity') + coord_flip() + labs(title = '2018년도 상반기 대학별 유학생 현황', x='학생 수', y='대학') + theme_classic()
+
+g0
+
+```
+
+####학교 미상이 가장 많음
+
+####미상을 제외하고, 1순위: 고려대, 2순위: 성균관대, 3순위: 경희대
+
+####명지대학교는 상위 20개 중에 속하지 않음
+
+---
+
+###3) 명지대학교에 유학온 유학생 중에 어떤나라의 유학생이 많은지 파악하기  
+
+---
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+stu18.1 <- stu018 %>% 
+  select(nation, univName) %>% 
+  filter(univName == '명지대학교') %>% 
+  group_by(nation) %>% 
+  summarise(total = n()) %>% 
+  arrange(desc(total)) %>% 
+  head(10)
+
+g1 <-  ggplot(stu18.1, aes(x = reorder(nation, desc(total)), y = total, fill=nation)) + geom_bar(stat="identity") + labs(title = '2018년도 상반기 국가별 명지대 유학생 현황', x='국가', y='학생 수') + theme_classic()
+
+g1
+```
+
+####1순위: 중국, 2순위: 베트남, 3순위: 몽골
+
+####이는 방금 위에서 살펴본 '2018 상반기 어떤 국가의 유학생이 많은지'를 파악한 결과와 3순위까지 동일함
+
+---
+
+###4) 명지대학교 유학생 중 어떤 유형의 비자로 유학온 학생이 많은지 파악하기 
+
+---
+
+```{r}
+library(dplyr)
+library(ggplot2)
+
+stu18.2 <- stu018 %>% 
+  select(visa, univName) %>% 
+  filter(univName == '명지대학교') %>% 
+  group_by(visa) %>% 
+  summarise(total = n()) %>% 
+  arrange(desc(total)) %>% 
+  head(10)
+
+g2 <-  ggplot(stu18.2, aes(x = reorder(visa, desc(total)), y = total, fill=visa)) + geom_bar(stat="identity") + labs(title = '2018년도 상반기 체류자격별 명지대 유학생 현황', x='학생 수', y='대학') + theme_classic()
+
+g2
+```
+
+####학사유학이 가장 많고, 그 다음으로는 대학부설 어학원 연수가 많은 것으로 나타남
+
+
+---
+
+#**결론**
+
+---
+
+####1. 2017년에는 남학생보다 여학생 유학생의 수가 더 많음  
+####2. 2017년에는 중국 > 베트남 > 몽골 순으로 유학생 수가 많았으며, 이 중 베트남은 남자 유학생이 더 많음 
+####3. 2017년 남자유학생은 자격이 '대학 부설어학원 연수' > '학사유학' 순으로 많으며, 여자유학생은 그 반대의 순서대로 유학생이 많음 
+####4. 2017년 한국유학비자(D2)체류자격은 남녀 유학생 모두 중국 > 베트남 순으로 학생 수가 많으며, 한국 어학연수비자(D4)체류자격은 남녀 모두 1,2순위가 베트남 > 몽골 순이며 그 다음으로 여성은 몽골 > 일본, 남성은 우즈베키스탄 > 몽골의 유학생 순으로 많음 
+####5. 3년치 데이터를 비교분석 했을 때, '학사유학'과 '대학부설어학원연수'의 자격을 가진 유학생의 수가 해마다 증가하는 추세를 보임 
+
+---
+
+##[번외]
+
+---
+
+####6. 2018년 상반기 유학생은 중국 > 베트남 > 몽골 순으로 유학생이 많음 
+####7. 2018년 상반기 유학생이 많은 대학 상위 20위에는 명지대가 포함되어 있지 않음
+####8. 명지대학교 유학생은 중국 > 베트남 > 몽골 순으로 유학생이 많음 
+####9. 명지대학교 유학생 중 학사유학 > 대학부설어학원연수 > 석사유학 순으로 유학생이 많음 
+
