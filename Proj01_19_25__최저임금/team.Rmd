@@ -1,0 +1,288 @@
+---
+title: "최저임금 인상이 물가에 미치는 영향"
+author: "19_신정민 25_이예은"
+output: html_document
+
+---
+
+<br>
+
+
+**데이터 선정이유**
+
+* 최근 소비자물가가 지속적인 상승세를 보이고 있다. 밥상물가뿐만 아니라 서비스물가, 외식물가가 줄줄이 상승하면서 전반적인 물가상승이 나타나고 있다. 소비자물가 상승률은 지난해 10월 이후 12개월 연속으로 1%씩 상승하고 있었고 지난달인 2018년 10월에는 13개월만에 가장 높은 상승률인 2%로 상승했다. <br>
+![소비자물가 상승률](/Users/iyeeun/rproject/MJU-2018-02-DataScience/Proj01_19_25__최저임금/consumer price.jpg)
+
+* 물가 인상의 주된 요인으로 뽑는 것이 최저임금 인상이다. 올해, 2018년 최저임금은 7530원으로 2017년에 6470원이었던 것과 비교하면 무려 16.4%나 상승하였다. 16.4%라는 상승률은 17년만에 가장 큰 폭으로 상승한 것이다. 2019년도 올해보다 10.9% 인상된 8350원으로 확정된 상황이다. <br>
+![최저임금 인상](http://img.yonhapnews.co.kr/etc/inner/KR/2017/12/18/AKR20171218147300004_03_i.jpg)
+
+* 서민들이 물가인상을 바로 체감하는 외식업계를 예로 들자면 최저임금 인상으로 인한 인건비 부담으로 인해 가격을 올렸다고 주장한다. 음식의 가격뿐만 아니라 배달료까지 받게 되면서 소비자들의 부담이 가중되었다. 이와 같이 최저임금 인상 후 물가의 변화를 기사를 통해 접하거나 직접 경험하면서 최저임금 인상이 물가 상승에 주는 영향이 크다는 생각을 가지게 되었다.  <br>
+
+
+* 하지만 전문가들은 이에 대해 다른 의견을 보인다. 최저임금 인상이 물가상승의 주범이 아니라는 것이다. 2015년 강승복 한국노동연구원 전문위원이 발표한 <최저임금 인상이 물가에 미치는 영향> 논문을 보면 최저임금이 10% 오르면 물가는 최대로 0.4%까지만 오른다고 한다. 또한 한국소비자단체협의회와 물가감시센터가 개최한 ‘최저임금 인상에 따른 외식물가 안정화’를 위한 토론회의 결론도 최근 물가상승에 대해 단순히 최저임금의 인상을 주된 요인으로 볼 것이 아니라 그 밖의 다른 요인들의 영향에도 기인하는 복합적인 현상임을 공통적으로 주장했다.<br>
+![관련기사](/Users/iyeeun/rproject/MJU-2018-02-DataScience/Proj01_19_25__최저임금/news.PNG)
+
+
+* 따라서 이번 분석을 통해 최저임금 인상이 물가인상에 어느정도 영향을 미치는지 살펴보고자 한다. 더 나아가 최저임금 외에 다른 요인들도 물가와 어느정도의 상관관계가 있는지 알아보고자 한다. <br>
+
+
+* 이번 분석에서 필요한 배경이론은 단순회귀분석이다. 단순회귀분석이란 한 개의 종속변수 Y와 한 개의 독립변수 X사이의 선형관계를 파악하거나, 한 개의 독립변수의 일정한 값에 대응되는 종속변수의 값을 예측하기 위한 방법이다.   
+
+
+<br><br><br>
+
+**변수와 모형설정**
+           
+     2009년 1분기부터 2018년 2분기까지 분기별 전동기대비증감률데이터를 이용하여 우리나라의 최저임금 인상이 소비자 물가에 미치는 영향을 분석하려 한다.
+     소비자 물가지수 증감의 요인으로는 통화량, 소득, 소비성향, 인플레이션 기대심리, 생산기술 및 설비투자, 자연조건, 수출입, 환율등 여러 가지가 있다.
+     본 분석에서는 종속변수를 소비자물가지수(CPI)로 설정하고, 독립변수로 최저임금,임대료와 거시변수 대표로 gdp deflator를 설정하였다.
+    
+
+<br><br><br>
+
+
+
+```{r message=FALSE, warning=FALSE}
+#패키지 불러들이기
+library(readxl)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(lattice)
+```
+
+    
+
+```{r message=FALSE, warning=FALSE}
+#데이터 불러들이기
+price <- read_xlsx("/Users/iyeeun/rproject/MJU-2018-02-DataScience/Proj01_19_25__최저임금/price inf.xlsx")
+rent <- read_xlsx("/Users/iyeeun/rproject/MJU-2018-02-DataScience/Proj01_19_25__최저임금/rent inf.xlsx") 
+wage <- read_xlsx("/Users/iyeeun/rproject/MJU-2018-02-DataScience/Proj01_19_25__최저임금/wage_inf.xlsx")
+gdp <- read_xlsx("/Users/iyeeun/rproject/MJU-2018-02-DataScience/Proj01_19_25__최저임금/gdp deflator inf.xlsx")
+
+```
+
+<br><br><br>
+
+데이터에 모든 분기가 한열씩 존재하고 있으므로 ```gather()```함수를 이용해 새로운  **quarter**열을 만들어 분기를 모아준다.
+```{r}
+wage1 <-wage %>% gather("quarter", "wage", `2009년1분기`:`2018년2분기`)
+gdp1 <-gdp %>% gather("quarter", "gdp", `2009 1/4`:`2018 2/4`)
+rent1 <- rent %>% gather("quarter","rent",`2009년1분기`:`2018년3분기`)
+price1 <- price %>% gather("quarter","price",`2009 1/4`:`2018 2/4`)
+```
+
+
+다음으로 ```join()```함수를 이용해 모든 독립변수와 종속변수를 하나의 데이터 프레임으로 만든다. 
+  이 과정에서 **quarter**열의 속성 값 표시형식을 통일시킨다.
+```{r}
+
+rent1<-rent1 %>% 
+  filter(`지 역`=="증감률") %>%
+  select(quarter,rent)
+
+dat1<-inner_join(price1 ,gdp1, by="quarter")
+dat1 <- dplyr::select(dat1, quarter,price,gdp)
+
+dat2 <- inner_join(rent1,wage1,by="quarter")
+dat2 <- dat2 %>% mutate(quarter = gsub("년"," ",dat2$quarter))
+dat2 <- dat2 %>% mutate(quarter = gsub("분기","/4",dat2$quarter))
+
+dat2 <- dplyr::select(dat2, quarter,rent,wage)
+
+dat3 <- left_join(dat1,dat2,by="quarter")
+dat3 
+
+```
+
+
+
+```{r}
+#데이터 살펴보기
+glimpse(dat3)
+summary(dat3)
+dat3 %>% summarise(mean(price), min(price), max(price), sd(price))
+dat3 %>% summarise(mean(gdp), min(gdp), max(gdp), sd(gdp))
+dat3 %>% summarise(mean(rent), min(rent), max(rent), sd(rent))
+dat3 %>% summarise(mean(wage), min(wage), max(wage), sd(wage))
+```
+
+ ```glimpse()```함수를 이용해 데이터를 살펴보면 종속변수와 독립변수의 값들이 ```numeric```형임을 알 수 있다.
+
+ 
+ 
+```{r}
+#outlier확인
+
+boxplot(dat3$price)
+boxplot(dat3$gdp)
+
+boxplot(dat3$wage)
+boxplot(dat3$rent)
+
+```
+
+```boxplot()```함수를 이용해 ```outlier```를 확인해보았다. <br>
+ 물가, gdp deflator는 ```outlter```가 존재하지 않았지만 **임대료**와 **최저임금**에는 ```outlier```가 존재하였다. <br>
+ 최저임금이 2018년 16.4% 인상됐는데 이 인상률은 이상치로 관측될만큼 높은 인상률임을 알 수 있었다. 임대료 또한 높은 증감률로 이상치가 관측되는 것이기 때문에 이 이상치들은 결측값이 아니므로 결측처리를 하지 않았다.
+ 
+
+```{r}
+#각 변수의 분포 확인
+hist(dat3$price)
+hist(dat3$gdp)
+hist(dat3$wage)
+hist(dat3$rent)
+```
+
+
+<br><br><br>
+
+**각 변수들과 물가의 선형관계 시각화**
+ 
+ 
+```{r}
+par(mfrow=c(2,2)) 
+plot(price~gdp,data =dat3) 
+abline(lm(price~gdp, dat3)) 
+plot(price~wage,data =dat3) 
+abline(lm(price~wage, dat3)) 
+plot(price~rent,data =dat3)
+abline(lm(price~rent, dat3)) 
+```
+
+
+
+**각 변수들의 상관분석**
+
+```{r}
+fit1 <- lm(price ~ gdp, data=dat3)
+summary(fit1)
+
+fit2 <- lm(price ~ wage, data=dat3)
+summary(fit2)
+
+fit3 <- lm(price ~ rent, data=dat3)
+summary(fit3)
+
+```
+
+각 변수들과 물가간의 상관관계는 위와 같다. <br>
+* ```gdp``` 와 ```price```의 상관관계를 살펴보면 p-value가 0.05보다 작으므로 유의하다고 할 수 있고, 0.32의 양의 상관도를 가진다. 이는 다른변수들이 고정되어 있는 상태에서 gdp가 1% 상승할 때 물가에 **0.3%** 영향을 미친다는 것을 알 수 있다.<br>
+* 다음으로 ```wage``` 와 ```price```의 상관관계를 살펴보면 p-value가 0.05보다 작으므로 유의하다고 할 수 있고, -0.18의 음의 상관도를 가진다. 이는 다른변수들이 고정되어 있는 상태에서 wage가 1% 상승할 때 물가에 **-0.18%** 영향을 미친다는 것을 알 수 있다.<br>
+* 마지막으로 ```rent``` 와 ```price```의 상관관계를 살펴보면 p-value가 0.05보다 크기 때문에 유의한 상관관계를 가진다고 할 수 없다. 
+
+**최저임금,gdp와 물가의 상관관계 비교 시각화**
+
+```{r}
+gg1 <- ggplot(dat3, aes(x=wage, y=price)) + 
+  geom_smooth(method="loess", se=F) +
+  labs(subtitle="", 
+       y="price", 
+       x="wage", 
+       title="Correlation between price and wage")+
+  scale_x_discrete()
+
+gg2 <- ggplot(dat3, aes(x=gdp, y=price)) + 
+  geom_smooth(method="loess", se=F) +
+  labs(subtitle="", 
+       y="price", 
+       x="gdp", 
+       title="Correlation between price and gdp")+
+  scale_x_discrete()
+
+par(mfrow=c(2,1))
+plot(gg1)
+plot(gg2)
+```
+
+```최저임금```,```gdp```와 ```물가```의 상관관계를 비교 시각화 해보면 그 차이를 뚜렷하게 확인할 수 있다. <br>
+앞에서 살펴보았던 상관계수로 예상해볼 수 있듯이 ```gdp``` 증감률과 ```물가```의 증감률은 양의 관계를 가지는 그래프가 나타나지만, ```최저임금```의 증감률은 **음의 상관관계**를 가지는 예상밖의 그래프가 나타난다.
+
+
+
+**임대료와 공실률의 관계**
+
+```{r}
+rent_area <- read_xlsx("/Users/iyeeun/rproject/MJU-2018-02-DataScience/25_이예은/rent_area.xlsx")
+
+rent_area1 <-rent_area %>% gather("quarter", "value", `2017년 01분기`:`2018년 03분기`)
+
+rent_area1 <- rent_area1 %>% mutate(quarter = gsub("년"," ",rent_area1$quarter))
+rent_area1 <- rent_area1 %>% mutate(quarter = gsub("분기","/4",rent_area1$quarter))
+
+rent_area2<- rent_area1 %>% 
+  filter(X__1=="강남"|X__1=="영등포신촌")
+rent_area2 <- rename(rent_area2,
+                     지역=X__1)
+rent_area2 <- rent_area2 %>% 
+  select(지역,quarter,value)
+
+rent_area2$지역 <- gsub("강남","gangnam",rent_area2$지역)
+rent_area2$지역 <- gsub("영등포신촌","yeongdeungpo/sinchon",rent_area2$지역)
+rent_area2 <- rename(rent_area2,region=지역)
+
+ggplot(data=rent_area2,aes(x=quarter,y=value,col=region,group=1))+
+  geom_line()+ylab("rent")+
+  theme(axis.text.x=element_text(angle=90)) +
+  facet_wrap(~region)  +
+  labs(title='Rent Difference by Region',
+        caption="2017Q1-2018Q3")
+
+
+```
+
+꽤 유의한 수준으로 나올 것이라고 예상했던 ```임대료```변수가 예상보다 낮은 유의성을 띄는 것으로 나타났다. 이에 ```임대료```데이터와 여타 자료들을 살펴보았다. <br>
+우선 데이터를 살펴보면 지역별로 임대료의 차이가 크고, 강남지역은 임대료가 하락하는 추세인 반면 영등포신촌지역은 임대료가 상승하는 추세이다.<br>
+
+* 한국감정원에 따르면 서울지역 **공실률**은 중대형 상가의 경우 지난해 1분기 6.5%에서 ```꾸준히 상승```해서 올 1분기에는 7.7%로 1.2%p 올랐다가 2분기에 7.4%로 다소 주춤한 상황이다고 한다. 같은 기간 소규모 상가의 공실률은 2.9%에서 올 1분기 3.7%로 올랐다 2분기에 3.2%를 기록했으며 전국적인 상황 또한 큰 차이 없이 비슷한 흐름을 보이며 꾸준하게 공실률이 오르고 있다고 한다.  <br>
+* 보통 임대료가 높을수록 공실률의 비율도 높아지는 경향이 있다. 위 그래프에 따르면 강남지역은 임대료가 낮아지는 추세이고 영등포신촌 지역은 임대료가 높아지는 추세이다. 이로 인해 영등포신촌의 공실률의 비율이 높아질 것을 예상할 수 있다. 
+
+![강남지역공실률](/Users/iyeeun/rproject/MJU-2018-02-DataScience/Proj01_19_25__최저임금/gangnam1.jpg)
+
+![영등포신촌지역공실률](/Users/iyeeun/rproject/MJU-2018-02-DataScience/Proj01_19_25__최저임금/hangdae1.jpg)
+
+* 공실률데이터와 임대료 데이터를 함께 살펴보면 영등포신촌 지역은 중대형 상가보다 소규모 상가의 공실률 변화가 눈에 띈다. 중대형 상가의 공실률은 신촌이 전분기 대비 1.6%p 오른 6.8%를 기록했으며 이외 영등포(-3.6%p), 홍대합정(-1.8%p)은 다소 줄었다.<br>
+홍대합정 등 일부 지역에선 공실률이 높아지는데 임대료가 오히려 올라가는 상황이 발생되고 있는 것이다. <br>
+그 요인 중 하나는 ```렌트 프리```이다.  렌트 프리란 공실률이 높아지는 가운데 임대료 하락을 막기 위해 무상임대를 하는 것이다.<br>
+
+
+* 위의 현상으로 미루어볼 때 실물경제에서 ```높은임대료```가 ```물가```에 독립변수로 작용하는 영향보다 ```물가상승```으로 인한 상권붕괴, 그로 인한 ```임대료 하락```이 보다 **직접적인 영향**을 미치고 있음을 알 수 있다. 
+
+
+**분기별 최저임금 증감률과 물가 증감률 비교 그래프**
+
+```{r}
+plot1<-xyplot(price ~ wage | quarter, dat3)
+
+plot1
+
+plot2<-  ggplot(dat3, aes(x=quarter)) + 
+  geom_line(aes(y=wage, col="wage",group=1)) + 
+  geom_line(aes(y=price, col="price",group=1)) + 
+  theme(axis.text.x=element_text(angle=90)) +
+  labs(title="Trends in Quarterly Prices and Wages", 
+       subtitle="a percentage change", 
+       caption="2009Q1-2018Q2", y="a percentage change") +  
+  scale_color_manual(name="", 
+                     values = c("wage"="#00ba38", "price"="#f8766d")) +  
+  theme(panel.grid.minor = element_blank()) 
+
+plot2
+```
+
+마지막으로 **분기**에 따른 ```최저임금증감률```과 ```물가증감률``` 그래프를 비교해보았다. <br>
+
+* 최저임금이 높은 인상률을 보이고 있지만 물가 비교적 낮은 인상률을 보인다. 또한 최저임금의 인상률과 상관없이 비슷한 양상을 띄고 있다. 
+
+
+<br><br><br>
+
+**결론**
+           
+     결론적으로 최저임금 증감이 물가증감의 한 가지 유의미한 변수로 작용할 수는 있지만 최저임금이 단독변수로 물가에 막대한 영향을 미치지는 않는다.
+     물가란 거시변수들을 포함한 여러 독립변수들의 다중작용에 의해 움직이기 때문에 현재 체감하고 있는 물가인상의 원인이 단순히 최저임금인상이라고는 볼 수 없다.
+
+<br><br><br>
+
+
