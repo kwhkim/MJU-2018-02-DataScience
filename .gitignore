@@ -1,0 +1,11 @@
+.Rproj.user
+.Rporj
+.Rhistory
+.RData
+.Ruserdata
+00_instructor_working/
+*.ods
+00_Instructor/prepare/*.*
+00_Instructor/git.*.html
+*.ods#
+=/*.*
