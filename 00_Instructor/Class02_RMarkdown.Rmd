@@ -1,0 +1,294 @@
+---
+title: "R 마크다운"
+author: "김권현"
+date: "2018년 9월 21일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# R Markdown
+
+R 마크다운(markdown)은 문서를 편집할 수 있는 간단한 언어이다. 마크업(markup) 언어보다 간단하고 쉽게 쓸 수 있다.[^1] R 마크다운에는 마크다운의 문서 편집 기능에 R 코드와 실행 결과를 문서에 삽입할 수 기능이 추가되었다. R 마크다운은 크게 다음의 세 부분의 구성된다.
+
+  1. **YAML 헤더**: 문서의 제목, 날짜, 저자, 그리고 출력 화일 형식(html, pdf, ms words)을 정한다.
+  2. **마크다운 텍스트**
+  3. **R 코드**: ```로 시작하고, 끝난다. 
+
+[^1]: HTML은 HyperText **Markup** Language의 약자이다.
+
+## **YAML 헤더**
+
+다음은 **YAML 헤더**의 예를 보여준다.
+
+```
+---
+title: "R 마크다운에 관하여"
+author: "KwH. Kim"
+date: "2018년 9월 21일"
+output: html_document
+---
+```
+
+`---`를 앞뒤로 두고 제목(`title`), 저자(`author`), 날짜(`date`), 출력형식(`output`)이 나타난다.
+
+## **마크다운**
+
+**마크다운**으로 작성된 텍스트는 쉽게 읽을 수 있다는 장점이 있다. (HTML과 마크다운의 차이를 확인하고 싶다면 [여기](https://en.wikipedia.org/wiki/Markdown#Example)를 참조하라.) **마크다운**은 제목/단락, 글씨 형태, 항목 나열, 링크/그림 첨부, 인용을 위해 사용될 수 있다.
+
+  1. 제목, 단락 : `#`(큰제목), `##`, `###`, `---`(단락 나누기)
+  2. 글씨 : `**`(**굵은글씨**; bold), `_`(_기울어진글씨_; italic), `(코드글씨; monospaced), 윗첨자/아래첨자
+  3. 항목 나열 : `*`, `1.`, `----|-----`(테이블[^5])
+  4. 링크, 그림 : `<http://www.rmarkdown.com>`, `[링크](http://www.rmarkdown.com)`, `![링크](http://rmarkdown.com/pic.jpg)`
+  5. 인용 : `>`
+
+[^5]: 테이블을 만들기 힘들다면 <https://www.tablesgenerator.com/markdown_tables#>을 활용하자. R의 데이터 프레임을 테이블로 제시하고 싶을 때에는 `knitr::kable(df, caption='')` 또는 `DT::datatable(df, caption='')`을 사용하자.
+
+## **R 코드**
+
+**R 코드**는 한 단락으로 텍스트와 분리되어 나타나거나, 텍스트 속에 나타날 수 있다(R code chunk, inline code). 마크다운에서 코드를 여러 줄에 걸쳐 쓰고 싶을 때 ```를 사용한다.
+
+R code chunk는 backtik 3개로 시작하여 코드가 R임을 나타내기 위해 `{r}`를 덧붙인다. 
+inline code 역시 코드를 나타내는 backtik(1개)으로 시작하여 R임을 나타내기 위해 `r`을 덧붙인다. 다음의 예를 보자.
+
+```{r}
+3+2
+```
+
+> 위에서 봤듯이 3+2는 `r 3+2`이다!
+
+R code chunk를 넣기 위해 backtick 3개와 `{r}`를 직접 쳐도 되지만, `[Cmd/Ctrl + Alt + I]키`를 누룰 수도 있다. 혹은 `[Insert]`를 클릭한다. 
+
+R 스튜디오에서 **R 코드 단락**ㅇ 다른 텍스트와 구별되며, **R 코드**의 오른쪽 플레이 버튼을 누르면 **R 코드**은가 실행되고 결과를 보여준다([Cmd/Ctrl+Shift+Enter]키를 눌러도 된다[^2]). 만약 모든 **R 코드**가 모두 실행된 최종 문서를 확인하고 싶다면 [Knit] 버튼을 누른다.
+
+마크다운의 R 코드는 기본적으로 매번 새롭게 시작한다. `setup`으로 명명된 R 코드 단락은 다른 R 코드 단락이 실행될 때마다 사전에 실행된다.
+
+R 코드 청크를 나타내는 backtik 3개 다음에는 R 코드 청크의 이름(label)과 여러가지 선택사항(option)을 지정해 줄 수 있다.
+
+[^2]: R Studio에서 [Cmd/Ctrl+Enter]의 역할과 비교해보자.
+
+### R 코드 단락 이름 정하기
+
+backtik 3개 이후에 추가되는 `{r ____}`의 ____에 'R 코드 단락(청크)'의 이름을 넣어 줄 수 있다. 이름을 활용하면 'R 코드 단락'이 여럿일 때 이름을 사용해서 쉽게 단락 사이를 이동할 수 있다.  스크립트 편집기의 왼쪽 아랫부분을 클릭해보자. 이름 `setup`을 가진 'R 코드 단락'은 다른 'R 코드 단락'이 실행되기 전에 매번 실행된다(setup이란 어떤 일을 하기 전 사전 준비란 의미이다).
+
+예를 들어 모든 R 코드 단락에서 파이프 `%>%`를 사용할 계획이라면 다음의 `setup`을 사용하는 것이 편리하다. (여기서는 기술적인 문제로 backtik 3개 대신 `'''`을 사용하였다. ) 
+
+```{r, eval=FALSE}
+'''{r setup}
+library(magrittr)
+'''
+```
+
+### R 코드 단락 옵션
+
+R 코드단락에는 여러 가지 선택사항(option)을 지정해 줄 수 있다. 우리가 R 코드를 활용하여 문서를 작성하는 경우를 생각해보자. 어떤 경우에는 R 코드 자체가 중요하지만, 다른 경우에는 R 코드 결과가 중요할 수도 있다. 기본값은 R의 코드와 코드의 실행 결과가 연이어 출력되는 것이다. 예를 들어 다음의 코드를 실행해보자.
+
+```{r, eval=FALSE}
+'''{r}
+data(mtcars)
+cat("First 5 rows of data 'mtcars'")
+head(dat)
+cat("Relation between qsec(Second for Quarter Mile), hp(Horse Power) and wt(Weight)")
+plot(qsec ~ I(hp/wt), data=dat)
+'''
+```
+
+```{r}
+data(mtcars)
+dat <- mtcars
+cat("First 5 rows of data 'mtcars'")
+head(dat)
+cat("Relation between qsec(Second for Quarter Mile), hp(Horse Power) and wt(Weight)")
+plot(qsec ~ I(hp/wt), data=dat)
+```
+
+---
+
+만약 코드에 관심이 없는 독자를 염두에 두고 있다면, `echo = FALSE`를 사용하면 코드를 제외하고 결과만 출력할 수 있다. 
+
+```{r, echo = FALSE}
+data(mtcars)
+dat <- mtcars
+cat("First 5 rows of data 'mtcars'")
+head(dat)
+cat("Relation between qsec(Second for Quarter Mile), hp(Horse Power) and wt(Weight)")
+plot(qsec ~ I(hp/wt), data=dat)
+```
+
+---
+
+`echo=FALSE`는 코드를 제외한 모든 output를 그대로 출력한다. 여기에는 텍스트 출력, 그림, 메세지, 경고 등도 포함된다. 다음의 출력을 보자. 
+
+```{r, eval=FALSE}
+'''{r, echo = FALSE}
+library(dplyr)
+data(mtcars)
+mtcars %>% select(hp, qsec, wt) -> dat
+cat("First 5 rows of data 'mtcars'")
+head(dat)
+x <- "two"
+y <- as.numeric(x)
+cat('잠깐! R에서 "two"를 숫자로 바꾸면 ', as.character(y), '가 된다.')
+cat("Relation between qsec(Second for Quarter Mile), hp(Horse Power) and wt(Weight)")
+plot(qsec ~ I(hp/wt), data=dat)
+'''
+```
+
+```{r, echo = FALSE}
+library(dplyr)
+data(mtcars)
+mtcars %>% select(hp, qsec, wt) -> dat
+cat("First 5 rows of data 'mtcars'")
+head(dat)
+x <- "two"
+y <- as.numeric(x)
+cat('잠깐! R에서 "two"를 숫자로 바꾸면 ', as.character(y), '가 된다.')
+cat("Relation between qsec(Second for Quarter Mile), hp(Horse Power) and wt(Weight)")
+plot(qsec ~ I(hp/wt), data=dat)
+```
+
+---
+
+`Attaching package ...`와 같은 **메세지**, `Warning: NAs introduced by coercion`와 같은 **경고**도 함께 출력되었다. 이들도 생략하고자 한다면 `message = FALSE`, `warning = FALSE` 옵션을 설정한다. 다음을 보자.
+
+```{r, eval=FALSE}
+'''{r, echo=F, message=F, warning=F}
+library(dplyr)
+data(mtcars)
+mtcars %>% select(hp, qsec, wt) -> dat
+cat("First 5 rows of data 'mtcars'")
+head(dat)
+x <- "two"
+y <- as.numeric(x)
+cat('잠깐! R에서 "two"를 숫자로 바꾸면 ', as.character(y), '가 된다.')
+cat("Relation between qsec(Second for Quarter Mile), hp(Horse Power) and wt(Weight)")
+plot(qsec ~ I(hp/wt), data=dat)
+'''
+```
+
+```{r, echo=F, message=F, warning=F}
+library(dplyr)
+data(mtcars)
+mtcars %>% select(hp, qsec, wt) -> dat
+cat("First 5 rows of data 'mtcars'")
+head(dat)
+x <- "two"
+y <- as.numeric(x)
+cat('잠깐! R에서 "two"를 숫자로 바꾸면 ', as.character(y), '가 된다.')
+cat("Relation between qsec(Second for Quarter Mile), hp(Horse Power) and wt(Weight)")
+plot(qsec ~ I(hp/wt), data=dat)
+```
+
+---
+
+이때 결과가 단락이 끊어져 있음을 주목하자. 만약 모든 결과를 한 단락 안에 출력하고자 한다면 `results = 'hold'`를 사용한다. 
+
+```{r, eval=FALSE}
+'''{r, results='hold', echo=F, message=F, warning=F}
+library(dplyr)
+data(mtcars)
+mtcars %>% select(hp, qsec, wt) -> dat
+cat("First 5 rows of data 'mtcars'\n")
+head(dat)
+x <- "two"
+y <- as.numeric(x)
+cat('잠깐! R에서 "two"를 숫자로 바꾸면 ', as.character(y), '가 된다.\n')
+cat("Relation between qsec(Second for Quarter Mile), hp(Horse Power) and wt(Weight)\n")
+plot(qsec ~ I(hp/wt), data=dat)
+'''
+```
+
+```{r, results='hold', echo=F, message=F, warning=F}
+library(dplyr)
+data(mtcars)
+mtcars %>% select(hp, qsec, wt) -> dat
+cat("First 5 rows of data 'mtcars'\n")
+head(dat)
+x <- "two"
+y <- as.numeric(x)
+cat('잠깐! R에서 "two"를 숫자로 바꾸면 ', as.character(y), '가 된다.\n')
+cat("Relation between qsec(Second for Quarter Mile), hp(Horse Power) and wt(Weight)\n")
+plot(qsec ~ I(hp/wt), data=dat)
+```
+
+---
+
+여기서 `results='hold'`를 R의 결과를 마지막까지 붙잡고(`hold`) 있는다는 의미이다. 이때 그림은 이 설정에 영향을 받지 않고 먼저 출력되었다. 그림도 마지막에 출력하고 싶다면 `fig.show='hold'`를 사용한다.
+
+```{r, eval=FALSE}
+'''{r, results='hold', fig.show='hold', echo=F, message=F, warning=F}
+library(dplyr)
+data(mtcars)
+mtcars %>% select(hp, qsec, wt) -> dat
+cat("First 5 rows of data 'mtcars'\n")
+head(dat)
+x <- "two"
+y <- as.numeric(x)
+cat('잠깐! R에서 "two"를 숫자로 바꾸면 ', as.character(y), '가 된다.\n')
+cat("Relation between qsec(Second for Quarter Mile), hp(Horse Power) and wt(Weight)\n")
+plot(qsec ~ I(hp/wt), data=dat)
+'''
+```
+
+```{r, results='hold', fig.show='hold', echo=F, message=F, warning=F}
+library(dplyr)
+data(mtcars)
+mtcars %>% select(hp, qsec, wt) -> dat
+cat("First 5 rows of data 'mtcars'\n")
+head(dat)
+x <- "two"
+y <- as.numeric(x)
+cat('잠깐! R에서 "two"를 숫자로 바꾸면 ', as.character(y), '가 된다.\n')
+cat("Relation between qsec(Second for Quarter Mile), hp(Horse Power) and wt(Weight)\n")
+plot(qsec ~ I(hp/wt), data=dat)
+```
+
+---
+
+출력 결과를 결정하는 R 코드 단락 옵션을 정리해보자. backtik 3개와 `{r}`을 이용해 코드를 문서를 포함시킬 때 문서에 나타날 수 있는 출력 결과는 **R 코드, 텍스트 출력, 그림, 메세지, 경고**로 나눌 수 있다. `echo=FALSE`는 코드를 출력에서 제외한다. 다음에서 보듯이 **텍스트 출력, 그림, 메세지, 경고**도 선택적으로 제외할 수 있다.
+
+* R 코드 제외 = `echo=FALSE`
+* 텍스트 출력 제외 = `results="hide"`
+* 그림 제외 = `fig.show="hide"`
+* 메제지 제외 = `message = FALSE` 
+* 경고 제외 = `warning = FALSE` 
+
+그리고 텍스트 출력과 그림은 마지막에 한꺼번에 출력되도록 설정할 수 있다(`"hold"`). 만약 결과가 아닌 코드만 출력하는 것이 목적이라면 `result="hide", fig.show="hide", message=FALSE, warning=FALSE`을 모두 쓸 수도 있지만 간단하게 `eval=FALSE`로 쓸 수도 있다. 둘의 차이라면 `eval=FALSE`는 R 코드를 실행하지 않으며, `result="hide", fig.show="hide", message=FALSE, warning=FALSE`는 코드를 실행한다.[^3]
+
+[^3]:사실 어떤 결과를 보여주지도 않는데 코드를 실행시킬 필요는 거의 없을 것이다. `setup` 코드 단락을 제외하고는. `setup` 코드에서는 주로 `include=FALSE`를 사용한다. `include=FALSE`는 코드를 실행하지만 어떤 출력도 문서에 포함시키지 않는다.
+
+--- 
+
+R Markdown에는 이밖에도 여러가지 설정 항목들이 있다. 관심있는 학생은 <https://yihui.name/knitr/options/>를 참조하기 바란다. 
+
+---
+
+### 그 밖에
+
+backtik 3개로 포함시킬 수 있는 코드는 R뿐만 아니라 python 등도 가능하다. 
+
+```{python python.reticulate=FALSE}
+for i in range(10):
+    print(i)
+```
+
+* 도움이 될 만한 자료
+    - [Writing Publications with R](http://www.geo.uzh.ch/microsite/reproducible_research/post/rr-r-publication/)
+    
+
+---
+
+
+# 과제
+
+* 지난 과제로 소개한 데이터를 RMarkdown을 이용하여 다시 소개하세요. 이때 다음의 요소를 포함시켜야 합니다.
+    - 데이터의 출처와 링크: `[링크](http://www.example.com)`을 활용하세요.
+    - 데이터와 관련된 사진 3개 이상:`![]()`을 활용하세요.
+    - 데이터를 선택한 이유: `*`와 `-`를 활용하여 나열하세요.
+    - 데이터의 일부를 테이블로 보여주세요.
+    - 데이터의 크기(행, 열의 크기)를 inline R code를 사용하여 알려주세요.
+    - 데이터와 관련된 전문지식(domain knowledge)
+    - 데이터 분석의 방향
+    

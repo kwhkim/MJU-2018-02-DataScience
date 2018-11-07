@@ -1,0 +1,216 @@
+---
+title: "git, 짧은 소개"
+output: html_notebook
+---
+
+# 주요 명령어
+
+* `git init .` : 초기화
+
+* `git add -A .`/`git commit` : 커밋 준비/커밋
+
+* `git status` : 현재 상태
+
+* `git log` : 이력(커밋내용)
+
+* `git diff` : 차이 확인
+
+* `git checkout` : 이전 화일 내용 확인
+
+* `git config --global user.name "..."` / `git config --local user.name "..."` : git id 설정(global/local)
+
+* `git config --list` : git 설정 확인
+
+* `git config credential.helper store` : git user.name, password 저장, [참고](https://stackoverflow.com/questions/35942754/how-to-save-username-and-password-in-git)
+
+* `git blame` : 현재 소스의 최종 작성자 확인
+
+# 작업 순서
+
+1. (선택사항) 해당 폴더에 대해 id 설정(모든 폴더에 대해 id 설정은 `local` -> `global`로 수정한다.)
+
+```
+git config --local user.name <...>
+```
+
+2. 작업을 할 폴더(디렉토리)로 가서 초기화한다.
+
+```
+git init .
+```
+
+3. 작업을 한다(화일이 생성된다).
+
+4. 작업 내용을 모두 커밋한다(이력 관리를 위해 저장한다).
+
+```
+git add -A . # <-> git rm
+git commit
+```
+
+5. 2-3을 반복한다.
+
+6. 이력을 확인하는 방법들
+    - `git log` : 커밋 로그
+    - `git blame` : 현재 소스의 최종 작성자 확인
+    - `git checkout` : 이전 화일 내용 확인
+    - `git status` : 현재 상태 확인. 마지막 커밋 이후 수정된 사항 등.
+
+## 마지막 커밋을 복원하기
+```
+git reset --hard HEAD  
+git clean -fd  # delete untracked files, but deleting this way, you can not restore files from Recycle Bin...!!!
+git clean -fdx # delete untracked files and files listed in .gitignore
+```
+
+* [HEAD](https://git-scm.com/book/ko/v2/Git-%EB%8F%84%EA%B5%AC-Reset-%EB%AA%85%ED%99%95%ED%9E%88-%EC%95%8C%EA%B3%A0-%EA%B0%80%EA%B8%B0)의 의미 : HEAD는 현재 브랜치를 가리키는 포인터이며, 브랜치는 브랜치에 담긴 커밋 중 가장 마지막 커밋을 가리킨다. 지금의 HEAD가 가리키는 커밋은 바로 다음 커밋의 부모가 된다. 단순하게 생각하면 HEAD는 현재 브랜치 마지막 커밋의 스냅샷이다.
+
+---
+
+## 충돌 처리
+### `git push`가 실패할 경우, `git pull`을 실행한다. `git pull`도 충돌이 발생할 경우
+
+1. 충돌이 일어나면 다음과 같은 메세지가 출력된다.
+```
+Auto-merging <filename.txt>
+CONFLICT (content): Merge conflict in <filename.txt>
+Automatic merge failed; fix conflicts and then commit the result.
+```
+2. 충돌이 일어난 화일을 수정한다.
+3. 다음을 실행한다.
+```
+git add 
+git commit
+git pull
+```
+
+[참조](https://backlog.com/git-tutorial/kr/intro/intro5_1.html)
+
+### `git pull`에서 발생할 수 있는 다른 문제
+
+1. 다음의 메세지 발생할 때,
+```
+error: unable to resolve reference refs/remotes/origin/...
+```
+
+2. 다음을 실행한다.
+```
+git gc --prune=now
+git remote prune origin
+```
+[참고: stackoverflow](https://stackoverflow.com/questions/2998832/git-pull-fails-unable-to-resolve-reference-unable-to-update-local-ref)
+
+
+### `git merge`에서 충돌이 발생할 경우
+
+* `git pull`의 충돌과 동일하게 처리한다. `git pull` = `git fetch` + `git merge`
+* `git fetch`를 하면 `git checkout FETCH_HEAD`로 체크아웃할 수 있다.
+
+### `git rebase`에서 충돌이 발생할 경우
+
+* 충돌을 해결 한 후
+```
+git add
+git rebase --continue
+```
+
+* `git rebase`를 취소할 경우: `git rebase --abort`
+
+---
+
+## 브랜치 관리
+### 새로운 브랜치 만들기
+```
+git checkout -b <BRANCH_NAME>
+```
+
+### 원격 저장소(remote repository) `origin` 에 새로운 이름으로 PUSH하기
+```
+git push -u origin <BRANCH_NAME>
+```
+
+### 원격 저장소의 브랜치 불러오기
+```
+git checkout --track origin/<BRANCH_NAME>
+```
+
+### 원격 저장소 관련
+```
+git remote
+git remote -v
+
+git remote add <name> <url>
+git remote rm <name>
+git remote rename <oldname> <newname>
+```
+
+### [commit 하지 않은 내용을 다른 브랜치로 옮기기](https://stackoverflow.com/questions/6925099/git-stash-changes-apply-to-new-branch)
+```
+git checkout -b <branchname>
+```
+
+### [두 브랜치에 동일한 내용 commit 하기](https://stackoverflow.com/questions/7259135/git-commit-to-multiple-branches-at-the-same-time/18529576#18529576)
+```
+git checkout <branchA>
+git commit -m "commit message"
+git checkout <branchB>
+git cherry-pick <branchA>
+```
+
+
+* <https://www.git-tower.com/learn/git/faq/track-remote-upstream-branch>
+
+---
+
+## 다른 사용자와 공동 작업하기
+
+### 다른 사용자 초대하기(https://help.github.com/articles/inviting-collaborators-to-a-personal-repository/)
+
+1. 사용자이름(username)을 확인한다.
+2. Github의 저장소 메인 페이지로 간다.
+3. Settings(설정)을 클릭한다.
+4. 왼쪽 사이드바에서 Collaborators(공동작업자)를 클릭한다.
+5. 공동작업자의 사용자이름(username)을 적는다.
+6. 드롭다운 메뉴에서 사용자이름을 선택한다.
+7. Add collaborator를 클릭한다.
+
+---
+
+## Authentication 관련
+
+* [Git push requires username and password](https://stackoverflow.com/questions/6565357/git-push-requires-username-and-password)
+
+* [Changing a remote's URL](https://help.github.com/articles/changing-a-remote-s-url/#switching-remote-urls-from-https-to-ssh)
+
+* [Connecting to GitHub with SSH](https://help.github.com/articles/connecting-to-github-with-ssh/)
+
+---
+## 참고
+
+* `lazygit()`
+```
+function lazygit() {
+    git add .
+    git commit -a -m "$1"
+    git push
+}
+```
+
+* [참고자료: Version control with RStudio and Github](https://aberdeenstudygroup.github.io/studyGroup/lessons/SG-T1-GitHubVersionControl/VersionControl/)
+
+* [삭제된 화일을 commit history에서 찾기](https://stackoverflow.com/questions/11845321/search-for-and-view-a-file-deleted-from-the-repo)
+```
+#by filepath and filename
+git log -- filepaht/filename
+#by filename
+git log --diff-filter=D --sumary | grep filename
+```
+
+* 빨리감기 병합(fast-forwad merge) : 병합할 브랜치가 현재 브랜치의 자식인 경우?
+
+* [Fun with keeping local changes around](https://gitster.livejournal.com/29060.html)
+
+* [How to undo anything with Git](https://blog.github.com/2015-06-08-how-to-undo-almost-anything-with-git/)
+
+* [Be a git pro in just one blog](https://itnext.io/become-a-git-pro-in-just-one-blog-a-thorough-guide-to-git-architecture-and-command-line-interface-93fbe9bdb395)
+

@@ -1,0 +1,95 @@
+---
+title: "ggplot2_coord"
+author: "KwH Kim"
+date: "2018년 10월 18일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(fig.height=3)
+knitr::opts_chunk$set(fig.width=3)
+library(ggplot2)
+library(dplyr)
+```
+
+## Key components of every plot
+
+1. Data
+
+2. Aesthetic mapping
+
+3. Geoms
+
+4. Auxillary lines
+
+5. **Coordinate System**
+    - Coordinate System
+        - Cartesian vs. Polar
+        - `coord_fixed(ratio = )`, `coord_flip()`, `coord_trans()`
+        - `coord_quickmap()`, `coord_map()`
+    - Coordinate label
+        - `+ labs(x='  ', y='  ')`
+    - Breaks & Labels
+        - `scale_x_continuous(breaks=c())`
+        - `scale_x_continuous(labels=c())` or `scale_x_continuous(labels=NULL)`
+    - Zooming
+        - Without clipping : `coord_cartesian(xlim = c( , ), ylim = c( , ))`
+        - With clipping 
+            - `+ xlim( , ) + ylim( , )`
+            - `+ scale_x_continuous(limits=c( , ))+scale_y_continuous(limits=c( , ))`
+        
+        
+### Coordinate System
+
+```{r, collapse=T}
+d <- ggplot(mpg, aes(fl))
+r <- d + geom_bar() 
+
+r + coord_cartesian(xlim = c(0, 5))
+r + coord_fixed(ratio = 1/2) 
+r + coord_flip()
+r + coord_polar(theta = "x", direction=1 ) 
+r + coord_trans(y = "sqrt") 
+```
+
+### Coordinate label
+```{r, collapse=T}
+r
+r + labs(x='fuel type', y='frequency')
+r + labs(x='연료 종류', y='횟수')
+```
+
+### Breaks and Labels
+
+```{r, collapse=T}
+(n <- d + geom_bar(aes(fill = fl)))
+n + scale_fill_manual( 
+  values = c("skyblue", "royalblue", "blue", "navy"), 
+  limits = c("d", "e", "p", "r"), breaks =c("d", "e", "p", "r"), 
+  name = "fuel", labels = c("D", "E", "P", "R"))
+n + scale_fill_discrete( 
+  #palette = "Blues",
+  breaks =c("d", "p"), 
+  labels = c("D", "E")) +
+  guides(fill='none')
+t <- ggplot(mpg, aes(cty, hwy)) + geom_point() 
+t + scale_x_continuous(
+  breaks=seq(10,40,10), 
+  labels=c('ten', 'twenty', 'thirty', 'forty'))
+```
+
+### Zooming
+```{r, collapse = T}
+t <- ggplot(mpg, aes(cty, hwy)) + geom_point() 
+
+# Original
+t
+
+# No Clipping
+t + coord_cartesian(xlim = c(0, 100), ylim = c(10, 20))
+
+# Clipping 
+t + xlim(0, 100) + ylim(10, 20)
+t + scale_x_continuous(limits = c(0, 100)) + scale_y_continuous(limits = c(0, 100))
+```

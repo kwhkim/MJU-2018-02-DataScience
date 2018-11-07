@@ -1,0 +1,22 @@
+정치외교학과 60151523 김현지
+
+1. 데이터 소개.
+
+1) 서울시 주민등록인구 (연령별/동별) 통계.
+http://data.seoul.go.kr/dataList/datasetView.do?infId=10727&srvType=S&serviceKind=2
+자치구 / 동 / 연령 / 인구 수 / 한국인, 외국인 구분.
+
+2) 서울시 보육시설(어린이집) 현황.
+http://data.seoul.go.kr/dataList/datasetView.do?infId=OA-242&srvType=S&serviceKind=1&currentPageNo=1#AXexec
+시도 / 시군구 / 어린이집 명 / 어린이집 유형 / 운영현황 / 우편번호 / 주소 / 전화번호 등.
+
+3) 서울시 문화공간 현황.
+http://data.seoul.go.kr/dataList/datasetView.do?infId=OA-151&srvType=S&serviceKind=1&currentPageNo=1
+문화공간코드 / 장르분류코드 / 장르분류명 / 문화공간명 / 대표이미지 / 주소 / 전화번호 등.
+
+4) 서울시 노인여가 복지시설(구별) 통계.
+http://data.seoul.go.kr/dataList/datasetView.do?infId=54&srvType=S&serviceKind=2
+기간 / 자치구 / 시설합계 / 노인복지관(시설수 / 종사자수) / 경로당 / 노인교실
+
+2. 어떤 분석을 하고 싶은가.
+자치구별 해당 연령층의 인구 수가 각각 보육시설, 문화공간, 노인여가 복지시설 수에 영향을 주는지 분석해보고 싶다. 

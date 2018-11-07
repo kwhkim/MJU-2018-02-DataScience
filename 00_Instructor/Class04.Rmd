@@ -1,0 +1,53 @@
+---
+title: "Class04"
+author: "김권현"
+date: "2018년 10월 5일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 오늘의 일정
+
+
+1. 문자열(character), 범주형(Factor), 날짜시간(Date), 행렬(Matrix) 
+2. 조별 관심 데이터 발표
+3. Vector, Matrix, Data.frame의 생성, 참조, 수정, 추가, 삭제
+4. 집단별 요약 통계치 계산
+
+---
+
+## 문자열(character), 범주형(Factor), 날짜시간(Date), 행렬(Matrix) 
+
+* [강의 자료 참조](RClass04_2018_03_26.pdf)
+
+---
+
+## Vector, Matrix, Data.frame의 생성, 참조, 수정, 추가, 삭제
+
+* `dat <- edit(dat)`을 쓰지 않고 script를 활용하는 이유?
+* 생성, 참조, 수정, 추가, 삭제하기 : [강의노트](RClass03_2018_03_19.pdf)
+
+---
+
+## 집단별 요약 통계치 계산
+
+### 요약 통계치
+* 한 변수에 대한 요약통계치 구하기
+    - `summary()`, `psych::describe()`, `Hmisc::describe()`, `pastecs::stat.desc()`
+* 두 변수의 관계에 대한 요약통계치 
+    - `cov()`, `cor()`, `psych::corr.test()`
+    
+### 집단별로 데이터를 나눈 후 함수 적용하기
+
+* 집단별 한 변수에 대한 요약통계치 구하기
+    - [R의 내장 함수 활용하기](RClass05_2018_04_02.pdf)
+    - [패키지 `dplyr` 활용하기](Class05_02_dplyr.pdf)
+    
+* 집단별 두 변수에 대한 요약통계치 구하기
+    - `aggregate`/`by`
+    - [패키지 `dplyr` 활용하기](Class05_02_dplyr.pdf)
+  
+

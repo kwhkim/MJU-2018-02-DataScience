@@ -81,3 +81,10 @@ tog
 (2) spread()
 ```{r}
 tog %>% spread(key = "exp", value = "result")
+```
+
+
+## <span style="color:red">채점 사항</span>
+
+> 다음에는 데이터 화일을 internet에서 다운 받던지, commit에 포함해서 knit가 가능하도록 하길 바랍니다.
+

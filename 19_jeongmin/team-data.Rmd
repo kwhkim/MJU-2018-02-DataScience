@@ -1,0 +1,128 @@
+---
+title: "team"
+author: "jeongmin,yeeun"
+date: "2018년 10월 5일"
+output: html_document
+---
+
+1. 데이터 살펴보기
+
+* 서울시 노인여가 복지시설 (구별) 통계 
+    - 출처 : [서울열린데이터광장](http://data.seoul.go.kr/dataList/datasetView.do?infId=54&srvType=S&serviceKind=2)
+    
+```{r message=TRUE, warning=FALSE}
+
+library(dplyr)
+library(ggplot2)
+library(readxl)
+
+welfare <- read_excel("Report-1.xls", sheet=1, col_names = T)
+head(welfare)
+
+welfare <- welfare %>% filter(기간 != '기간')
+welfare <- rename(welfare,
+                  노인복지관_시설수 = 노인복지관,
+                  노인복지관_종사자수 = 노인복지관__1,
+                  경로당=경로당,
+                  노인교실=노인교실,
+                  시설합계=시설합계)
+
+# 데이터의 전체적인 구조
+head(welfare) ; tail(welfare)
+dim(welfare)
+colnames(welfare)
+summary(welfare)
+table(is.na(welfare))
+
+# 데이터 타입 변경
+mode(welfare$시설합계) <- "numeric"
+mode(welfare$노인복지관_시설수) <- "numeric"
+mode(welfare$노인복지관_종사자수) <- "numeric"
+mode(welfare$경로당) <- "numeric"
+mode(welfare$노인교실) <- "numeric"
+mode(welfare$노인복지관_종사자수) <- "numeric"
+summary(welfare)
+
+# 데이터 통계요약치
+welfare %>% 
+  filter(자치구 != '합계') %>% 
+  summarise(mean(시설합계))
+welfare %>%
+  filter(자치구 != '합계') %>% 
+  arrange(desc(시설합계)) %>% 
+  head(3)
+welfare %>% 
+  arrange(시설합계) %>% 
+  head(3)
+```
+
+    
+* 서울시 노인의 선호여가 활동
+    - 출처 : [서울열린데이터광장](http://data.seoul.go.kr/dataList/datasetView.do?infId=10664&srvType=S&serviceKind=2)
+    
+```{r message=TRUE, warning=FALSE}
+
+leisure_prefer <- read.csv(file='report.txt-5.csv',sep="\t",fileEncoding="UTF-8")
+head(leisure_prefer)
+
+region_prefer<-leisure_prefer %>%
+  filter(대분류=="지역소분류")
+head(region_prefer)
+
+senior_prefer<-leisure_prefer %>%
+  filter(대분류=="서울시") %>%
+  select(운동.건강.프로그램,노래.오락.프로그램,새로운.지식교육.교양.프로그램,수입과.연결된.직업관련.프로그램,여행.관광.등산.낚시.프로그램,사회봉사활동,사교.프로그램,전통문화.프로그램,기타,없음) 
+head(senior_prefer)
+
+senior_prefer <- as.data.frame(t(senior_prefer))
+colnames(senior_prefer) <- c("ratio")
+senior_prefer
+```
+
+
+
+* 서울시 노인 사회활동 참가 통계 
+     - 출처 : [서울열린데이터광장](http://data.seoul.go.kr/dataList/datasetView.do?infId=47&srvType=S&serviceKind=2)
+     
+```{r message=TRUE, warning=FALSE}
+leisure_participation <- read.csv(file='report.txt-6.csv',sep="\t",fileEncoding="UTF-8")
+head(leisure_participation)
+
+senior_participation<-leisure_participation %>%
+  filter(분류=="서울시") %>%
+  select(직장,노인정경로당,복지관노인교실,자원봉사활동기관이나모임,취미활동모임,종교단체모임,시민단체사회단체,기타,직장이나.특별한.모임이.없음)
+
+senior_participation <- t(senior_participation)
+colnames(senior_participation) <- c("ratio")
+senior_participation
+
+```
+
+
+
+
+
+2. 데이터 시각화
+```{r warning=FALSE}
+top10 <- welfare %>% 
+  filter(자치구 != '합계') %>% 
+  arrange(desc(시설합계)) %>% 
+  head(5)
+ggplot(data=top10, aes(x=reorder(자치구,-시설합계), y=시설합계)) + geom_col()
+
+sum <- welfare %>%
+  filter(자치구 =='합계') %>% 
+  select(노인복지관_시설수,경로당,노인교실)
+sum <- as.data.frame(t(sum))
+colnames(sum) <- c("total")
+sum
+pie(sum$total, labels = c("노인복지관_시설수","경로당","노인교실"))
+
+
+
+senior_prefer <- senior_prefer %>% 
+  mutate(prefer=c("운동.건강.프로그램","노래.오락.프로그램","새로운.지식교육.교양.프로그램","수입과.연결된.직업관련.프로그램","여행.관광.등산.낚시.프로그램","사회봉사활동","사교.프로그램","전통문화.프로그램","기타","없음"))
+senior_prefer$ratio <- as.numeric(as.character(senior_prefer$ratio))
+ggplot(data=senior_prefer, aes(x=reorder(prefer,ratio), y=ratio))+geom_col()+coord_flip()
+```
+

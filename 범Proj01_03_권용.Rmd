@@ -1,0 +1,115 @@
+---
+title: "오지환 선수 논란이 우리에게 알려주는 것"
+author: "권용범"
+date: "2018년 11월 2일"
+output: html_document
+---
+## 데이터에 흥미를 가지게 된 이유
+1.  아시안게임 선수 발표 이후 오지환 선수에 대한 논란은 사회적으로 크게 주목을 받았습니다. 하지만 대부분의 논의들은 소모적이고 합의점을 내릴 수 있는 수준의 논의는 형성 되지 못했습니다. 야구를 사랑하는 저로써 어떻게 하면 조금더 생산적인 논의를 할 수 있을까 고민을 하게 되었습니다. 이렇게 데이터에 흥미를 가지게 되었습니다.
+
+2. 데이터와 관련된 배경 이론
+= 제가 이번 분석에 주로 사용하게 된 column에 대해서 간략하게 설명을 드리겠습니다. 타율, BA(Batting Average)는 안타/타석입니다. AB(At Bat), 타석은 타자가 타석에 들어서서 타격을 완료한 횟수를 말합니다. 볼넷, 희생번트, 포수 타격 방해등은 타수에 포함되지 않습니다. 타점은 타자의 플레이로 주자가 홈베이스에 들어와 득점했을 때 플레이를 만든 타자에게 주어지는 점수를 말합니다. 그다음 출루율(OBP)는 단어가 말해주듯이 얼마나 많이 출루를 했는지를 보여주는 수치입니다. 마지막으로 SLG은 타율에서 발생하는 저평가 문제, 즉 모든 안타를 똑같은 가치로 바라보는 문제를 해결하기 위해서 홈런, 2루타, 3루타, 안타 각각 다른 가중치를 곱해서 산출한 수치입니다.
+
+3. 데이터를 통해 알고자 하는 내용
+= 선동렬 감독은 “유격수 부분에는 김하성 선수가 가정 성적이 좋았었고 오지환이 (엔트리 발표일인 6월 11일 기준) 유격수에서 두 번째로 좋았습니다.“ 그럼 정말로 오지환 선수가 유격수에서 두 번째로 우수한 선수였는가?
+
+4. 데이터와 관련하여 특별한 가설이 있나요? 있다면 그런 가설을 가지된 배경 이론이나 개인적인 경험은 무엇인가요?
+= 세이버메트릭스(Sabermetrics), Sabermetrics is the scientific and objective analysis of baseball. 세이버메트릭스란 야구에 대한 과학적이고 객관적인 평가이다. 타율, 타점, 홈런  전통적인 기록들이 선수를 잘 평가하는 가? 그렇지 않다면 그 선수의 능력치를 잘 표현해주는 기록, 또는 수치를 통해서 조금 더 야구라는 게임을 객관적으로 평가할 수 있는 방법택하고 있는 방법입니다.
+
+```{r setup}
+
+library("ggplot2")
+library("lattice")
+library("readxl")
+library("dplyr")
+
+```
+
+## 데이터 불러오기
+
+```{r data}
+Player <- read_excel("Playerstat.xlsx")
+Team <- read_excel("Teamstat.xlsx")
+Defense <- read_excel("Defense.xlsx")
+
+Player <- rename(Player,
+                 double = '2B',
+                 Triple = '3B')
+
+Player <- Player %>%
+  mutate(OBP = (H+BB+HBP)/(AB+BB+HBP+SF),
+         TB = H+2*double+3*Triple+4*HR,
+         SLG = TB/AB,
+         RC = H+BB*TB/AB+BB)
+
+Team <- Team %>% 
+  mutate(RC = H+BB*TB/AB+BB)
+
+Player_new <- left_join(Player, Defense, by = "Player")
+
+```
+
+## Summarize function
+
+```{r pressure}
+
+summary(Player_new)
+summary(Team)
+
+```
+
+
+```{r outlier}
+
+boxplot(Player_new$AB)
+
+Player_new$AB <- ifelse(Player_new$AB < 195.3, NA, Player_new$AB)
+
+Player_new <- Player_new %>%
+  filter(!is.na(AB))
+
+boxplot(Player_new$AB)
+
+```
+
+```{r plot}
+hist(Player_new$H)
+
+reg1 <- lm(AVG ~ R, data=Team)
+summary(reg1)
+with(Team, plot(AVG~R))
+abline(reg1)
+
+reg0 <- lm(PO ~ R, data=Team)
+summary(reg0)
+with(Team, plot(PO~R))
+abline(reg0)
+
+reg2 <- lm(OBP ~ R, data=Team)
+summary(reg2)
+with(Team, plot(OBP~R))
+abline(reg2)
+
+reg3 <- lm(OPS ~ R, data=Team)
+summary(reg3)
+with(Team, plot(OPS~R))
+abline(reg3)
+
+reg4 <- lm(RC ~ R, data=Team)
+summary(reg4)
+with(Team, plot(RC~R))
+abline(reg4)
+
+
+```
+
+```{r graph}
+y <- ggplot(data = Player_new, aes(Player, OBP, col=OBP)) +
+  geom_point(size=5)
+y + labs(title='Player, OBP Scatter Plot')
+
+x <- ggplot(data = Player_new, aes(Player, RC, col=RC)) +
+         geom_point(size=5)
+x + labs(title='Player, RC Scatter Plot')
+```
+
