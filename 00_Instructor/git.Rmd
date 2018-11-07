@@ -144,7 +144,45 @@ git remote rm <name>
 git remote rename <oldname> <newname>
 ```
 
+### [commit 하지 않은 내용을 다른 브랜치로 옮기기](https://stackoverflow.com/questions/6925099/git-stash-changes-apply-to-new-branch)
+```
+git checkout -b <branchname>
+```
+
+### [두 브랜치에 동일한 내용 commit 하기](https://stackoverflow.com/questions/7259135/git-commit-to-multiple-branches-at-the-same-time/18529576#18529576)
+```
+git checkout <branchA>
+git commit -m "commit message"
+git checkout <branchB>
+git cherry-pick <branchA>
+```
+
+
 * <https://www.git-tower.com/learn/git/faq/track-remote-upstream-branch>
+
+---
+
+## 다른 사용자와 공동 작업하기
+
+### 다른 사용자 초대하기(https://help.github.com/articles/inviting-collaborators-to-a-personal-repository/)
+
+1. 사용자이름(username)을 확인한다.
+2. Github의 저장소 메인 페이지로 간다.
+3. Settings(설정)을 클릭한다.
+4. 왼쪽 사이드바에서 Collaborators(공동작업자)를 클릭한다.
+5. 공동작업자의 사용자이름(username)을 적는다.
+6. 드롭다운 메뉴에서 사용자이름을 선택한다.
+7. Add collaborator를 클릭한다.
+
+---
+
+## Authentication 관련
+
+* [Git push requires username and password](https://stackoverflow.com/questions/6565357/git-push-requires-username-and-password)
+
+* [Changing a remote's URL](https://help.github.com/articles/changing-a-remote-s-url/#switching-remote-urls-from-https-to-ssh)
+
+* [Connecting to GitHub with SSH](https://help.github.com/articles/connecting-to-github-with-ssh/)
 
 ---
 ## 참고
@@ -159,6 +197,14 @@ function lazygit() {
 ```
 
 * [참고자료: Version control with RStudio and Github](https://aberdeenstudygroup.github.io/studyGroup/lessons/SG-T1-GitHubVersionControl/VersionControl/)
+
+* [삭제된 화일을 commit history에서 찾기](https://stackoverflow.com/questions/11845321/search-for-and-view-a-file-deleted-from-the-repo)
+```
+#by filepath and filename
+git log -- filepaht/filename
+#by filename
+git log --diff-filter=D --sumary | grep filename
+```
 
 * 빨리감기 병합(fast-forwad merge) : 병합할 브랜치가 현재 브랜치의 자식인 경우?
 

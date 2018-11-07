@@ -1,7 +1,7 @@
 library(dplyr)
 library(readxl)
 library(ggplot2)
-df_exam <- read_excel("00_Instructor/excel_exam.xlsx")
+df_exam <- read_excel("00_Instructor/W07_ggplot2/excel_exam.xlsx")
 df_exam
 
 
