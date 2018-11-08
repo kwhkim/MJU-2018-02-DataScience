@@ -311,10 +311,52 @@ g4
 grid.arrange(g1,g2, nrow=1, ncol=2)
 ```
 
+**최종 결과 시각화라고 생각한다면 제목이나 x축-레이블 등이 겹치는 것도 신경을 써야 합니다. 그리고 색깔 범례는 x축에 표시가 되었기 때문에 굳이 필요하지 않습니다.**
+
 (2) 창업자의 창업 성공 및 실패경험과 기업 자산 간의 관계
 ```{r message=FALSE, warning=FALSE}
 g3
 ```
+
+**평균만 그려놓으면 평균 차이의 유의미성을 알기 힘듭니다. 분포에 대해 이미 잘 알려져 있거나 특별히 평균만을 보여주려고 하는 것이 아니라면 산포도(scatterplot)를 그리거나 표준오차를 그리는 것이 좋습니다.**
+
+예1)
+```{r }
+library(ggplot2)
+ggplot() +
+  geom_point(data = startup_tot, aes(x=expr_success+0.1, y=asset, col = "성공 경험"),alpha=0.1) + 
+  geom_point(data = startup_tot, aes(x=expr_fail-0.1, y=asset, col = "실패 경험"), alpha=0.1) + 
+  geom_line(data = success, aes(x=expr_success,y=mean_asset, col = "성공 경험")) +
+  geom_point(data = success, aes(x=expr_success,y=mean_asset, col = "성공 경험")) +
+  geom_line(data = fail, aes(x=expr_fail,y=mean_asset, col = "실패 경험")) +
+  geom_point(data = fail, aes(x=expr_fail,y=mean_asset, col = "실패 경험")) +
+  ggtitle("창업 경험과 기업 자산 간의 관계") +
+  labs(col = "경험",
+       subtitle = '성공 경험과 실패 경험 비교') +
+  theme(plot.title = element_text(family="NanumGothic", face="bold",size=20, hjust = 0.5), plot.subtitle = element_text(family="NanumGothic",size=12, hjust = 0.5)) +
+  xlab('경험 횟수') +
+  ylab('자산') + theme_bw()  
+```
+
+**만약 y-축의 분포가 너무 넓다면 log10으로 변환(tranformation)할 수 있습니다.**
+
+```{r }
+library(ggplot2)
+ggplot() +
+  geom_point(data = startup_tot, aes(x=expr_success+0.1, y=asset, col = "성공 경험"),alpha=0.1) + 
+  geom_point(data = startup_tot, aes(x=expr_fail-0.1, y=asset, col = "실패 경험"), alpha=0.1) + 
+  geom_line(data = success, aes(x=expr_success,y=mean_asset, col = "성공 경험")) +
+  geom_point(data = success, aes(x=expr_success,y=mean_asset, col = "성공 경험")) +
+  geom_line(data = fail, aes(x=expr_fail,y=mean_asset, col = "실패 경험")) +
+  geom_point(data = fail, aes(x=expr_fail,y=mean_asset, col = "실패 경험")) +
+  ggtitle("창업 경험과 기업 자산 간의 관계") +
+  labs(col = "경험",
+       subtitle = '성공 경험과 실패 경험 비교') +
+  theme(plot.title = element_text(family="NanumGothic", face="bold",size=20, hjust = 0.5), plot.subtitle = element_text(family="NanumGothic",size=12, hjust = 0.5)) +
+  xlab('경험 횟수') +
+  ylab('자산') + theme_bw()  + scale_y_log10()
+```
+**이 그래프를 보면 실패 경험이 3번인 회사는 2개 밖에 없기 때문에 작은표본(small sample) 문제가 있을 수 있음을 확인할 수 있습니다.**
 
 (3) [추가분석] 학력과 기업 자산 간의 관계가 기업이 만들어진 시기에 상관없이 동일하게 적용되는가?
 ```{r message=FALSE, warning=FALSE}
