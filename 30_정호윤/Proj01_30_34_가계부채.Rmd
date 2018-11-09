@@ -1,0 +1,507 @@
+---
+title: " 중간고사_가계부채 "
+author: " 30_정호윤, 34_홍영화 "
+date: "2018년 11월 2일"
+output: html_document
+---
+
+## 데이터 소개 - **[ 가계부채에 영향을 미치는 결정요인 분석 ]**
+
+### 1.이 데이터에 흥미를 가지게 된 이유
+
+#### 최근 뉴스에 부동산 가격 & 가계부채에 관한 이슈가 많이 오르내렸다. 올해 초 미국이 기준금리를 인상했을 때부터 경제전문가들은 가계부채의 끊임없는 증가와 그로 인한 사회적 영향 등에 대하여 저마다의 의견을 제시해 오고 있다. / 대부분의 경제변수들이 그렇듯, 경제변수는 단일적인 영향이 아닌 다양한 요소들의 복합적 관계의 영향으로 규정되는데, 관련 논문을 조사 해 본 결과 **가계부채에 영향을 주는 요소로 언급되는 변수들은 분석하는 주체의 관점에 따라 다소 달랐고, 때문에 분석의 결론이 우리가 분석해가는 방식에 따라 나름대로의 의의가 있을 것 같아 흥미를 가졌다.**
+ 
+ ![가계부채 추이](http://img.hani.co.kr/imgdb/resize/2018/0523/00503483_20180523.JPG)
+ 
+### 2.데이터와 관련된 배경 이론
+ 
+#### 가계는 경제를 구성하는 가장 기본적이고 중요한 주체이다. **가계부채의 규모는 중앙은행인 한국은행이 집계하는 가계신용 통계로 파악하는 것이 일반적**이다.  한국은행, 한국개발연구원(KDI), 한국금융연구원(KIF) 등에서는 가계부채 누증의 요인을 정부의 경기대응을 위한 경제정책 기조 변화들 외에도 인구구조, 주택시장 및 가계신용의 수급구조 등 우리나라 경제의 구조적 요인에 상당부분 기인하고 있다고 바라본다. 조금 더 세부적으로 보자면 경제정책 기조 면에서는, 저금리 지속 - 부동산 규제 완화 - 주택 매입수요 및 주택 공급물량 확대 - 주택담보대출 증가 같은 정책적 기조들이 상호 연관을 주고받아 가계부채를 누증시킨다는 것이고, 구조적 요인 면에서는 인구구조 및 주택시장/가계신용 수급구조 등이 복합적으로 가계부채 증가에 기인하고 있다는 것이다. 선행연구에 따른 이론적 배경은 이러하지만 여기서 정확한 분석 모델링은 구현하기 어렵다고 판단하여 **사전에 연구가 많이 진행되었던 deflator, 고용률 등의 대표적인 경제지표들을 사용하여** 비교적 최신의 데이터를 활용해 다양한 분석방법과 시각화를 통하여 회귀분석 및 시각화를 구현해보고자 한다.
+ 
+### 3.데이터를 통해 알고자 하는 내용
+ 
+#### 기존 논문 및 연구결과에서 확인할 수 있었던 가계부채와 경제변수들간의 동태적 관계들은 대부분 최신 3년간의 데이터까지는 포함하지 않았던 분석 자료인 경우가 많았다. 2013년 4분기에 1000조원을 돌파하였고, 5년이 채 안되서 현재 2018년 2분기 기준 1493조로 약 500조원 가량 증가하였는데, 기존 500조원에서 1000조원으로 불어난 기간은 8년 6개월으로 *최근 4년간 무려 두배 가까이 빠른 상승세를 보인 것이다.*  **이처럼 인상률이 높은 최근 데이터를 포함한 분석 결과는 기존에 알고 있던 연구내용과 어떻게 다른 결과를 보이는지** 확인해 보면 좋을 것 같다.
+ 
+### 4.데이터와 관련한 가설(이론 혹은 경험)
+ 
+#### 윤석헌 금융감독원장은 2016년 교수시절 한 강연장에서 2018~2019년 가계부채로 한국경제에 큰 위기가 올 가능성이 있다고 경고 한 바 있다. 그는 "중요한 문제는 부채를 갚느라 부담스러워 소비를 못한다는 점"이라며 "소비를 못하니 기업 활동이 위축되고 일자리 창출은 안 되고 장사는 더 안 되고 빚내서 빚을 갚아야 되니 부채는 자꾸 쌓여간다"고 설명했다. 즉 해결하지 못한다면 경제는 시들해져 국가 경제를 위협하는 수준에 달한다는 것이다. **가계부채와 경제변수들간의 관계를 분석한 앞선 연구에서는 금리변화와 주택시장 가격변화, 국민가처분소득의 변화와 가계부채가 가장 높은 상관관계를 가지고 있음을 확인할 수 있었다.** 2018년 10월 1일 한국경제 기사 *하단 Link1* 에서 확인한 결과로, 금융권에서는 금리가 0.25%포인트 오르면 가계의 이자 부담이 2조3000억원 안팎 늘어나는 것으로 분석하고 있다. 
+ 
+ [Link1_'1500조 가계부채' 금리인상 타격… 금융당국 일제히 현황 점검](http://news.hankyung.com/article/2018093092251)
+ 
+ [Link2_가계부채 1500兆… 대출금리 2%p 오르면 46만 가구 벼랑끝으로](http://biz.chosun.com/site/data/html_dir/2018/06/21/2018062100289.html)
+
+
+
+### 5.사용한 데이터 및 개념 설명
+ 
+    1) housedebt - 가계신용. 가계부채는 일반 가정이 은행 등 금융기관에서 대출을 받거나 외상으로 물품을 구입한 대금 등을 합한 금액으로, 가계부채 규모는 한국은행 경제통계시스템이 집계하는 가계신용 통계로 파악하므로 즉 이는 가계신용을 뜻하며 가계신용은 가계대출과 판매신용으로 구성된다. 가계부채는 지속적으로 증가 추세이며, 특히 '15년부터 크게 급증하였다. 데이터 출처 - 한국은행 경제통계시스템(2006.1분기~2017.1분기)
+    
+    2) GDP deflator - 디플레이터. 그 나라 국민경제 수준의 물가 수준을 나타낸다. 경제 전반의 모든 상품과 서비스의 물가변화를 대상으로 한다. 데이터 출처 - 한국은행 경제통계시스템(2006.1분기~2017.1분기)
+    
+    3) houseprice - 서울의 공동주택, 아파트 통합 실거래가격지수. 전국 단위의 실거래가격지수를 사용하려 했으나 분기별로 얻을 수 있는 데이터는 서울의 데이터였던 관계로 서울의 공동주택, 아파트 실거래가격지수 변동률 데이터를 사용하였다. 데이터 출처 - 한국감정원
+    
+    4) houserate - 예금취급기관 주택담보대출금리. 주택담보대출금리 인상시 가계의 이자부담이 늘어나 가계에 큰 부담으로 작용한다. 데이터 출처 - 한국은행 경제통계시스템(2006.1분기~2017.1분기)
+    
+    5) employrate - 고용률은 15-64세 생산가능인구 중 취업한 사람들의 비율을 말한다. 고용률은 얼마나 많은 사람들이 실제로 취업하고 있는지를 가장 간명하게 나타내는 지표로서, 노동시장의 현황을 핵심적으로 보여준다. 데이터 출처 - 한국은행 경제통계시스템(2006.1분기~2017.1분기)
+ 
+## 데이터 불러오기
+#### 0. 필요한 패키지
+```{r}
+library(readxl)
+library(dplyr)
+library(stringr)
+```
+
+#### 1. 불러오기
+```{r, message=FALSE, warning=FALSE}
+housedebt_raw <- read_excel("1.housedebt.xlsx")
+deflator_raw <- read_excel("2.deplator.xlsx")
+houseprice_raw <- read_excel("3.houseprice.xlsx")
+houserate_raw <- read_excel("4.houserates.xlsx")
+employmentrates_raw <- read_excel("5.employmentrates.xlsx")
+```
+
+#### 2.예상치 못했던 문제점과 해결책
+```{r, message=FALSE, warning=FALSE}
+housedebt <- housedebt_raw #이하 가계부채
+deflator <- deflator_raw #이하 디플레이터
+houseprice <- houseprice_raw #이하 주택가격 
+houserate <- houserate_raw #이하 주택담보대출금리
+employ <- employmentrates_raw #이하 고용률 
+
+# 예상치 못했던 문제점: houseprice에 결측치가 존재!
+# 2006년 1분기 & 2017년 2분기 이후의 데이터가 없었던 것이 이유
+# 데이터를 합친 후 시계열데이터의 특성을 위해 해당 분기의 행은 모두 결측처리
+
+```
+
+
+## 데이터 합치기(join)
+```{r, message=FALSE, warning=FALSE}
+join_sample <- inner_join(housedebt, deflator, by='year_q')
+
+df1 <- data.frame(housedebt$year_q, housedebt$housedebt, deflator$deplator,
+                  houseprice$houseprice, houserate$houserates, employ$employmentrate)
+names(df1) <- c('year_q','housedebt','deflator','houseprice','houserate','employrate')
+
+
+df1$year_q <- str_replace(df1$year_q, '_','.')
+
+#결측치 제거!
+df1 <- df1[complete.cases(df1), ]
+table(is.na(df1))
+
+
+```
+
+## 데이터 살펴보기
+###  1. 적절한 데이터유형 (as.numeric, as.factor 등)
+
+```{r, message=FALSE, warning=FALSE}
+class(df1$year_q)        
+class(df1$housedebt)    
+class(df1$deflator)      
+class(df1$houseprice)    
+class(df1$houserate)     
+class(df1$employrate)    
+
+#연도_분기 형식으로 저장된 데이터는 character 타입, 그 외 다른 변수는 numeric 타입임을 확인.
+
+```
+
+###  2. summary
+```{r, message=FALSE, warning=FALSE}
+summary(df1)
+
+```
+
+###  3. outlier 존재 확인하기 (배경지식, 시각화)
+```{r, message=FALSE, warning=FALSE}
+#year_q 제외한 변수들 boxplot 한번에 보기
+boxplot(subset(df1, select=-year_q),outcol="red")
+
+
+```
+
+####주택가격과 고용률에 이상치가 존재함을 확인. 또한 상대적으로 주택담보대출금리의 range가 넓음. 
+
+
+
+#시각화
+
+###  0. 시각화에 필요한 package library
+```{r, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(corrplot)
+library(bindrcpp)
+library(car)
+library(lattice)
+library(psych)
+library(gridExtra)
+library(grid)
+library(RColorBrewer)
+library(jtools)
+library(ggcorrplot)
+```
+
+###  1. 한 변수의 분포 시각화
+```{r, message=FALSE, warning=FALSE}
+#lattice - densityplot
+Accent <- brewer.pal(8, "Accent")
+
+dp1 <- densityplot(~deflator, data=df1, col.symbol=Accent[1], col=Accent[2], xlab='',ylab='density', main='deflator')
+dp2 <- densityplot(~houseprice, data=df1, col.symbol=Accent[1], col=Accent[2], xlab='',ylab='density', main='houseprice')
+dp3 <- densityplot(~houserate, data=df1, col.symbol=Accent[1], col=Accent[2], xlab='',ylab='density', main='houserate')
+dp4 <- densityplot(~employrate, data=df1, col.symbol=Accent[1], col=Accent[2], xlab='',ylab='density', main='employrate')
+
+grid.arrange(dp1,dp2,dp3,dp4, ncol=2, top=textGrob('Distribution visualization by lattice',gp=gpar(fontsize=20,font=3)))
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+#ggplot - histogram + density
+Dark2 <- brewer.pal(8, "Dark2")
+
+
+gh1 <- ggplot(data= df1, aes(x=deflator, y=..density..)) + 
+  geom_histogram(aes(y=..density..), binwidth=0.5, color='black',fill=Dark2[5],alpha=0.5) +
+  geom_line(stat='density')+ labs(title="deflator" )+theme(axis.title.x = element_blank())
+gh2 <- ggplot(data= df1, aes(x=houseprice, y=..density..)) + 
+  geom_histogram(aes(y=..density..), binwidth=2, color='black',fill=Dark2[5],alpha=0.5) +
+  geom_line(stat="density")+ labs(title="houseprice" )+theme(axis.title.x = element_blank())
+gh3 <- ggplot(data= df1, aes(x=houserate, y=..density..)) + 
+  geom_histogram(aes(y=..density..), binwidth=3.5, color='black',fill=Dark2[5],alpha=0.5) +
+  geom_line(stat="density")+ labs(title="houserate" )+theme(axis.title.x = element_blank())
+gh4 <- ggplot(data= df1, aes(x=employrate, y=..density..)) + 
+  geom_histogram(aes(y=..density..), binwidth=0.5, color='black',fill=Dark2[5],alpha=0.5) +
+  geom_line(stat="density")+ labs(title="employrate")+theme(axis.title.x = element_blank())
+
+grid.arrange(gh1,gh2,gh3,gh4, ncol=2, top=textGrob('Distribution visualization by ggplot',gp=gpar(fontsize=20,font=3)))
+
+```
+
+#### ggplot으로 본 각각의 변수들의 분포 시각화. 자료의 개수가 다소 적지만 조금의 정규성을 띈다.
+
+
+
+```{r, message=FALSE, warning=FALSE}
+#변수들의 정규성 확인
+library(car)
+par(mfrow=c(2,2))
+
+qqPlot(df1$deflator, main='deflator')
+qqPlot(df1$houseprice, main='houseprice')
+qqPlot(df1$houserate, main='houserate')
+qqPlot(df1$employrate,main='employrate')
+
+```
+
+#### 대부분의 변수들이 정규성을 띈다. 
+
+
+```{r, message=FALSE, warning=FALSE}
+#time series
+Set3 <- brewer.pal(8, "Set3")
+
+ggplot(data=df1) +
+  geom_line(mapping=aes(y=housedebt,x= year_q,color="housedebt"),size=2,group=1 ) +
+  geom_line(mapping=aes(y=deflator,x= year_q,color="deflator"),size=1.5,group=1, alpha=0.7) +
+  geom_line(mapping=aes(y=houseprice,x= year_q,color="houseprice"),size=1.5,group=1, alpha=0.7) +
+  geom_line(mapping=aes(y=houserate,x= year_q,color="houserate"),size=1.5,group=1, alpha=0.7) +
+  geom_line(mapping=aes(y=employrate,x= year_q,color="employrate"),size=1.5,group=1, alpha=0.7) +
+  scale_color_manual(values = c(
+    'housedebt' = Set3[4],
+    'deflator' = Set3[2],
+    'houseprice' = Set3[3],
+    'houserate' = Set3[1],
+    'employrate' = Set3[5])) +labs(color = 'Variables') + 
+  theme(axis.text.x = element_text(face="bold", size=7, angle=45)) +
+  theme(axis.text.x = element_blank(), axis.ticks = element_blank()) +
+  labs(title='Time series',
+       subtitle=' 2006년부터 2017년까지 분기별로 모든 변수의 추이를 확인한 시계열 그래프. ',
+       caption = '종속변수로 설정한 가계부채의 그래프를 조금 더 강조하여 표시했다.')
+
+```
+
+#### 약 11년간의 모든 변수들의 분기별 추이를 확인할 수 있으며, 주택담보대출금리 변수의 추이의 폭이 상대적으로 더 큰 것은 변수 자체로 비율을 나타낸 금리(%) 단위 자체의 특성 때문에 그 범위가 더욱 확대되는 것이라 보았다. 
+
+
+###  2. 두 변수의 관계 시각화
+
+```{r, message=FALSE, warning=FALSE}
+#lattice - xyplot
+Set1 <- brewer.pal(8, "Set1")
+
+xy1 <- xyplot(housedebt~deflator, data=df1,
+       type = c('p','g','smooth'), col=Set1[1], col.line=Set1[2], xlab='', main='vs. deflator')
+xy2 <- xyplot(housedebt~houseprice, data=df1,
+       type = c('p','g','smooth'), col=Set1[1], col.line=Set1[2], xlab='', main='vs. houseprice')
+xy3 <- xyplot(housedebt~houserate, data=df1,
+       type = c('p','g','smooth'), col=Set1[1], col.line=Set1[2], xlab='', main='vs. houserate')
+xy4 <- xyplot(housedebt~employrate, data=df1,
+       type = c('p','g','smooth'), col=Set1[1], col.line=Set1[2], xlab='', main='vs. employrate')
+
+grid.arrange(xy1,xy2,xy3,xy4, ncol=2, top=textGrob("Relationship visualization by lattice",gp=gpar(fontsize=20,font=3)))
+
+```
+
+#### 종속변수로 설정한 가계부채와의 상관성을 알아보기 위하여 x축에 각 변수를, y축에 가계부채를 설정한 변수의 관계 시각화.
+#### 주택담보대출금리의 추세선이 직선으로 그려져 눈에 띈다. 
+
+
+
+```{r, message=FALSE, warning=FALSE}
+#ggplot
+
+gs1 <- ggplot(data=df1, aes(x=deflator, y=housedebt)) + 
+  geom_point() +
+  geom_smooth(method=lm) +
+  labs(title="vs. deflator" )+
+  theme(axis.title.x = element_blank())
+gs2 <- ggplot(data=df1, aes(x=houseprice, y=housedebt)) + 
+  geom_point()+
+  geom_smooth(method=lm)  +
+  labs(title="vs. houseprice")+
+  theme(axis.title.x = element_blank())
+gs3 <- ggplot(data=df1, aes(x=houserate, y=housedebt)) + 
+  geom_point()+
+  geom_smooth(method=lm)  +
+  labs(title="vs. houserate")+
+  theme(axis.title.x = element_blank())
+gs4 <- ggplot(data=df1, aes(x=employrate, y=housedebt)) + 
+  geom_point()+
+  geom_smooth(method=lm)  +
+  labs(title="vs. employrate")+
+  theme(axis.title.x = element_blank())
+
+grid.arrange(gs1,gs2,gs3,gs4, ncol=2, top=textGrob("Relationship visualization by ggplot",gp=gpar(fontsize=20,font=3)))
+```
+
+###  3. 한 변수 분포의 조건부 시각화 (06년~11년 -> before, 12년~17년 -> after)
+#### 변수들관의 관계는 시기적으로 언제 영향력이 더 컸는지, 관계성은 오래전부터 항상 일관적이었는지 구간을 6년 기준으로 나누어 파악하려 한다.
+
+
+```{r, message=FALSE, warning=FALSE}
+#2011년 이전
+df1_before<- df1 %>% filter(year_q < '2011')
+
+bf_gh1 <- ggplot(data= df1_before, aes(x=deflator, y=..density..)) + 
+  geom_histogram(aes(y=..density..), binwidth=0.5, color='black',fill=Set3[4],alpha=0.8) +
+  geom_line(stat='density',size=1)+
+  theme(axis.title.y = element_blank(),text = element_text(size=15)) +
+  xlim(-2.5,7.5)
+bf_gh2 <- ggplot(data= df1_before, aes(x=houseprice, y=..density..)) +
+  geom_histogram(aes(y=..density..), binwidth=2.5, color='black',fill=Set3[4],alpha=0.8) +
+  geom_line(stat='density', size=1)+
+  theme(axis.title.y = element_blank(),text = element_text(size=15)) + 
+  xlim(-10,20)
+bf_gh3 <- ggplot(data= df1_before, aes(x=houserate, y=..density..)) + 
+  geom_histogram(aes(y=..density..), binwidth=4.5, color='black',fill=Set3[4],alpha=0.8) +
+  geom_line(stat="density",size=1)+theme(axis.title.y = element_blank(),text =element_text(size=15))+
+  xlim(-30,30)
+bf_gh4 <- ggplot(data= df1_before, aes(x=employrate, y=..density..)) + 
+  geom_histogram(aes(y=..density..), binwidth=0.5, color='black',fill=Set3[4],alpha=0.8) +
+  geom_line(stat="density",size=1)+theme(axis.title.y = element_blank(),text = element_text(size=15))+
+  xlim(-2.5,2.5)
+
+
+#2011년 이후
+df1_after<- df1 %>% filter(year_q > '2011')
+
+af_gh1 <- ggplot(data= df1_after, aes(x=deflator, y=..density..)) + 
+  geom_histogram(aes(y=..density..), binwidth=0.5, color='black',fill=Set3[5],alpha=0.8) + geom_line(stat='density', size=1)+theme(axis.title.y = element_blank(),axis.title.x = element_blank(),text = element_text(size=15)) + xlim(-2.5,7.5) 
+af_gh2 <- ggplot(data= df1_after, aes(x=houseprice, y=..density..)) + 
+  geom_histogram(aes(y=..density..), binwidth=2.5, color='black',fill=Set3[5],alpha=0.8) + geom_line(stat="density", size=1)+theme(axis.title.y = element_blank(),axis.title.x = element_blank()) + theme(axis.title.x = element_blank(),text = element_text(size=15)) + xlim(-10,20)
+af_gh3 <- ggplot(data= df1_after, aes(x=houserate, y=..density..)) + 
+  geom_histogram(aes(y=..density..), binwidth=4.5, color='black',fill=Set3[5],alpha=0.8) + geom_line(stat="density",size=1)+theme(axis.title.y = element_blank(),axis.title.x = element_blank()) + theme(axis.title.x = element_blank(),text = element_text(size=15)) + xlim(-30,30)
+af_gh4 <- ggplot(data= df1_after, aes(x=employrate, y=..density..)) + 
+  geom_histogram(aes(y=..density..), binwidth=0.5, color='black',fill=Set3[5],alpha=0.8) + geom_line(stat="density",size=1)+theme(axis.title.y = element_blank(),axis.title.x = element_blank()) + theme(axis.title.x = element_blank(),text = element_text(size=15)) + xlim(-2.5,2.5)
+
+grid.arrange(bf_gh1,bf_gh2,bf_gh3,bf_gh4,af_gh1,af_gh2,af_gh3,af_gh4,nrow=2, top=textGrob('Distribution visualization by ggplot',gp=gpar(fontsize=20,font=3)))
+
+```
+
+#### 11년 이전과 11년 이후의 분포가 육안으로 크게 차이나지 않았다. 
+
+
+###  4. 두 변수의 관계 조건부 시각화
+```{r, message=FALSE, warning=FALSE}
+#년도 정보만 있는 df2
+df2 <- df1
+df2 <- subset(df2, select=-year_q)
+df2$year <- substr(df1$year_q, 1,4)
+df2$year <- as.numeric(df2$year)
+class(df2$year)
+```
+
+```{r, message=FALSE, warning=FALSE}
+df2_before<- df2 %>% filter(year <= '2011')
+df2_after<- df2 %>% filter(year > '2011')
+
+facet_bf <- ggplot(data=df2_before, aes(x=deflator, y=housedebt)) +
+  geom_point(color=Set3[4], size=2) + facet_grid(. ~year) +
+  labs(title=' 06 to 11 ')
+facet_af <- ggplot(data=df2_after, aes(x=deflator, y=housedebt)) +
+  geom_point(color=Set3[5], size=2) + facet_grid(. ~year)+
+  labs(title=' 12 to 17 ',caption=' 매년도별로 facet 사용하여 두 변수간의 산점도를 표현함. ')
+
+grid.arrange(facet_bf, facet_af,nrow=2,top=textGrob('Conditional visualization of two variables',gp=gpar(fontsize=20,font=3)))
+
+```
+
+#### deflator 변수와 가계부채 변수와의 관계를 년도별로 나타내었으며, 상단에 11년도 이전, 하단에 11년도 이후를 나타내었다.
+#### 데이터의 수가 많지 않아 적합하지 않은 그림이라 판단하였다. 
+
+```{r, message=FALSE, warning=FALSE}
+point_bf1 <- ggplot(data=df2_before, aes(x=deflator, y=housedebt)) +
+  geom_point(size=3, color=Set3[4], alpha=0.8) + stat_ellipse(type = "norm") +
+  theme(text = element_text(size=15)) +xlim(-1,5)
+point_bf2 <- ggplot(data=df2_before, aes(x=houseprice, y=housedebt)) +
+  geom_point(size=3, color=Set3[4], alpha=0.8) + stat_ellipse(type = "norm")+
+  theme(axis.title.y = element_blank(),text = element_text(size=15)) + xlim(-8,12)
+point_bf3 <- ggplot(data=df2_before, aes(x=houserate, y=housedebt)) +
+  geom_point(size=3, color=Set3[4], alpha=0.8) + stat_ellipse(type = "norm")+
+  theme(axis.title.y = element_blank(),text = element_text(size=15)) + xlim(-30,30)
+point_bf4 <- ggplot(data=df2_before, aes(x=employrate, y=housedebt)) +
+  geom_point(size=3, color=Set3[4], alpha=0.8) + stat_ellipse(type = "norm")+
+  theme(axis.title.y = element_blank(),text = element_text(size=15)) + xlim(-3,3)
+
+
+point_af1 <- ggplot(data=df2_after, aes(x=deflator, y=housedebt)) +
+  geom_point(size=3,color=Set3[5], alpha=0.8)+ stat_ellipse(type = "norm") +
+  theme(axis.title.x = element_blank(),text = element_text(size=15))+xlim(-1,5)
+point_af2 <- ggplot(data=df2_after, aes(x=houseprice, y=housedebt)) +
+  geom_point(size=3,color=Set3[5], alpha=0.8)+ stat_ellipse(type = "norm")+
+  theme(axis.title.y = element_blank(),axis.title.x = element_blank(),text = element_text(size=15)) +
+  xlim(-8,12)
+point_af3 <- ggplot(data=df2_after, aes(x=houserate, y=housedebt)) +
+  geom_point(size=3,color=Set3[5], alpha=0.8)+ stat_ellipse(type = "norm")+
+  theme(axis.title.y = element_blank(),axis.title.x = element_blank(),text = element_text(size=15)) +
+  xlim(-30,30)
+point_af4 <- ggplot(data=df2_after, aes(x=employrate, y=housedebt)) +
+  geom_point(size=3,color=Set3[5], alpha=0.8)+ stat_ellipse(type = "norm")+
+  theme(axis.title.y = element_blank(),axis.title.x = element_blank(),text = element_text(size=15)) +
+  xlim(-3,3)
+
+grid.arrange(point_bf1,point_bf2,point_bf3,point_bf4, point_af1,point_af2,point_af3,point_af4, nrow=2,top=textGrob('Conditional visualization of two variables',gp=gpar(fontsize=20,font=3)))
+```
+
+#### 11년도 이전과 11년도 이후의 분포가 일관성이 있는 변수는 주택가격과 주택담보대출금리였다.
+#### 즉 주택가격과 담보대출금리는 전체 기간에서 상대적으로 가계부채에 더 알관성있게 유의했을 것이다. 
+#### 디플레이터와 고용률은 11년 전과 후의 추세가 반대 방향.
+
+```{r, message=FALSE, warning=FALSE}
+#상관관계 확인(1)
+corr <- round(cor(subset(df2,select=-year)), 1)
+
+ggcorrplot(corr, hc.order=TRUE,
+           type="lower",
+           lab=TRUE,
+           lab_size=3,
+           method='circle',
+           colors=c(Set3[4],'white',Set3[5]),
+           title='Correlogram',
+           ggtheme=theme_bw)
+```
+
+```{r, message=FALSE, warning=FALSE}
+#상관관계 확인(2)
+cor_sample <- cor(subset(df1, select= -year_q))
+
+corrplot(cor_sample, method='shade', shade.col = NA, tl.col = 'black', tl.srt = 45)
+
+##1에 가까울수록 파란색, -1에 가까울수록 붉은색
+
+```
+
+
+```{r, message=FALSE, warning=FALSE}
+df3 <- df2 %>% 
+  mutate(period = ifelse(year<=2011,'before','after'))
+
+per1 <- ggplot(df3, aes(x=deflator, y=housedebt, color=period))  + 
+  geom_point() + geom_smooth(method=lm)+
+  theme(axis.title.x = element_blank(),legend.position="none")+
+  labs(title="vs. deflator" )
+per2 <- ggplot(df3, aes(x=houseprice, y=housedebt, color=period))  + 
+  geom_point() + geom_smooth(method=lm)+
+  theme(axis.title.x = element_blank(),legend.position="none")+
+  labs(title="vs. houseprice" )
+per3 <- ggplot(df3, aes(x=houserate, y=housedebt, color=period))  + 
+  geom_point() + geom_smooth(method=lm)+
+  theme(axis.title.x = element_blank(),legend.position="none")+
+  labs(title="vs. houserate" )
+per4 <- ggplot(df3, aes(x=employrate, y=housedebt, color=period))  + 
+  geom_point() + geom_smooth(method=lm)+
+  theme(axis.title.x = element_blank(),legend.position=c(0.72,0.1),legend.direction = 'horizontal')+
+  labs(title="vs. employrate" )
+
+grid.arrange(per1,per2,per3,per4,nrow=2,top=textGrob('Conditional visualization of two variables',gp=gpar(fontsize=20,font=3)))
+```
+
+#### before의 회귀선과 after의 회귀선이 비슷하다면 전 구간에서 일관성있게  유의하다고 볼 수 있다.
+#### 위 그래프로 주택가격에 가장 영향을 많이 주는 변수는 주택담보대출금리임을 확인할 수 있다.
+#### 주택가격 또한 다소 차이는 있지만 회귀선의 기울기가 둘다 양의 값을 가져 주택담보대출금리에 담보대출금리 다음으로 영향을 많이 준다는 것을 추측할 수 있다.  
+
+
+##단일선형회귀 분석
+```{r, message=FALSE, warning=FALSE}
+library(jtools)
+output1 <- lm(housedebt~deflator, data=df1)
+summ(output1) #y=0.2985x + 7.9809 
+
+output2 <- lm(housedebt~houseprice, data=df1)
+summ(output2) #y=0.28146x + 8.11962
+
+output3 <- lm(housedebt~houserate, data=df1)
+summ(output3) #y=0.11698x + 9.09794
+
+output4 <- lm(housedebt~employrate, data=df1)
+summ(output4) #y=-0.07307x + 8.55847
+##설명 : Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+##  *의 개수가 많을수록 p-value가 0.05보다 작아짐. 통계적으로 유의해진다.
+
+###결과 :  housedebt와의 단일회귀분석은 houserate>houseprice>deflator>employrate 순서로 통계적으로 유의하다.
+
+```
+
+#### 결과 :  housedebt와의 단일회귀분석은 houserate>houseprice>deflator>employrate 순서로 통계적으로 유의하다.
+
+##다중회귀분석
+```{r, message=FALSE, warning=FALSE}
+output5 <- lm(housedebt ~ houserate+houseprice+employrate+deflator, data=df1)
+summ(output5) 
+
+```
+
+#### employrate p-value 0.724372 / deflator 0.104990 로 설명력 낮음. 최대 설명력 houserate
+
+# 최종 플롯 3개.
+
+```{r, message=FALSE, warning=FALSE}
+#단순 회귀 그래프
+grid.arrange(gs1,gs2,gs3,gs4, ncol=2, top=textGrob("Relationship visualization by ggplot",gp=gpar(fontsize=20,font=3)))
+
+#조건부 분포 그래프
+grid.arrange(point_bf1,point_bf2,point_bf3,point_bf4, point_af1,point_af2,point_af3,point_af4, nrow=2,top=textGrob('Conditional visualization of two variables',gp=gpar(fontsize=20,font=3)))
+
+#조건부 회귀 그래프
+grid.arrange(per1,per2,per3,per4,nrow=2,top=textGrob('Conditional visualization of two variables',gp=gpar(fontsize=20,font=3)))
+```
+
+# 한계점
+
+#### * 사용한 데이터는 모두 분기 기준으로 총 44분기의 데이터를 활용하였는데, 이는 다소 적은 데이터의 수를 활용한 것으로 위 조사의 한계점이 될 수 있다. 데이터를 제공한 사이트(한국은행 경제통계시스템) 에서는 월 데이터로는 전체 변수의 데이터를 얻기 힘들었기 때문에 분기 데이터를 활용했다. 
+
+#### * 위 분석에서 사용한 회귀모형은 기본적인 통계 방식만을 R에서 사용하여 구현한 모형이며, 거시경제 변수는 시간 차를 두고 다른 변수에 영향을 주기도 하는 등 다른  복잡한 경제원리를 배제한 단순화한 모델으로 설정한 한계점을 가진다.
+
+#결론
+
+#### 1. **가계부채는 주택담보대출금리에 영향을 가장 많이 받으며, 또한 설명력이 높음을 시각화와 회귀분석을 통하여 확인할 수 있다.** 이는 서론에 있던 기사 [Link1_'1500조 가계부채' 금리인상 타격… 금융당국 일제히 현황 점검](http://news.hankyung.com/article/2018093092251) 에도 설명되어 있듯, 금융권에서는 금리가 0.25%포인트 오르면 가계의 이자 부담이 2조3000억원 안팎 늘어나는 것으로 분석하였다는 내용과 방향을 같이 한다. 
+
+#### 2. **주택가격 또한 가계부채에 영향을 많이 주는 것을 확인할 수 있었다.** 흔히 생각할 수 있는 새 아파트 분양 과정에서 발생하는 집단대출이나, 주택 임대시장에서 전세에서 월세로 넘어가는 현상 등은 최근에 더 강하게 유인했을 것이라는 분석이 있다. 월세를 받게 되면 집주인은 금융기관에 직접적으로 담보대출을 받는 과정에서 가계부채에 영향을 줄 수 있는 것이다. 
+
+#### 3. **가계부채와의 상관관계는 주택담보대출금리 > 주택가격 > GDP 디플레이터 > 고용률 순서대로 높다고 볼 수 있다.** 여기서 총 10년의 기간 중 가계부채가 2배 이상 급증한 최근 5년 추세의 영향을 확인하기 위해 조건을 달리 하여 구간을 나누어 확인하였다.
+
+#### 4. 구간을 나누었을 때 11년 이전과 11년 이후가 다른 상관관계를 보인다는 것은 1)실제로 그 값의 상관관계가 바뀌는 event가 있었거나 2)데이터의 수가 적거나 하여 설정한 구간에 따라 양상이 달라지거나 3) 실제로 상관관계가 약해서 그런 결과를 발생시킨다고 보았고, 위 분석에서는 3)에 해당한다고 가정하고 분석을 진행하였다. 그리하여 디플레이터와 고용률은 가계부채에 영향을 미치는 정도가 전 구간에 걸쳐 주택가격과 담보대출금리보다 적으며, **결론적으로 디플레이터와 고용률 같은 경제변수는 주택시장에 금리 및 주택가격보다는 직접적 영향을 미치기 어려움을 종합적으로 확인할 수 있다.**  
+
+

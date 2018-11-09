@@ -1,0 +1,134 @@
+---
+title: "4th_assignment"
+author: "JunHyeongKim"
+date: "2018년 10월 19일"
+output: html_document
+---
+
+#### <과제4 _ 18.10.19> 
+
+#### 1. 관심자료에 대해 'summary'를 하고 집단별로 나눠서 'min', 'max', 'mean', 'sd'를 구해보시오.
+
+# 필요한 패키지 로드
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(readxl)
+```
+
+# 데이터 불러오기
+```{r echo=TRUE, warning=FALSE, paged.print=FALSE}
+# 17-18시즌 잉글랜드 프리미어 리그 모든 경기에 대한 로우 데이터
+data <- read_xlsx("E0.xlsx")
+
+```
+
+# 데이터 파악하기
+```{r echo=TRUE, message=FALSE, warning=FALSE, paged.print=FALSE}
+summary(data)
+
+# 17-18시즌 잉글랜드리그 각 팀의 홈경기 득점 및 원정경기 득점 (정렬은 경기당 평균득점순)
+
+# 홈경기 성적 
+
+data %>% 
+  group_by(HomeTeam) %>% 
+  summarise(min = min(FTHG),
+            max = max(FTHG),
+            mean = mean(FTHG),
+            sd = sd(FTHG)) %>% 
+  arrange(desc(mean))
+
+# 원정경기 성적
+
+data %>% 
+  group_by(AwayTeam) %>% 
+  summarise(min = min(FTAG),
+            max = max(FTAG),
+            mean = mean(FTAG),
+            sd = sd(FTAG)) %>% 
+  arrange(desc(mean))
+```
+
+#### 2. 집단별로 함수를 적용하는 방법을 활용하여 자료에서 새로운 사실을 발견해 보세요.
+
+# 데이터 집단별 구분하기
+```{r}
+# 경기결과에 있어서 "홈경기가 더 유리하다."라는 이야기를 증명하기 위해 경기결과로 집단을 나누어 결과를 본다.
+
+data %>%
+  group_by(FTR) %>% 
+  summarise(count_win = n()) %>% 
+  arrange(desc(count_win))
+
+# 따라서 홈경기가 원정경기에 비해서 더 유리하다고 볼 수 있다.
+
+```
+
+#### 3. 두 개 이상의 자료를 통합(join)해서 하나의 큰 자료를 만들어 보세요.
+
+# 두 자료 통합하기
+
+```{r echo=TRUE, warning=FALSE, paged.print=FALSE}
+# 추가자료인 2016-2017 자료를 불러온다.
+
+data2 <- read_xlsx("E0_bet.xlsx")
+
+# 두 자료의 기준이 되는 변수를 찾는다.
+
+ls(data)
+ls(data2)
+
+# 이 데이터를 공통변수인 'Date'변수를 기준으로 가로로 합친다.
+
+total <- left_join(data, data2, by = "Date")
+
+total
+
+```
+
+#### 4. 이 자료를 가로형, 세로형으로 형태를 바꿔 보세요.
+
+```{r echo=TRUE, warning=FALSE, paged.print=FALSE}
+# 현재 이 데이터는 가로형 데이터로 세로형으로 바꿔야한다.
+# 우선 해당하는 함수패키지를 불러온다.
+
+library(tidyr)
+
+data %>%
+  gather(key = 'feature', value = 'Value', Date, HomeTeam, AwayTeam, FTHG, FTAG, FTR, HTHG, HTAG, HTR, Referee, HS, AS, HST, AST, HF, AF, HC, AC, HY, AY, HR, AR) -> new_data
+
+data %>% gather(key='feature', value='value', FTHG:AR)
+
+head(new_data)
+
+```
+
+## <span style="color:red">채점 사항</span>
+
+> Div, Date, HomeTeam, AwayTeam이 모두 하나의 경기를 식별하기 위한 정보이고, FTHG, FTAG, ...등은 모두 그 경에 대한 결과를 나타내고 있으므로, gather(key='feature', value='value', FTHG:AR)이 적절할 것입니다.
+
+#### 5. 위의 방법을 활용하여 자료에서 새로운 사실을 발견해 보세요.
+
+```{r echo=TRUE, warning=FALSE, paged.print=FALSE}
+# 데이터프레임 만들기
+
+data_new <- data %>%
+  gather(key = 'feature', value = 'Value', Date, HomeTeam, AwayTeam, FTHG, FTAG, FTR, HTHG, HTAG, HTR, Referee, HS, AS, HST, AST, HF, AF, HC, AC, HY, AY, HR, AR) -> new_data
+head(new_data)
+
+# 데이터 살펴보기
+
+View(data_new)
+
+# 분석하기가 너무 어렵다.    
+
+# 해당변수에 어떠한 값이 있는지는 알기 쉬우나 이 값이 어떤 데이터의 값인지 알기가 매우 어렵다.
+
+
+```
+
+
+## <span style="color:red">채점 사항</span>
+
+> 수고했습니다. 만약 결측치가 상당히 존재하는 데이터의 경우 가로형/세로형 변환을 통해 결측치의 패턴을 확인할 수 있습니다.
+

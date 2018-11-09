@@ -1,4 +1,0 @@
-lottery <- c("tryagain", "congratulation")
-sum(1:100)
-hist(sample(1:6, 10000, replace=TRUE), breaks=0 : 6)
-mean(sample(1:6, 100, replace=TRUE))
