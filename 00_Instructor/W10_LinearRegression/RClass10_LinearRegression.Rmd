@@ -1,0 +1,265 @@
+---
+title: "Linear Regression"
+author: "KwH. Kim"
+date: "2018년 11월 9일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(fig.height=3)
+knitr::opts_chunk$set(fig.width=4)
+library(ggplot2)
+```
+
+## 기초 통계학
+
+* 통계학의 두 가지 주제: 서술 통계(descriptive statistics), 추론 통계(inferential statistics)
+
+* 모집단(population)/표본(sample)
+
+* 모수(parameter)/추정량(estimator)
+   - 모수의 예
+       - 통계 요약치
+           - 집중경향치 : 평균(mean), 중앙값(median), 최빈값(mode), 절사평균(trimmed mean)
+           - 변산성 측정치 : 범위(range), 사분점간 범위(inter-quartile range), 분산(variance)
+           
+* 모평균의 추정방법(모평균 추정량)
+    - 표본 평균
+    - 표본 중앙값
+   
+* 추정량의 좋은 성질
+    - 비편향성(unbiasedness)
+    - 일치성(consistency)
+    - 효율성(efficiency)
+
+* 가설 검정 
+    - 영가설(귀무가설; null hypothesis), 검정통계량(test statistics)
+    - 유의수준(significance level), 오류율(error rate), 기각역(critical region)
+    - 효과크기(effect size)
+    - 검정력(power)
+    
+## 예: 모평균 추정하기
+```{r populationMean, collapse=TRUE, fig.show='hold'}
+print(getwd())
+#dat <- read.csv(file='./00_Instructor/W10_LinearRegression/LR_weight_n100.csv', header=T, row.names=1)
+#dat <- read.csv(file='./W10_LinearRegression/LR_weight_n100.csv', header=T, row.names=1)
+dat <- read.csv(file='./LR_weight_n100.csv', header=T, row.names=1)
+t.test(dat$height)
+t.test(dat$weight)
+
+```
+
+## 예: 모평균의 차이 추정하기
+```{r populationMeanDif, collapse=TRUE, fig.show='hold'}
+t.test(height ~ gender, dat)
+t.test(weight ~ gender, dat)
+
+ggplot(dat, aes(x=gender, y=height, col=gender)) + 
+  #geom_point(alpha=0.2, col='black') + 
+  geom_boxplot(width=0.3) +
+  #geom_boxplot(width=0.3, alpha=0.2) + 
+  guides(colour='none', fill='none') + 
+  scale_x_discrete(labels=c('Female', 'Male')) +
+  labs(title='남녀의 키 분포 비교')
+```
+
+    
+---
+
+## 회귀(Regression) 분석(Analysis)
+
+* 독립변수(independent variable), 종속변수(dependent variable)
+* 설명변수(Explanatory variable), 반응변수(Response variable)
+* 예측변수(Predictor variable), 결과변수(Outcome variable)
+
+$$ \mathbb{E}[Y | x_1, x_2, ..., x_p] = f(x_1, x_2, ..., x_p) $$
+
+---
+
+## 단순선형회귀(Simple Linear Regression) 분석
+
+### 모형
+
+$$ y= \beta_0 + \beta_1 x + e, e \sim N(0, \sigma^2)$$
+$$ E[Y | x] = \beta_0 + \beta_1 x + e $$
+
+### 가정(LINE)
+
+- **L**inearity(선형성)
+- **I**ndependence(독립성)
+- **N**ormality(정규성)
+- **E**qual variance(등분산성)
+
+### 예: 부모와 키로 자녀의 키 예측하기
+```{r SLR, collapse=T, fig.show='hold'}
+library(ggplot2)
+getwd()
+dat <- read.csv(file='./LR_weight_n100.csv', header=T, row.names=1)
+
+# 01. 데이터 살펴보기
+ggplot(dat, aes(x=height, y=weight)) + geom_point() + labs(title="01. 데이터 살펴보기")
+
+# 02. 회귀분석
+fitLm <- lm(weight ~ height, dat)
+print(fitLm)
+print(summary(fitLm))
+
+# 03. 회귀분석 결과를 시각화하기
+## a
+plot(weight ~ height, dat, main='03. 회귀분석 결과 시각화 a'); abline(fitLm)
+
+## b
+ggplot(dat, aes(x=height, y=weight)) + geom_point() + 
+  geom_smooth(method="lm") + labs(title='03. 회귀분석 결과 시각화 b')
+
+## c
+ggplot(dat, aes(x=height, y=weight)) + geom_point() +
+  geom_abline(intercept = fitLm$coefficients["(Intercept)"],
+              slope = fitLm$coefficients["height"]) + 
+  labs(title='03. 회귀분석 결과 시각화 c')
+
+# 04. 회귀분석 가정 검토
+#par(mfrow=c(2,2),oma = c(0, 0, 2, 0))
+plot(fitLm, main='04. 회귀분석 가정 검토') # plot(fitLm, which=1:6)
+## a. x와 y의 관계가 선형적인가?
+## b. 잔차가 정규성을 띄는가?
+## c. 잔차가 등분산인가?
+## d. 특이값(계수 추정에 큰 영향을 미치는 값)이 존재하는가?
+```
+
+### 몇 가지 유의할 부분
+
+- 계수의 크기는 계수의 유의성과 다르다
+    - 키와 체중의 관계에서 키 또는 체중의 측정 단위를 달리하면 계수를 임의로 증가 혹은 감소시킬 수 있다. 
+    - 유의성 여부보다는 **신뢰구간**을 확인한다.
+    
+### 문제
+
+* <http://data.princeton.edu/wws509/datasets/#salary>의 자료를 통해 `sl`와 `yd`의 관계를 선형 회귀로 분석하시오.
+
+* 예측변수와(또는) 결과변수를 변환(transformation)한 후에 회귀 분석을 할 때, 위에서 설명한 LINE 가정은 어떻게 바뀌는지 설명하시오.
+
+### 상관계수(Correlation Coefficient)
+
+$$ r_{xy} = \frac{\sum_{i=1}^n (x_i - \hat{x})(y_i - \hat{y})}{(n-1)s_x s_y} $$
+
+* [참고](https://en.wikipedia.org/wiki/Anscombe%27s_quartet)
+
+
+---
+
+## 다중선형회귀(Multiple Linear Regression) 분석
+
+### 모형
+$$ y= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + e, e \sim N(0, \sigma^2)$$
+
+### 가정(LINE)
+- **L**inearity(선형성)
+- **I**ndependence(독립성)
+- **N**ormality(정규성)
+- **E**qual variance(등분산성)
+
+```{r MLR, collapse=T, fig.show='hold', error=T}
+library(ggplot2)
+getwd()
+dat <- read.csv(file='00_Instructor/LR_weight_n100.csv', header=T, row.names=1)
+ggplot(dat, aes(x=height, y=weight)) + geom_point()
+
+# 01. 첫 번째 모형
+fitLm01 <- lm(weight ~ height + gender, dat)
+print(fitLm01)
+print(summary(fitLm01))
+
+# 02. 두 번째 모형
+fitLm02 <- lm(weight ~ height * gender, dat)
+print(fitLm02)
+print(summary(fitLm02))
+
+# 03. plot 활용 시각화
+plot(weight ~ height, dat, col=gender, main='03. plot 활용 시각화'); abline(fitLm)
+
+# 04. ggplot 활용 시각화
+## 04a
+ggplot(dat, aes(x=height, y=weight, col=gender)) + geom_point() + 
+  geom_smooth(method="lm") + labs(title='04. ggplot 활용 시각화 b')
+
+## 04b
+ggplot(dat, aes(x=height, y=weight, col=gender)) + geom_point() + 
+  geom_smooth(method="lm", level=0.95) + labs(title='04. ggplot 활용 시각화 b')
+
+## 04c
+ggplot(dat, aes(x=height, y=weight, col=gender)) + geom_point() + 
+  geom_smooth(method="lm", level=0.6826895) + # pnorm(1) - pnorm(-1) 
+  labs(title='04. ggplot 활용 시각화 c')
+
+## 04d
+ggplot(dat, aes(x=height, y=weight, col=x)) + geom_point() + 
+  geom_smooth(method="lm", formula = y ~ x * col) +
+  labs(title='04. ggplot 활용 시각화 d')
+
+## 04e
+datPred01 <- data.frame(gender="M", height=150:200)
+datPred02 <- data.frame(gender="F", height=150:200)
+datPred <- rbind(datPred01, datPred02)
+datPred$gender <- factor(as.character(datPred$gender), levels= levels(dat$gender))
+
+pred <- predict(fitLm02, newdata=datPred, se.fit=T)
+datPred2 <- data.frame(height=datPred$height, gender=datPred$gender,   # predictor
+                       weight = pred$fit,  # prediction
+                       weightSE = pred$se.fit)  # SE of prediction
+
+ggplot(dat, aes(x=height, y=weight, col=gender)) + geom_point() + 
+  geom_ribbon(data=datPred2, aes(x=height, 
+                                 ymin=weight-weightSE, ymax=weight+weightSE,
+                                 col=NULL,
+                                 fill=gender), alpha=0.2) +
+  geom_line(data=datPred2, aes(x=height, y=weight, col=gender), size=1) + 
+  coord_cartesian(xlim=c(155,195)) +
+  labs(title='04. ggplot 활용 시각화 d')
+  
+# 05. 계수 시각화
+library(coefplot)
+## a 독립 선형 모형
+coefplot(fitLm01) + labs(title='05a. 계수 시각화: 독립항')
+## b 상호작용 선형 모형
+coefplot(fitLm02) + labs(title='05b. 계수 시각화: 상호작용항')
+
+## c 독립 선형 모형
+coefplot(fitLm01, sort='mag') + labs(title='05c. 계수 시각화(크기순 정렬)')
+## d 상호작용 선형 모형
+coefplot(fitLm02, sort='mag') + labs(title='05d. 계수 시각화(크기순 정렬)')
+
+## e 독립 선형 모형(확대)
+coefplot(fitLm01) + labs(title='05e. 독립선형모형(확대)') +
+  coord_cartesian((xlim=c(0,25)))
+## f 상호작용 모형(확대)
+coefplot(fitLm02) + labs(title='05f. 상호작용 모형(확대)') +
+  coord_cartesian((xlim=c(0,2)))
+
+## g 계수 비교
+multiplot(fitLm01, fitLm02) + labs(title='05g. 계수 비교') + 
+  scale_color_discrete(labels=c('independent', 'interaction')) +
+  theme(legend.position = 'bottom') +
+  theme(axis.text.x=element_text(angle=0))
+
+library(car)
+compareCoefs(fitLm01, fitLm02) 
+compareCoefs(fitLm01, fitLm02, se=F) 
+
+anova(fitLm01, fitLm02)
+  
+```
+
+### Wilkson-Rogers Notation
+|표기   	|표기2 | 수식   	|
+|:---	|:---|:--------	|
+|`y ~ x1 + x2`   	||$\mathbb{E}[\mathbf{y}] = \beta_0 + \beta_1 \mathbf{x1} + \beta_2 \mathbf{x2}$| 
+|`y ~ x1 + x2-1`   	||$\mathbb{E}[\mathbf{y}] = \phantom{\beta_0+} \beta_1 \mathbf{x1} + \beta_2 \mathbf{x2}$   	|
+|`y ~ x1:x2`   	||$\mathbb{E}[\mathbf{y}] = \beta_0 + \beta_1 (\mathbf{x1}\cdot\mathbf{x2})$   	|
+|`y ~ x1*x2`   	|`y~x1+x2+x1:x2`|$\mathbb{E}[\mathbf{y}] = \beta_0 + \beta_1 \mathbf{x1} +\beta_2 \mathbf{x2} + \beta_3 (\mathbf{x1}\cdot\mathbf{x2})$     	|
+|`y ~ I(x1*x2)`   	|`z=x1*x2; y~z`   |$\mathbb{E}[\mathbf{y}] = \beta_0 + \beta_1 (\mathbf{x1}\cdot\mathbf{x2})$   	|
+
+
+---
+
