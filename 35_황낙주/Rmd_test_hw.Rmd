@@ -1,7 +1,0 @@
----
-title: "Rmd test homework"
-author: "knock"
-date: "2018년 9월 28일"
-output: html_document
----
-
