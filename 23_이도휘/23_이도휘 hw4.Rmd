@@ -1,0 +1,47 @@
+---
+title: "HW4"
+author: "23_이도휘"
+date: "2018년 11월 15일"
+---
+
+#데이터 불러오기
+```{r}
+library(ggplot2)
+salary <- read.csv("http://data.princeton.edu/wws509/datasets/salary.dat", sep='')
+```
+
+#계수 추정
+```{r}
+sallm <- lm(sl ~ yd, salary)
+print(sallm)
+print(summary(sallm)) #계수: 390.65
+```
+
+#신뢰구간 추청
+```{r}
+confint(sallm)
+#95% 신뢰구간: 269.3063 ~ 511.9839
+```
+
+#시각화
+```{r}
+plot(salary$sl, salary$yd, main='diagnosis')
+
+ggplot(salary, aes(x=yd, y=sl)) + geom_point() +
+  geom_smooth(method = "lm", level=0.95) +
+  labs(title='sl ~ yd visualization') 
+
+ggplot(salary, aes(x=yd, y=sl, col=sx)) + geom_point() +
+  geom_smooth(method = "lm", level=0.95) +
+  labs(title='sl ~ yd by sex visualization') 
+```
+
+#결과 진단 
+*regression 결과 yd가 1 증가할 때, sl은 390.65 증가함을 알 수 있다. 
+
+*이 때의 t값이 6.466으로 1% 수준에서 유의하다.
+
+*추정식 전체의 p값은 4.102e-08로 유의하다.
+
+*그러나 R-squared 값이 0.4554로 추정이 다소 낮은 적합도를 보인다고 할 수 있다.
+
