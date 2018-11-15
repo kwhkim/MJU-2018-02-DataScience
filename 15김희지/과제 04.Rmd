@@ -1,0 +1,46 @@
+---
+title: "과제 04"
+author: "15_김희지"
+date: "2018년 11월 13일"
+output: html_document
+---
+
+### 데이터 불러오기
+```{r}
+library(readr)
+library(ggplot2)
+library(knitr)
+salary <- read_table2("http://data.princeton.edu/wws509/datasets/salary.dat")
+kable(head(salary))
+```
+
+####선형회귀분석
+```{r}
+sal_lm <- lm(sl~yd, salary)
+sal_lm
+summary(sal_lm)
+```
+
+#### __추정된 회귀식 sl = 390.6X + 17502.3__
+
+* 신뢰구간 95%  
+```{r}
+confint(sal_lm, level = 0.95)
+```
+
+
+* 회귀분석 시각화    
+```{r}
+attach(salary)
+plot(sl~yd, main = 'plot')
+abline(sal_lm, col = 'blue')
+detach(salary)
+ggplot(data = salary, aes(x = yd, y = sl)) +
+  geom_point() +
+  geom_smooth(method = "lm", level = 0.95) + ggtitle('ggplot smooth') +
+  theme(plot.title = element_text(face = "bold", hjust = 0.5, size = 20))
+```
+
+### 회귀분석 진단  
+p-value가 4.102e-08이므로 추정된 회귀계수가 유의미하다. 
+그러나 R-squared가 약 0.45이므로 모형의 설명력이 높지않다. 
