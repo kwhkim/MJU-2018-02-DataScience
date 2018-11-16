@@ -1,0 +1,62 @@
+---
+title: "과제 04"
+author: "09_김세영"
+date: "2018년 11월 16일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+*http://data.princeton.edu/wws509/datasets/#salary 의 자료에서 예측변수 yd와 결과변수 sl로 선형회귀분석을 하세요.
+
+*계수를 추정하세요.
+
+*계수의 95% 신뢰구간을 구하세요.
+
+*데이터와 적합한 회귀선을 시각화하세요.
+
+*선형회귀분석 결과에 대해 진단(diagnostics)하세요.
+
+#http://data.princeton.edu/wws509/datasets/#salary 의 자료 불러오기 및 데이터 확인 
+```{r}
+library(readr)
+data <- read_table2('http://data.princeton.edu/wws509/datasets/salary.dat')
+
+data
+str(data)
+summary(data)
+```
+
+#예측변수 yd와 결과변수 sl로 선형회귀분석하기
+```{r}
+dat <- lm(sl~yd, data)
+dat
+summary(dat)
+```
+
+# 1. 계수를 추정하세요.
+```{r}
+coef(dat)
+```
+
+# 2. 계수의 95% 신뢰구간을 구하세요.
+```{r}
+confint(dat, level=0.95)
+```
+
+# 3. 데이터와 적합한 회귀선을 시각화하세요.
+```{r}
+library(ggplot2)
+
+ggplot(data, aes(x = yd, y = sl)) +
+  geom_point() +
+  geom_smooth(method = "lm", level = 0.95) + ggtitle('salary 회귀분석 시각화') 
+```
+
+# 4. 선형회귀분석 결과에 대해 진단(diagnostics)하세요.
+
+* 예측변수 yd와 결과변수 sl로 선형회귀분석한 summary(dat)의 결과에서 p-value가 4.102e-08 이므로, 0.05보다 작기때문에 유의미하다. 
+
+* 예측변수 yd와 결과변수 sl로 선형회귀분석한 summary(dat)의 결과에서 Multiple R-squared가 0.4554 이므로, yd가 sl을 약 45% 정도 예측할 수 있는 설명력을 가진다고 할 수 있다. 
