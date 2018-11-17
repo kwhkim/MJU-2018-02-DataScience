@@ -9,4 +9,5 @@
 00_Instructor/git.*.html
 *.ods#
 =/*.*
-my.path # for git diff -> git apply
+my.path 
+# for git diff -> git apply
