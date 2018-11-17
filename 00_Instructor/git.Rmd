@@ -218,6 +218,13 @@ git log --diff-filter=D --sumary | grep filename
     - Merge와 Rebase는 최종 결과물은 같지만 커밋 히스토리가 다르다.
     - Merge는 두 브랜치의 최종 결과만을 가지고 합치고, Rebase는 변경사항을 순서대로 적용하면서 히스토리가 선형적이 된다.
     
+---
+<https://stackoverflow.com/questions/3334475/git-how-to-update-checkout-a-single-file-from-remote-origin-master>
     
+* "In a **depolyed** repository"? 
+
+* "it will not put it in your current checked out code (**working area**)."
+
+* 
 
 
