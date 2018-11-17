@@ -227,4 +227,11 @@ git log --diff-filter=D --sumary | grep filename
 
 * 
 
+----
+
+* history에 나오는 `HEAD -> refs/heads/master`는 뭔가?
+
+* history에 나오는 `origin/master`와 `origin/HEAD`는 뭔가?
+    - `origin/master`는 `origin` remote repository에 `master` 브랜치인듯...
+    - `HEAD`는 뭐라고? 
 
