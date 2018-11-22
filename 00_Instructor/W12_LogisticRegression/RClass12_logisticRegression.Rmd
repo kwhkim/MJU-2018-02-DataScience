@@ -1,0 +1,331 @@
+---
+title: "Logistic Regression"
+author: "김권현"
+date: "2018년 11월 18일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 결과가 '0 또는 1'과 같이 이산 분포일 때 선형 회귀 모형으로 분석할 때 문제점
+
+* $\beta_1 \neq 0$인 경우 예측변수에 커지거나 작아지면 예측값이 0보다 작거나, 1보다 커진다.
+* $Y|x$의 분포는 정규분포가 아니다.
+
+## 로지스틱 회귀분석
+
+### 비교
+
+* 선형 회귀 모형 : $y_i = \beta_0+ \beta_1 x + e_i,\ \  e_i \sim \mathcal{N}(0, \sigma^2)$
+    - $\mathbb{E}[Y | x]$는 $\beta_0+\beta_1 x$이다.
+    - 따라서, $Y|x \sim \mathcal{N}(\beta_0+\beta_1 x, \sigma^2)$.
+* 로지스틱 회귀 모형 
+    - $p_i = \mathbb{E}[y_i | x_i]$일 때, $\log \frac{p_i}{1-p_i} = \beta_0 + \beta_1 x_i$.
+    - $y_i | x_i ~ \text{bern}(p_i)$
+    - 결과 변수가 '참 또는 거짓'처럼 이산적이며, 이항분포를 따른다.
+    - 로그 우도 $\log \frac{p}{1-p}$는 계수의 선형 함수이다.
+    - $i$-번째 관찰값 $y_i$가 '참'일 확률 $p_i$는 $\mathbb{E}[Y|x]$가 같다.
+
+### 로지스틱의 가정
+
+- **L**inearity : $g(\mathbb{E}[Y|x])$는 계수의 선형함수이다.
+- **I**ndependence : $x$가 주어졌을 때, $Y$의 분포는 서로 독립이다.
+- ~~**N**ormality~~ : 오차의 분포는 이항분포이다. 일반화 선형모형(GLM; Generalized Linear Model)에서는 $Y|x$의 분포가 이항분포, 다항분포, 푸와송 분포 등으로 확장된다.
+- ~~**E**qual Variance~~ : 오차의 분산은 오차의 분포에 따라 예측 변수 값에 따라 달라질 수 있다.
+
+#### 몇 가지 용어
+
+* 승산(odds) : 어떤 사건의 확률이 $p$일 때, 승산은 $\frac{p}{1-p}$이다.
+* 승산비(odds ratio) : 두 사건의 승산의 비율. 한 사건의 확률이 $p_1$이고, 다른 사건의 확률이 $p_2$일 때, 승산비는 $\frac{p_1}{1-p_1}/\frac{p_2}{1-p_2}$이다. 또는 확률의 변화를 나타낼 수도 있다. 확률의 변화를 나타낼 때 승산비는 두 승산의 비율로 생각할 수 있다. 예를 들어 $0.3$의 확률이 $0.5$로 증가했다면, 승산은 $0.3/0.7=0.42$에서 $0.5/0.5=1$로 증가했으면 승산비의 비율은 $1/0.42 = 2.380952$가 된다.
+* 로짓(logit) : 로그 승산($\log \frac{p}{1-p}$)
+* 로지스틱(logistic) 함수(로짓의 역함수) : $\frac{1}{1+\exp(-x)}$
+
+```{r}
+library(arm)
+invlogit
+logit
+curve(x/(1-x), xlim=c(0,1), main='odds')
+curve(logit(x), xlim=c(0,1), main='logit(x)')
+curve(invlogit(x), xlim=c(-5,5), main='invlogit or logistic')
+```
+
+### 예 : `carData::Wells`
+
+* 데이터 살펴보기
+
+```{r}
+data(Wells, package='carData')
+summary(Wells)
+```
+
+* 데이터 시각화 1
+
+```{r}
+library(ggplot2)
+ggplot(data=Wells) + geom_point(aes(x=distance, y=switch), alpha=0.2)
+ggplot(data=Wells) + geom_jitter(aes(x=distance, y=switch), alpha=0.2) 
+```
+
+* 데이터 시각화 2
+
+```{r}
+library(dplyr)
+Wells_cut <- 
+  Wells %>% summarise(min = min(distance), max = max(distance), by = (max-min)/10)  
+Wells <- 
+  Wells %>% mutate(distCut = cut(distance, 
+                                 breaks=seq(Wells_cut$min, Wells_cut$max, Wells_cut$by))) 
+ggplot(data=Wells, aes(x=distCut, col=switch, fill=switch)) + geom_bar()
+ggplot(data=Wells, aes(x=distCut, col=switch, fill=switch)) + geom_bar(position = "fill" )
+ggplot(data=Wells, aes(x=distCut, col=switch, fill=switch)) + geom_bar(position = "fill" ) + 
+  geom_rug(aes(x=distCut, y=0.5), position=position_jitter(width=0.2), alpha=0.02, sides='b', col='black')
+```
+
+```{r}
+library(dplyr)
+Wells_cut <- 
+  Wells %>% summarise(min = min(distance), max = max(distance), by = (max-min)/5)  
+Wells <- 
+  Wells %>% mutate(distCut = cut(distance, 
+                                 breaks=seq(Wells_cut$min, Wells_cut$max, Wells_cut$by))) 
+ggplot(data=Wells, aes(x=distCut, col=switch, fill=switch)) + geom_bar()
+ggplot(data=Wells, aes(x=distCut, col=switch, fill=switch)) + geom_bar(position = "fill" )
+ggplot(data=Wells, aes(x=distCut, col=switch, fill=switch)) + geom_bar(position = "dodge" ) +
+  scale_y_log10()
+```
+
+
+* 로지스틱 회귀분석
+
+```{r}
+fit0 <- glm(switch ~ distance, family=binomial(link="logit"), 
+            data=Wells)
+fit0 # 계수 및 model fit(Null Deviance, Residual Deviance, AIC) 확인
+```
+
+* 로지스틱 회귀분석 계수의 해석
+    - 로짓(logit)은 선형적이다.
+    - $x$의 수준에 따라 $x$의 영향이 달라진다.
+    - [로지스틱 회귀에서 계수는 예측변수 1 증가에 따른 두 승산의 승산비로 해석할 수 있다.](https://bookdown.org/jefftemplewebb/IS-6489/logistic-regression.html) ($\frac{p_2/(1-p_2)}{p_1/(1-p_1)} = \exp(\beta_1)$)
+    
+```{r}
+summary(fit0)
+coef(fit0)
+confint(fit0)
+
+newdat = data.frame(distance = seq(0, 500, 10))
+predy <- predict(fit0, newdata=newdat, type='link', se.fit=TRUE)
+head(predy) # predy$fit, $se.fit, 
+prob = 0.95
+predy$lwr <- predy$fit + qnorm((1-prob)/2)*predy$se.fit
+predy$upr <- predy$fit + qnorm(1-(1-prob)/2)*predy$se.fit
+
+dfPredy <- data.frame(predy)
+dfPredy$distance <- newdat$distance
+
+library(arm)
+dfPredy <- 
+  dfPredy %>% mutate(lwr = invlogit(lwr),
+                     upr = invlogit(upr),
+                     fit = invlogit(fit))
+```
+
+* 로지스틱 회귀분석 시각화
+
+```{r}
+library(effects)
+eff <- effect("distance", fit0)
+plot(eff, type='response') # type = "rescale", "response", "link"
+#plot(eff, family="bionomial")
+
+#effAll <- allEffects(fit0)
+#plot(effAll, type='response')
+
+Wells <- Wells %>% mutate(switchnum = ifelse(switch=="yes", 1, 0))
+ggplot(data=Wells) + geom_jitter(aes(x=distance, y=switchnum), alpha=0.2, height=0.05) +
+  geom_line(data=dfPredy, aes(x=distance, y=fit)) + 
+  geom_ribbon(data=dfPredy %>% arrange(distance), aes(x=distance, y=fit, ymin=lwr, ymax=upr), alpha=0.2) 
+#ggplot(data=Wells) + geom_jitter(aes(x=distance, y=switchnum), alpha=0.2, height=0.05) +
+#  geom_line(data=dfPredy, aes(x=distance, y=fit)) + 
+#  geom_ribbon(data=dfPredy %>% arrange(distance), aes(x=distance, y=fit, ymin=lwr, ymax=upr), alpha=0.2) +
+#  xlim(-100, 500)
+
+```      
+
+### 가정 진단
+
+```{r fig.height=3, fig.width=3}
+plot(fit0)
+```
+
+```{r fig.height=3, fig.width=4}
+binnedplot(fitted(fit0), 
+           residuals(fit0, type = "response"),
+# type should be one of 'deviance', 'pearson', 'working', 'repsonse', 'partial'
+           nclass = NULL, 
+           xlab = "Expected Values", 
+           ylab = "Average residual", 
+           main = "Binned residual plot", 
+           cex.pts = 0.8, 
+           col.pts = 1, 
+           col.int = "gray") 
+
+```
+
+### 다중 로지스틱 회귀
+
+```{r fig.height=3, fig.width=4}
+fitA <- glm(switch ~ association, family=binomial(link="logit"), data=Wells)
+summary(fitA)
+coef(fitA)
+confint(fitA)
+
+eff <- effect("association", fitA)
+plot(eff) # type = "rescale", "response", "link"
+            
+fitB <- glm(switch ~ distance + association, family=binomial(link="logit"), 
+            data=Wells)
+summary(fitB)
+coef(fitB)
+confint(fitB)
+
+eff <- allEffects(fitB)
+plot(eff, type='response') # type = "rescale", "response", "link"
+
+#eff <- effect("distance", fitB)
+#plot(eff, type='response') # type = "rescale", "response", "link"
+
+fitC <- glm(switch ~ distance * association, family=binomial(link="logit"), 
+            data=Wells)
+summary(fitC)
+coef(fitC)
+confint(fitC)
+
+eff <- allEffects(fitC)
+plot(eff, type='response') # type = "rescale", "response", "link"
+
+eff2 <- effect("distance*association", fitC)
+#plot(eff2, type='response')
+plot(eff2, type='response', multiline=TRUE)
+plot(eff2, type='response', multiline=TRUE, confint=list(style='bands'))
+```
+
+### 예 : `GermanCredit` 데이터
+
+#### 단순 로지스틱 회귀
+
+```{r}
+data('GermanCredit', package='caret')
+fit0 <- glm(Class ~ Age, data=GermanCredit, family=binomial)
+library(arm)
+binnedplot(fitted(fit0), 
+           residuals(fit0, type = "response"),
+# type should be one of 'deviance', 'pearson', 'working', 'repsonse', 'partial'
+           nclass = NULL, 
+           xlab = "Expected Values", 
+           ylab = "Average residual", 
+           main = "Binned residual plot", 
+           cex.pts = 0.8, 
+           col.pts = 1, 
+           col.int = "gray") 
+summary(fit0)
+
+#plot(allEffects(fit0), type='rescale')
+plot(allEffects(fit0), type='response')
+#plot(allEffects(fit0), type='link')
+
+#plot(effect('Age', fit0),  type='rescale')
+#plot(effect('Age', fit0),  type='response')
+#plot(effect('Age', fit0),  type='link')
+```
+
+#### 다중 로지스틱 회귀
+
+```{r}
+fit1 <- glm(Class ~ Age + Housing.Rent, data=GermanCredit, family=binomial)
+library(arm)
+binnedplot(fitted(fit1), 
+           residuals(fit1, type = "response"),
+# type should be one of 'deviance', 'pearson', 'working', 'repsonse', 'partial'
+           nclass = NULL, 
+           xlab = "Expected Values", 
+           ylab = "Average residual", 
+           main = "Binned residual plot", 
+           cex.pts = 0.8, 
+           col.pts = 1, 
+           col.int = "gray") 
+
+summary(fit1)
+
+#plot(allEffects(fit1), type='rescale')
+plot(allEffects(fit1), type='response')
+
+#plot(allEffects(fit1), type='link')
+
+plot(effect('Age*Housing.Rent', fit1),  type='response')
+plot(allEffects(fit1), type='response', multiline=TRUE, confint=list(style='bands'))
+```
+
+#### 상호작용을 포함한 다중 로지스틱 회귀
+
+```{r}
+fit2 <- glm(Class ~ Age * Housing.Rent, data=GermanCredit, family=binomial)
+library(arm)
+binnedplot(fitted(fit2), 
+           residuals(fit2, type = "response"),
+# type should be one of 'deviance', 'pearson', 'working', 'repsonse', 'partial'
+           nclass = NULL, 
+           xlab = "Expected Values", 
+           ylab = "Average residual", 
+           main = "Binned residual plot", 
+           cex.pts = 0.8, 
+           col.pts = 1, 
+           col.int = "gray") 
+
+summary(fit2)
+
+#plot(allEffects(fit1), type='rescale')
+plot(allEffects(fit2), type='response')
+plot(allEffects(fit2), type='response', multiline=TRUEd)
+#plot(allEffects(fit1), type='link')
+
+plot(effect('Age*Housing.Rent', fit2),  type='response')
+```
+
+### 발생 가능한 문제들
+
+* 공선성
+
+* 분리(seperation) 문제  
+
+* 결과변수가 지나치게 불균형인 경우 : 예) 실제 양성이 99%라면 무조건 양성으로 탐지할 때, 정확률은 99%이다.
+
+### 모형평가
+
+* TP(true positive; 진양성), FP(false positive; 위양성) = false alarm(오탐) 
+* TN(true negative; 진음성), FN(false negative; 위음성)
+
+* 분모에 전체 분류가 들어간 평가방법
+    - 정확도(accuracy) : 전체 분류에서 제대로 된 분류의 비율. (TP+TN)/(TP+TN+FP+FN) = (TP+TN)/(P+N).
+    - 오류율(error rate) : 전체 분류에서 잘못된 분류의 비율.
+* 분모에 실제 양성 또는 음성이 들어간 평가방법
+    - 민감도(sensitivity) 또는 재현율(recall) : 실제 양성 중 양성으로 분류된 비율. TP/P.
+    - 특이도(specificity) : 실제 음성 중 정확하게 음성으로 분류된 비율. TN/N.
+* 분모에 탐지된 양성 또는 음성이 들어간 평가방법
+    - 정밀도(precision) 또는 양성예측도(Positive Predictive Value) : 양성 탐지 중 실제 양성의 비율. TP/(TP+FP).
+    - 음성예측도(Negative Predictive Value) : 음성 탐지 중 실제 음성의 비율. TN/(TN+FN).
+
+```{r}
+fit0 <- glm(switch ~ distance, family=binomial(link="logit"), 
+            data=Wells)
+pred <- predict(fit0, type='link') > 0
+pred <- ifelse(pred == TRUE, "yes", "no")
+pred <- factor(pred, levels = c('no', 'yes'))
+table(pred, Wells$switch)
+library(caret)
+confusionMatrix(pred, Wells$switch, positive='yes')
+```
+
+    
