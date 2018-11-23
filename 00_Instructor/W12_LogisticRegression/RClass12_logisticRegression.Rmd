@@ -43,6 +43,7 @@ knitr::opts_chunk$set(echo = TRUE)
 * 로지스틱(logistic) 함수(로짓의 역함수) : $\frac{1}{1+\exp(-x)}$
 
 ```{r}
+install.packages('arm')
 library(arm)
 invlogit
 logit
