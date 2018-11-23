@@ -11,7 +11,7 @@ output: html_document
 **데이터 선정이유**
 
 * 최근 소비자물가가 지속적인 상승세를 보이고 있다. 밥상물가뿐만 아니라 서비스물가, 외식물가가 줄줄이 상승하면서 전반적인 물가상승이 나타나고 있다. 소비자물가 상승률은 지난해 10월 이후 12개월 연속으로 1%씩 상승하고 있었고 지난달인 2018년 10월에는 13개월만에 가장 높은 상승률인 2%로 상승했다. <br>
-![소비자물가 상승률](/Users/iyeeun/rproject/MJU-2018-02-DataScience/Proj01_19_25__최저임금/consumer price.jpg)
+![소비자물가 상승률](consumer price.jpg)
 
 * 물가 인상의 주된 요인으로 뽑는 것이 최저임금 인상이다. 올해, 2018년 최저임금은 7530원으로 2017년에 6470원이었던 것과 비교하면 무려 16.4%나 상승하였다. 16.4%라는 상승률은 17년만에 가장 큰 폭으로 상승한 것이다. 2019년도 올해보다 10.9% 인상된 8350원으로 확정된 상황이다. <br>
 ![최저임금 인상](http://img.yonhapnews.co.kr/etc/inner/KR/2017/12/18/AKR20171218147300004_03_i.jpg)
@@ -20,7 +20,7 @@ output: html_document
 
 
 * 하지만 전문가들은 이에 대해 다른 의견을 보인다. 최저임금 인상이 물가상승의 주범이 아니라는 것이다. 2015년 강승복 한국노동연구원 전문위원이 발표한 <최저임금 인상이 물가에 미치는 영향> 논문을 보면 최저임금이 10% 오르면 물가는 최대로 0.4%까지만 오른다고 한다. 또한 한국소비자단체협의회와 물가감시센터가 개최한 ‘최저임금 인상에 따른 외식물가 안정화’를 위한 토론회의 결론도 최근 물가상승에 대해 단순히 최저임금의 인상을 주된 요인으로 볼 것이 아니라 그 밖의 다른 요인들의 영향에도 기인하는 복합적인 현상임을 공통적으로 주장했다.<br>
-![관련기사](/Users/iyeeun/rproject/MJU-2018-02-DataScience/Proj01_19_25__최저임금/news.PNG)
+![관련기사](news.PNG)
 
 
 * 따라서 이번 분석을 통해 최저임금 인상이 물가인상에 어느정도 영향을 미치는지 살펴보고자 한다. 더 나아가 최저임금 외에 다른 요인들도 물가와 어느정도의 상관관계가 있는지 알아보고자 한다. <br>
@@ -55,10 +55,10 @@ library(lattice)
 
 ```{r message=FALSE, warning=FALSE}
 #데이터 불러들이기
-price <- read_xlsx("/Users/iyeeun/rproject/MJU-2018-02-DataScience/Proj01_19_25__최저임금/price inf.xlsx")
-rent <- read_xlsx("/Users/iyeeun/rproject/MJU-2018-02-DataScience/Proj01_19_25__최저임금/rent inf.xlsx") 
-wage <- read_xlsx("/Users/iyeeun/rproject/MJU-2018-02-DataScience/Proj01_19_25__최저임금/wage_inf.xlsx")
-gdp <- read_xlsx("/Users/iyeeun/rproject/MJU-2018-02-DataScience/Proj01_19_25__최저임금/gdp deflator inf.xlsx")
+price <- read_xlsx("price inf.xlsx")
+rent <- read_xlsx("rent inf.xlsx") 
+wage <- read_xlsx("wage_inf.xlsx")
+gdp <- read_xlsx("gdp deflator inf.xlsx")
 
 ```
 
@@ -204,7 +204,7 @@ plot(gg2)
 **임대료와 공실률의 관계**
 
 ```{r}
-rent_area <- read_xlsx("/Users/iyeeun/rproject/MJU-2018-02-DataScience/25_이예은/rent_area.xlsx")
+rent_area <- read_xlsx("rent_area.xlsx")
 
 rent_area1 <-rent_area %>% gather("quarter", "value", `2017년 01분기`:`2018년 03분기`)
 
@@ -238,9 +238,9 @@ ggplot(data=rent_area2,aes(x=quarter,y=value,col=region,group=1))+
 * 한국감정원에 따르면 서울지역 **공실률**은 중대형 상가의 경우 지난해 1분기 6.5%에서 ```꾸준히 상승```해서 올 1분기에는 7.7%로 1.2%p 올랐다가 2분기에 7.4%로 다소 주춤한 상황이다고 한다. 같은 기간 소규모 상가의 공실률은 2.9%에서 올 1분기 3.7%로 올랐다 2분기에 3.2%를 기록했으며 전국적인 상황 또한 큰 차이 없이 비슷한 흐름을 보이며 꾸준하게 공실률이 오르고 있다고 한다.  <br>
 * 보통 임대료가 높을수록 공실률의 비율도 높아지는 경향이 있다. 위 그래프에 따르면 강남지역은 임대료가 낮아지는 추세이고 영등포신촌 지역은 임대료가 높아지는 추세이다. 이로 인해 영등포신촌의 공실률의 비율이 높아질 것을 예상할 수 있다. 
 
-![강남지역공실률](/Users/iyeeun/rproject/MJU-2018-02-DataScience/Proj01_19_25__최저임금/gangnam1.jpg)
+![강남지역공실률](gangnam1.jpg)
 
-![영등포신촌지역공실률](/Users/iyeeun/rproject/MJU-2018-02-DataScience/Proj01_19_25__최저임금/hangdae1.jpg)
+![영등포신촌지역공실률](hangdae1.jpg)
 
 * 공실률데이터와 임대료 데이터를 함께 살펴보면 영등포신촌 지역은 중대형 상가보다 소규모 상가의 공실률 변화가 눈에 띈다. 중대형 상가의 공실률은 신촌이 전분기 대비 1.6%p 오른 6.8%를 기록했으며 이외 영등포(-3.6%p), 홍대합정(-1.8%p)은 다소 줄었다.<br>
 홍대합정 등 일부 지역에선 공실률이 높아지는데 임대료가 오히려 올라가는 상황이 발생되고 있는 것이다. <br>
