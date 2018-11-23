@@ -97,14 +97,11 @@ library(reshape2)
 # 세로형
 long_data <- melt(new_data, measure.vars = 7:9, variable.name='theater', value.name='number')
 
-View(long_data)
+head(long_data)
 
 # 가로형
 wide_data <- dcast(long_data, Gu+place_sum+place1+num_place1+place2+place3~theater)
 
-View(wide_data)
+head(wide_data)
 ```
 
-## <span style="color:red">채점 사항</span>
-
-> 데이터를 internet에서 다운 받거나 local에 올려주길 바랍니다. 
