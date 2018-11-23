@@ -214,3 +214,10 @@ git log --diff-filter=D --sumary | grep filename
 
 * [Be a git pro in just one blog](https://itnext.io/become-a-git-pro-in-just-one-blog-a-thorough-guide-to-git-architecture-and-command-line-interface-93fbe9bdb395)
 
+* Merge와 Rebase
+    - Merge와 Rebase는 최종 결과물은 같지만 커밋 히스토리가 다르다.
+    - Merge는 두 브랜치의 최종 결과만을 가지고 합치고, Rebase는 변경사항을 순서대로 적용하면서 히스토리가 선형적이 된다.
+    
+    
+
+
