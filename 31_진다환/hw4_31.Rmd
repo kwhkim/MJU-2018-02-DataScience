@@ -1,0 +1,41 @@
+---
+title: "hw4_31"
+author: "31_진다환"
+date: "2018_11_15"
+output: html_document
+---
+
+###데이터 불러오기
+```{r}
+library(readr)
+library(ggplot2)
+library(knitr)
+salary <- read_table2("http://data.princeton.edu/wws509/datasets/salary.dat")
+kable(head(salary))
+```
+
+###선형회귀분석
+```{r}
+sal_lm <- lm(sl~yd, salary)
+sal_lm
+summary(sal_lm)
+```
+회귀식은 390.6X + 17502.3
+
+
+###신뢰구간 95%
+
+```{r}
+confint(sal_lm, level = 0.95)
+```
+
+###시각화
+
+```{r}
+ggplot(data = salary, aes(x = yd, y = sl)) + geom_point()
+```
+
+###진단
+
+추정된 p-value가 4.102e-08 이므로 0.05보다 작다 그러므로 통계적으로 유의하다.
+그리고 R-squared가 0.45정도 되므로 45%정도 설명한다고 보인

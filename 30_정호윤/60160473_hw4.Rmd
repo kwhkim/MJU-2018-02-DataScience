@@ -1,0 +1,116 @@
+---
+title: "hw4"
+author: "30_정호윤"
+date: "2018년 11월 16일"
+output: html_document
+---  
+
+  
+##데이터 불러오기
+```{r}
+#패키지 불러오기
+library(readr)
+library(ggplot2)
+```
+
+## 데이터 전처리
+```{r}
+salary_raw <- read_table2("http://data.princeton.edu/wws509/datasets/salary.dat")
+salary <- salary_raw
+View(salary)
+
+colSums(is.na(salary))
+```
+
+
+## 1. 예측변수 sl~ 결과변수 yd 선형회귀분석, 계수 추정
+```{r}
+# 1) 각 변수 데이터에 대한 확인
+
+summary(salary$sl)
+summary(salary$yd)
+
+# 2) 상관계수 및 scatter plot
+cor.test(salary$yd,salary$sl) # 상관계수 0.6748542
+ggplot(salary, aes(x=yd, y=sl)) + geom_point(size=5, shape=20) + labs(title="1. Basic scatter plot")
+
+# 3) 회귀분석
+reg <- lm(sl~yd, data=salary)   #회귀계수 #sl = 17502.2574 + 390.6451*yd
+print(reg)
+print(summary(reg)) 
+
+#sl변수에 대한 yd변수의 p-value 0.01 % 수준에서 유의미하다고 판단할 수 있다(귀무가설 기각)
+#Adjusted R-squared:0.4445 로, 44.45% 정도의 모델 적합성을 설명할 수 있다.
+
+
+```
+
+## 2. 95% 신뢰구간 분석
+```{r}
+t.test(salary$sl) # 23797.65 (22150.27, 25445.04)
+t.test(salary$yd) # 16.11538 (13.26947, 18.96130)
+```
+
+## 3. 적절한 회귀선의 시각화 
+```{r}
+## 단순 선형회귀_1
+plot(sl ~ yd, salary, main='단순 선형회귀_1'); abline(reg)
+
+## 단순 선형회귀_2
+ggplot(salary, aes(x=yd, y=sl)) + geom_point() + 
+  geom_smooth(method="lm") + labs(title='단순 선형회귀_2')
+
+## 단순 선형회귀_3
+ggplot(salary, aes(x=yd, y=sl)) + geom_point() +
+  geom_abline(intercept = reg$coefficients["(Intercept)"],
+              slope = reg$coefficients["yd"]) + 
+  labs(title='단순 선형회귀_3')
+
+```
+
+## 3-2. 다항회귀분석의 시각화
+```{r}
+reg2 <- lm(sl~yd+I(yd^2), data=salary)
+summary(reg2)
+
+par(mfrow=c(2,2))
+plot(reg2)
+par(mfrow=c(1,1))
+
+```
+
+### 또한 yd^2를 입력하여 예측변수 yd의 경향성을 추정해 볼 수 있다. 예측변수로 yd^2변수가 추가된 모델은 기존의 선형모형에 비해 yd의 계수가 390.65에서 931.99로 증가하였고, Adjusted R-squared:  0.5072로 모형적합도가 다소 증가하였고, yd^2의 계수는 -16.41로 음수를 띄는 것을 확인할 수 있다. 이는 yd가 증가할수록 sl 변수가 증가하긴 하지만, 그 증가하는 정도는 yd가 증가함에 따라 감소한다는 사실을 보인다. 즉 곡률이 감소형태를 띄고 있음을 yd^2 변수의 추가로 확인할 수 있다.
+
+## 4. 회귀분석 가정 검토 
+```{r}
+par(mfrow=c(2,2))
+plot(reg)
+par(mfrow=c(1,1))
+```
+
+### 선형회귀분석 결과에 대해 진단(diagnostics)하세요.
+
+```{r}
+## 1. x와 y 관계가 선형적인가?
+### 선형성(Linearity): 종속변수와 독립변수가 선형관계에 있다면 잔차와 예측치 사이에 어떤 체계적인 관계가 있으면 안 된다. 
+
+ggplot(salary, aes(x=yd, y=sl)) + geom_point() + 
+  geom_smooth(method="lm") + labs(title='단순 선형회귀_2')
+
+### 결과변수 sl은 예측변수 yd과 선형관계에 있다고 할 수 있다. 
+### sl = 17502.3 + 390.6*yd
+
+## 2. 잔차가 정규성을 띄는가?
+### 정규성(Normality): 결과변수가 정규분포한다면 잔차(residual value) 또한 정규분포하며 평균은 0이다. 정규성 가정을 만족한다면 이 그래프의 점들은 45도 각도의 직선 위에 있어야 하는데, 위 모형에서 확인할 수 있듯 0 주변에 모여 정규성을 띄고 있음을 확인할 수 있다.  
+
+## 3. 잔차가 등분산인가?
+### 등분산성(Homoscedasticity): 잔차의 분산이 일정하다는 가정을 만족한다면, 왼쪽 아래의 그림에서 수평선 주위로 random한 형태로 나타나야 한다. 이 그래프에서는 등분산성을 만족하는 것으로 보인다.
+
+## 4. 특이값(계수 추정에 큰 영향을 미치는 값)이 존재하는가?
+boxplot(subset(salary, select=sl),outcol="red")
+boxplot(subset(salary, select=yd),outcol="red")
+### 계수 추정에 큰 영향을 미치는 이상치는 존재하지 않는다.
+```
+
+
+
