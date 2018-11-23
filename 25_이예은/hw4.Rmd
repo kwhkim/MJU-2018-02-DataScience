@@ -1,0 +1,57 @@
+---
+title: "hw4"
+author: "25_이예은"
+output: html_document
+---
+
+* 데이터 불러오기
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+library(data.table)
+
+salary <- read.table('http://data.princeton.edu/wws509/datasets/salary.dat',header=T)
+```
+
+
+
+* 데이터 살펴보기
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+head(salary)
+ggplot(salary, aes(x=yd, y=sl)) + geom_point() + labs(title="데이터 살펴보기")
+```
+
+* 계수 추정
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+fit<-lm(sl~yd,salary)
+summary(fit)
+#yd=390.65*sd+17502.26
+```
+
+
+* 95% 신뢰구간 추정
+```{r}
+confint(fit,level=0.95)
+#269.3063 ~ 511.9839
+```
+
+
+* 시각화
+```{r}
+ggplot(salary, aes(x=yd, y=sl)) + geom_point() + geom_smooth(method="lm")+
+  geom_abline(intercept = fit$coefficients["(Intercept)"],
+              slope = fit$coefficients["yd"]) + 
+  labs(title='회귀분석 결과 시각화')
+```
+
+* 결과 진단
+```{r}
+par(mfrow=c(2,2))
+plot(fit)
+
+#a. 회귀선이 0에 일직선으로 나타나지 않으므로 선형적이라고 할 수 없다.
+#b. 몇 개의 점들을 제외하고는 점들이 모두 점선 위에 놓여있으므로 대체로 정규성을 띈다고 할 수 있다.
+#c. 점들이 골고루 퍼져있으므로 등분산이라고 할 수 있다.
+#d. 특이값은 관측되지 않고 있다. 22,24,34는 이상치이지만 계수추정에 큰 영향을 미치지는 않는다.
+```
+

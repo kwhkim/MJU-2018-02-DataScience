@@ -1,0 +1,71 @@
+---
+title: "homework4"
+author: "19_jeongmin"
+date: "2018년 11월 15일"
+output: html_document
+---
+
+### 단순선형회귀분석
+
+* 데이터 불러오기
+```{r warning=FALSE}
+library(readr)
+salary <- read_table2("http://data.princeton.edu/wws509/datasets/salary.dat")
+head(salary)
+```
+
+
+1. 계수 추정
+```{r}
+lm2 <- lm(sl~yd,salary)
+summary(lm2)
+coef(lm2)
+```
+회귀분석의 결과를 보면 yd의 계수는 390.6451인 것을 알 수 있다.
+
+
+2. 계수의 95% 신뢰구간
+```{r}
+confint(lm2, level = 0.95)
+```
+yd의 95%신뢰구간은 269.3063 ~ 511.9839이다. 
+
+
+3. 회귀선 시각화
+```{r warning=FALSE}
+library(ggplot2)
+ggplot(salary, aes(x=yd, y=sl)) + geom_point() + 
+  geom_smooth(method="lm") + labs(title="회귀분석 결과 시각화")
+```
+
+
+
+4. 선형회귀분석 결과에 대한 진단
+```{r}
+summary(lm2)
+```
+
+우선 summary 함수를 이용하여 모형의 적합도 검정 결과를 보면, y절편(Intercept)와 독립변수 yd에 대한 p-value값이 0.05보다 낮기때문에 매우 유의미하다고 볼 수 있다. 모형 전반에 대한 p-value 값도 4.102e-08로 0.05보다 낮기 때문에 통계학적으로 유의미성을 나타낸다. 
+
+R-squared 값을 보면 0.4554로 sl의 변동량의 약 46%정도를 이 모형을 통해 설명할 수 있음을 알 수 있다.
+
+
+```{r}
+par(mfrow=c(2,2),oma = c(0, 0, 2, 0))
+plot(lm2, main='회귀분석 가정 검토')
+```
+
+다음으로 회귀분석 가정에 대해서 검토를 해 보았다.
+
+
+* x와 y의 관계가 선형적인가? <br>
+Residuals vs Fitted 그래프를 통해 X와 y의 관계를 알 수 있다. 기울기가 0인, 즉 그래프가 일직선인 그래프가 나타나야 이상적이라 할 수 있는데 이 그래프는 포물선을 띄고 있기 때문에 yd과 sl의 관계가 선형적이 않다는 것을 알 수 있다. 
+
+* 잔차가 정규성을 띄는가? <br>
+Normal Q-Q 그래프를 통해 잔차의 정규성을 알 수 있다. 대부분의 점들이 기준선에 놓여 있기때문에 정규성을 만족하는 것으로 판단된다.
+
+* 잔차가 등분산인가? <br>
+Scale-Location 그래프를 통해 잔차의 등분산 여부를 알 수 있다. 값이 무작위로 찍혀져 있기 때문에 등분산을 만족하는 것으로 판단된다. 
+
+* 특이값이 존재하는가? <br>
+Residuals vs Leverage 그래프를 통해 계수 추정에 큰 영향을 미치는 특이값이 존재하는지 알 수 있다. 22,24,34가 이상치로 발견되었지만 계수추정에 큰 영향을 미치지 않기 때문에 특이값으로 볼 수는 없다. 따라서 특이값은 존재하지 않는다. 
