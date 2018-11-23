@@ -25,7 +25,11 @@ ggplot(salary, aes(x=yd, y=sl)) + geom_point() + labs(title="데이터 살펴보
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 fit<-lm(sl~yd,salary)
 summary(fit)
+<<<<<<< HEAD
 #sl=390.65*yd+17502.26
+=======
+#yd=390.65*sd+17502.26
+>>>>>>> upstream/master
 ```
 
 

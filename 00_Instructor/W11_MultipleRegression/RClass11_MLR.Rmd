@@ -1,0 +1,473 @@
+---
+title: "RClass11_MLR"
+author: "KwH Kim"
+date: "2018년 11월 15일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+```
+
+## 다중선형회귀(Multiple Linear Regression) 분석
+
+### 모형
+$$ y= \beta_0 + \beta_1 x_1 + \beta_2 x_2 + ... + \beta_p x_p + e, e \sim N(0, \sigma^2)$$
+
+### 가정(LINE)
+- **L**inearity(선형성) : $x_1, x_2, ..., x_{k-1}, x_{k+1}, x_p$ 값에 상관없이 $x_k$가 1 증가할 때 $y$ 평균의 증가량은 $\beta_k$로 일정하다.
+- **I**ndependence(독립성)
+- **N**ormality(정규성)
+- **E**qual variance(등분산성)
+
+### 예: 키와 체중을 모두 활용하여 체중을 예측하기
+
+```{r MLR, collapse=T, fig.show='hold', error=T}
+library(ggplot2)
+getwd()
+#dat <- read.csv(file='00_Instructor/LR_weight_n100.csv', header=T, row.names=1)
+dat <- read.csv(file='./LR_weight_n100.csv', header=T, row.names=1)
+ggplot(dat, aes(x=height, y=weight)) + geom_point()
+
+# 01. 다중선형회귀분석: 첫 번째 모형
+fitMLm01 <- lm(weight ~ height + gender, dat)
+print(fitMLm01)
+print(summary(fitMLm01))
+
+# 02. 단순선형회귀와 비교
+## MSE
+mean((dat$weight - predict(fitA))^2) # deviance(fitA)/nrow(dat)
+mean((dat$weight - predict(fitB))^2)
+mean((dat$weight - predict(fitMLm01))^2)
+
+## RMSE
+RMSE(dat$weight, predict(fitA)) #sqrt(mean((dat$weight - predict(fitA))^2))
+RMSE(dat$weight, predict(fitB)) 
+RMSE(dat$weight, predict(fitMLm01)) 
+
+## MAE
+MAE(dat$weight, predict(fitA)) 
+MAE(dat$weight, predict(fitB))
+MAE(dat$weight, predict(fitMLm01))
+
+## 결정계수
+summary(fitA)$r.squared # cor(dat$weight, predict(fitA))^2
+summary(fitB)$r.squared
+summary(fitMLm01)$r.squared
+
+## 로그우도
+logLik(fitA)
+logLik(fitB)
+
+## AIC
+AIC(fitA)
+AIC(fitB)
+
+## BIC
+AIC(fitA, k=log(nrow(dat)))
+AIC(fitB, k=log(nrow(dat)))
+
+# 03. 두 번째 모형
+fitMLm02 <- lm(weight ~ height + gender + height:gender, dat) # weight ~ height * gender
+print(fitMLm02)
+print(summary(fitMLm02))
+
+# 04. ggplot 활용 시각화
+## 04a
+ggplot(dat, aes(x=height, y=weight, col=gender)) + geom_point() + 
+  geom_smooth(method="lm") + labs(title='04. ggplot 활용 시각화 b')
+
+## 04b
+ggplot(dat, aes(x=height, y=weight, col=gender)) + geom_point() + 
+  geom_smooth(method="lm", level=0.95) + labs(title='04. ggplot 활용 시각화 b')
+
+## 04c
+ggplot(dat, aes(x=height, y=weight, col=gender)) + geom_point() + 
+  geom_smooth(method="lm", level=0.6826895) + # pnorm(1) - pnorm(-1) 
+  labs(title='04. ggplot 활용 시각화 c')
+
+## 04d
+ggplot(dat, aes(x=height, y=weight, col=x)) + geom_point() + 
+  geom_smooth(method="lm", formula = y ~ x * col) +
+  labs(title='04. ggplot 활용 시각화 d')
+
+## 04e
+datPred01 <- data.frame(gender="M", height=150:200)
+datPred02 <- data.frame(gender="F", height=150:200)
+datPred <- rbind(datPred01, datPred02)
+datPred$gender <- factor(as.character(datPred$gender), levels= levels(dat$gender))
+
+pred <- predict(fitMLm02, newdata=datPred, se.fit=T)
+datPred2 <- data.frame(height=datPred$height, gender=datPred$gender,   # predictor
+                       weight = pred$fit,  # prediction
+                       weightSE = pred$se.fit)  # SE of prediction
+
+ggplot(dat, aes(x=height, y=weight, col=gender)) + geom_point() + 
+  geom_ribbon(data=datPred2, aes(x=height, 
+                                 ymin=weight-weightSE, ymax=weight+weightSE,
+                                 col=NULL,
+                                 fill=gender), alpha=0.2) +
+  geom_line(data=datPred2, aes(x=height, y=weight, col=gender), size=1) + 
+  coord_cartesian(xlim=c(155,195)) +
+  labs(title='04. ggplot 활용 시각화 d')
+  
+# 05. 두 모형의 비교 1
+## MSE
+mean(fitMLm01$residuals^2)
+mean(fitMLm02$residuals^2)
+
+## RMSE
+RMSE(dat$weight, predict(fitMLm01)) #sqrt(mean((dat$weight - predict(fitA))^2))
+RMSE(dat$weight, predict(fitMLm02)) 
+
+## MAE
+MAE(dat$weight, predict(fitMLm01)) 
+MAE(dat$weight, predict(fitMLm02))
+
+## 결정계수
+summary(fitMLm01)$r.squared # cor(dat$weight, predict(fitA))^2
+summary(fitMLm02)$r.squared
+
+## AIC
+AIC(fitMLm01)
+AIC(fitMLm02)
+
+## BIC
+AIC(fitMLm01, k=log(nrow(dat)))
+AIC(fitMLm02, k=log(nrow(dat)))
+
+# 06. 두 모형의 비교 2
+## a. 표본크기 100
+anova(fitMLm01, fitMLm02)
+
+## b. 표본크기 1000
+dat <- read.csv(file='./LR_weight_n1000.csv', header=T, row.names=1)
+ggplot(dat, aes(x=height, y=weight, col=gender)) + geom_point() + labs(title='산포도: 표본크기 1000')
+fitMLm01 <- lm(weight ~ height + gender, dat)
+fitMLm02 <- lm(weight ~ height * gender, dat)
+anova(fitMLm01, fitMLm02)
+
+# 07. 계수 시각화
+library(coefplot)
+## a 독립 선형 모형
+coefplot(fitMLm01) + labs(title='07a. 계수 시각화: 독립항')
+## b 상호작용 선형 모형
+coefplot(fitMLm02) + labs(title='07b. 계수 시각화: 상호작용항')
+
+## c 독립 선형 모형
+coefplot(fitMLm01, sort='mag') + labs(title='07c. 계수 시각화(크기순 정렬)')
+## d 상호작용 선형 모형
+coefplot(fitMLm02, sort='mag') + labs(title='07d. 계수 시각화(크기순 정렬)')
+
+## e 독립 선형 모형(확대)
+coefplot(fitMLm01) + labs(title='07e. 독립선형모형(확대)') +
+  coord_cartesian((xlim=c(0,25)))
+## f 상호작용 모형(확대)
+coefplot(fitMLm02) + labs(title='07f. 상호작용 모형(확대)') +
+  coord_cartesian((xlim=c(0,2)))
+
+## g 계수 비교
+multiplot(fitMLm01, fitMLm02) + labs(title='07g. 계수 비교') + 
+  scale_color_discrete(labels=c('independent', 'interaction')) +
+  theme(legend.position = 'bottom') +
+  theme(axis.text.x=element_text(angle=0))
+
+library(car)
+compareCoefs(fitMLm01, fitMLm02) 
+compareCoefs(fitMLm01, fitMLm02, se=F) 
+
+## h 내포된 두 모형의 비교
+anova(fitMLm01, fitMLm02)
+```
+
+### 상호작용(Interaction) 효과
+
+* 한 변수의 효과가 다른 변수의 값(value) 또는 수준(level)에 따라 달라지는 현상
+* R에서는 두 변수가 `x`, `y`일 때, `x:y`로 나타낸다.
+
+### R에서 공식(formula)으로 선형 모형을 나타내는 방법
+
+* Wilkson-Rogers Notation
+
+|표기   	|표기2 | 수식   	|
+|:-----	|:-----|:--------	|
+|`y ~ x1 + x2`   	|`y~1+x1+x2`|$\mathbb{E}[\mathbf{y}] = \beta_0 + \beta_1 \mathbf{x1} + \beta_2 \mathbf{x2}$| 
+|`y ~ x1 + x2 - 1`   	|`y~x1+x2`|$\mathbb{E}[\mathbf{y}] = \phantom{\beta_0+} \beta_1 \mathbf{x1} + \beta_2 \mathbf{x2}$   	|
+|`y ~ x1:x2`   	|`y~1+x1:x2`|$\mathbb{E}[\mathbf{y}] = \beta_0 + \beta_1 (\mathbf{x1}\cdot\mathbf{x2})$   	|
+|`y ~ x1*x2`   	|`y~1+x1+x2+x1:x2`|$\mathbb{E}[\mathbf{y}] = \beta_0 + \beta_1 \mathbf{x1} +\beta_2 \mathbf{x2} + \beta_3 (\mathbf{x1}\cdot\mathbf{x2})$     	|
+|`y ~ I(x1*x2)`   	|`z=x1*x2; y~1+z`   |$\mathbb{E}[\mathbf{y}] = \beta_0 + \beta_1 (\mathbf{x1}\cdot\mathbf{x2})$   	|
+|`y ~ (x1 + x2)^2 - x1`   	|`y~1+x2+x1:x2`   |$\mathbb{E}[\mathbf{y}] = \beta_0 + \beta_1(\mathbf{x2})+\beta_2 (\mathbf{x2}\cdot\mathbf{x2})$   	|
+
+* 그 밖에 `.`는 상황에 따라 다른 의미를 나타낸다.
+    - `fit <- lm(y ~ . , dat)`에서 `.`는 데이터 프레임 `dat`에서 결과변수로 쓰인 `y`를 제외한 모든 변수를 나타낸다.
+    - `update(fit, . ~ . - x1)`에서 `.`는 기존의 모든 변수를 나타낸다. 만약 `fit`이 `y ~ x1 + x2 + x3`이었다면, `. ~ . - x1`은 `. ~ x1 + x2`를 나타낸다.
+
+### 두 선형 모형을 평가하기
+* 적합도와 모형의 복잡도를 함께 고려한 평가 지수
+    - AIC(Akake Information Criterion) : `aic(fit)`
+    - BIC(Bayesian Information Criterion) : `aic(fit, k=log(nrow(fit$model))`
+* 예측 능력 평가
+    - 검증 데이터에서 실제 $y$와 예측된 $y$의 차이
+        - 평균제곱오차(MSE; Mean Squared Error) : $\frac{\sum{(\hat{y_i}-y_i)^2}}{n}$ 
+        - 제곱근평균제곱오차(RMSE; Root Mean Squared Error) : $\sqrt{\frac{(\sum{\hat{y_i}-y_i)^2}}{n}}$
+        - 평균절대오차(MAE; Mean Absolute Error) : $\frac{\sum{|\hat{y_i}-y_i|}}{n}$ 
+    - 결정계수(the coefficient of determination) : $R^2 = \mathbb{C}or(y, \hat{y})^2 = \frac{\mathbb{V}\text{ar}[y]-\text{MSE}}{\mathbb{V}\text{ar}[y]}$
+* 내포된 두 모형 비교
+    - 항이 더 많은 모형이 항상 설명력이 더 높다(동일한 설명변수 값에 대해 결정계수가 더 크다).
+    - `anova`를 통해 설명력이 유의미하게 높은지 검정이 가능하다.
+
+### 범주형 변수에 대한 선형 회귀 분석(3개 이상의 범주일 때)
+
+```{r}
+# Prestige Data
+library(ggplot2)
+Prestige <- carData::Prestige
+
+ggplot(Prestige, aes(x=type, y=income)) + geom_boxplot()
+
+fitPrestige <- lm(income ~ type, data=Prestige)
+summary(fitPrestige)
+
+#fitaov <- aov(income ~ type, data=Prestige)
+#summary(fitaov)
+
+modelmat <- model.matrix(~ type, data=Prestige)
+modelmat[c(1,28,31),]  # prof, bc, wc
+
+fitPrestige2 <- lm(income ~ type -1, data=Prestige) # type + 0
+summary(fitPrestige2)
+
+modelmat2 <- model.matrix(~ type -1, data=Prestige)
+modelmat2[c(1,28,31),]  # prof, bc, wc
+```
+
+### 예측 모형(Predictive Model)과 구조 모형(Structural Model)
+
+* 구조 모형 
+    - 원인-결과 모형
+    - 한 변수를 변화시킬 때 나타나는 효과를 추정할 수 있다.
+* 예측 모형
+    - 주어진 관찰값으로 결과 변수의 값을 예측하기 위한 모형
+    - 계수 해석 : 다른 예측 변수가 고정되어 있을 때, 주어진 예측 변수가 1 더 큰 사례에 대한 결과변수 평균의 증가량
+   
+```{r structural, error=T}
+# 01. age -> iq
+#         -> footsize
+print(getwd())
+library(car)
+datIQ <- read.csv('./data_iq.csv', row.names=1)
+fitA <- lm(iq ~ age, datIQ)
+fitB <- lm(iq ~ age + footsize, datIQ)
+summary(fitA)
+summary(fitB)
+compareCoefs(fitA, fitB)
+anova(fitA, fitB)
+
+fitA <- lm(footsize ~ age, datIQ)
+fitB <- lm(footsize ~ age + iq, datIQ)
+summary(fitA)
+summary(fitB)
+compareCoefs(fitA, fitB)
+anova(fitA, fitB)
+
+# 02. taste -> score <- interior
+datScore <- read.csv('./data_taste.csv', row.names=1)
+fitA <- lm(taste ~ score, dat=datScore)
+fitB <- lm(taste ~ score + interior, data=datScore)
+fitC <- lm(taste ~ score*interior, data=datScore)
+compareCoefs(fitA, fitB, fitC)
+anova(fitA, fitB, fitC)
+
+datScore$score_cut <- cut(datScore$score, breaks=5)
+
+library(ggplot2)
+ggplot(datScore, aes(x=interior, y=taste, col=score_cut)) + geom_point() + 
+  geom_smooth(method='lm')
+```
+
+
+### 예측변수가 범주형 변수와 연속형 변수인 경우
+
+```{r}
+# Prestige Data
+library(ggplot2)
+Prestige <- carData::Prestige
+cat('#### Prestige 데이터 : education=연속형 변수, type=범주형 변수')
+
+ggplot(Prestige, aes(x=education, y=income)) + geom_point()
+Prestige %>% filter(complete.cases(Prestige)) %>%
+  ggplot(aes(x=education, y=income, col=type)) + 
+  geom_point() +
+  geom_smooth(method="lm") 
+
+fit <- lm(income ~ type + education, Prestige)
+summary(fit)
+```
+
+### 문제
+
+* `00_Instructor/Davis.txt`을 불러 읽은 후 자료를 plot하고 보고된 체중과 실제 체중의 관계에 대해 분석하세요.
+
+```{r eval=FALSE, include=FALSE}
+library(readr)
+Davis <- read.fwf("./00_Instructor/prepare/Davis.txt",
+                  widths=c(-5,1,-1,3,-1,3,-1,3,-1,3), skip=1)
+colnames(Davis) <- c('gender', 'weight', 'height', 'Rweight', 'Rheight')
+str(Davis)
+Davis %>% mutate(Rweight = as.numeric(as.character(Rweight)),
+                 Rheight = as.numeric(as.character(Rheight))) -> Davis
+                 
+
+ggplot(Davis, aes(x=weight, y=Rweight, col=gender)) + 
+  geom_abline(intercept=0, slope=1, alpha=0.4, linetype='dashed') +
+  geom_point(alpha=0.4) 
+  
+ggplot(Davis, aes(x=weight, y=Rweight, col=gender)) + 
+  geom_abline(intercept=0, slope=1, alpha=0.4, linetype='dashed') +
+  geom_point(alpha=0.4) +
+  geom_smooth(method='lm')
+
+Davis %>% 
+  filter(weight>160) %>% 
+  mutate(w=weight, weight=height, height=w) %>%
+  select(-w) -> Davis01
+Davis %>% 
+  filter(! weight>160 | is.na(weight)) -> Davis02
+DavisCorrected <- rbind(Davis01, Davis02)
+ggplot(DavisCorrected, aes(x=weight, y=Rweight, col=gender)) +
+  geom_abline(intercept=0, slope=1, alpha=0.4, linetype='dashed') +
+  geom_point(alpha=0.4) +
+  geom_smooth(method='lm')
+```
+
+### 이상치(Outlier) 또는 영향점(influential point)에 대한 대처법
+1. 여러 가지 근거로 데이터가 정확한지 확인한다 
+    - 의외로 실수로 잘못 입력된 경우가 많다. 여러 가지 정황으로 고칠 수 있다면 고친다. 그럴 수 없다면 삭제한다.
+    - 정확하다면 관찰값을 이해하고자 노력해본다. 해당 사례에는 특별한 이유가 있을 수 있다. 특별한 사례라면 따로 다룬다.
+2. 모형을 다시 만들어 본다. 
+    - 상호작용을 포함해서 새로운 변수가 필요할 수도 있다. 특별한 사례라면 그것을 나타내는 지시변수를 생각해볼 수 있다.
+    - 예측 변수 또는 결과 변수를 변환해 본다. 변환된 변수에는 이상치 또는 영향점이 아닐 수 있다.
+3. 강건한(robust) 방법을 사용한다.
+    - 강건한 방법은 오차 분산(error variance)가 정규분포가 아닐 때에도 효율적인 추정이 가능하다. 이때 이상치는 비중가 축소된다. 하지만 영향점에 대해서는 해결이 불가능하다.
+
+---
+
+## 다중 회귀 분석에 나타날 수 있는 문제점과 해결책
+
+### 너무 많은 예측 변수 또는 다중공선성(Multicollinearity)
+
+* 관찰 사례보다 예측 변수의 수가 비슷하거나 많으면 모수 추정이 불안정하거나 불가능하다.
+* 예측 변수의 수가 많아지면 과적합이 일어나서 예측이 부정확해진다.
+* 변수 사이에 다중공선성이 있을 경우에 계수 추정이 불안정하거나 불가능하다. R에서 `car::vif` 함수로 다중공선성의 존재 여부를 판단할 수 있다.
+* 대처 방법
+    - 상관계수가 높은 두 변수의 경우 둘의 가중치 합을 새로운 변수로 사용하거나, 한 변수를 제거할 수 있다.
+    - 분산이 너무 작거나, 범주가 너무 치우쳐서 예측에 도움이 되지 않는 변수는 제거한다.
+    - 주성분분석(pca; principal component analysis)와 같은 차원축소(dimension reduction)방법을 먼저 실시한다.
+
+### 문제
+
+* `carData::Anscombe`을 `lm(income~education+young+urban, dat)`을 했을 때 다중 공선성 문제를 진단하세요. 그리고 모든 상호작용항을 포함시킨 모형에 대해서도 다중공선성 문제를 진단하세요.
+
+```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+dat <- carData::Anscombe
+fit0 <- lm(income ~ ., dat) # lm(income~education+young+urban, dat)
+vif(fit0)
+fit1 <- update(fit0, . ~ .^2) # lm(income~(education+young+urban)^2, dat)
+vif(fit1)
+```
+
+### 예 
+
+* 미국 프로야구 선수의 연봉 예측하기(`BaseballHitters.csv`)
+
+### 비선형적인 독립변수-종속변수 관계(Nonlinear functional form)
+
+* 예측변수 또는 결과변수를 변환(transform)한다.
+    - `log(x), 1/x, sqrt(x), x, x^2, exp(x)`
+    - `log(y), 1/y, sqrt(y), y, y^2, exp(y)`
+* 비선형 회귀분석(Nonlinear regression)을 실시한다.
+    - 예) 평활 스플라인(smoothing spline) 회귀, 일반화가법모형(gam; generalized additive model) 
+
+### 비선형적이고 상호작용효과가 동시에 존재할 경우
+
+* 회귀나무(Regression Tree) 또는 인공신경망(Artificial Neural Network)을 사용할 수 있다.    
+  
+---
+
+### 과적합의 예
+
+```{r overfitting, echo=FALSE, fig.height=3, fig.width=6, message=FALSE, warning=FALSE, paged.print=FALSE, error=T}
+library(ggplot2); library(dplyr)
+
+x <- rnorm(1000, 0, 2)
+e <- rnorm(1000, 0, 0.1)
+y <- sin(x) + e
+dat <- data.frame(x=x, y=y)
+#plot(y ~ x)
+lmFit0 <- lm(y~x)
+lmFit1 <- lm(y~x + I(x^2))
+lmFit2 <- lm(y~x + I(x^2) + I(x^3))
+lmFit3 <- lm(y~x + I(x^2) + I(x^3) + I(x^4))
+lmFit4 <- lm(y~x + I(x^2) + I(x^3) + I(x^4) + I(x^5))
+#lmFit5 <- lm(y~x + I(x^2) + I(x^3) + I(x^4) + I(x^5) + I(x^6))
+#lmFit6 <- lm(y~x + I(x^2) + I(x^3) + I(x^4) + I(x^5) + I(x^6) + I(x^7))
+#lmFit7 <- lm(y~x + I(x^2) + I(x^3) + I(x^4) + I(x^5) + I(x^6) + I(x^7) + I(x^8))
+#lmFit8 <- lm(y~x + I(x^2) + I(x^3) + I(x^4) + I(x^5) + I(x^6) + I(x^7) + I(x^8) + I(x^9))
+#lmFit9 <- lm(y~x + I(x^2) + I(x^3) + I(x^4) + I(x^5) + I(x^6) + I(x^7) + I(x^8) + I(x^9) + I(x^10))
+
+#summary(lmFit0)
+#summary(lmFit1)
+#summary(lmFit2)
+#summary(lmFit3)
+#summary(lmFit4)
+#summary(lmFit5)
+#summary(lmFit6)
+#summary(lmFit7)
+#summary(lmFit8)
+#summary(lmFit9)
+
+plotLR = function(fit, x=NULL, xmult=10, ...) {
+  if (is.null(x)) {
+    minx = min(fit$model$x)
+    maxx = max(fit$model$x)
+    intx = (maxx-minx)/(nrow(fit$model)*xmult)
+    x = seq(minx, maxx, intx) }
+  newdat <- data.frame(x=x)
+  newdat1 <- data.frame(predict(fit, newdat, interval='confidence'))
+  newdat2 <- data.frame(predict(fit, newdat, interval='prediction'))
+  newdat1$x <- newdat2$x <- newdat$x
+  newdat3 <- left_join(newdat1, newdat2, by=c('x', 'fit'))
+  ggplot(dat, aes(x=x, y=y)) + geom_point(...) +
+    geom_ribbon(data=newdat3, aes(x=x, y=fit, ymin=lwr.x, ymax=upr.x), alpha=0.2) +
+    geom_ribbon(data=newdat3, aes(x=x, y=fit, ymin=lwr.y, ymax=upr.y), alpha=0.2) +
+    geom_line(data=newdat3, aes(x=x, y=fit)) +
+    coord_cartesian(xlim=0.9*(range(x)-mean(range(x)))+mean(range(x)))
+}
+
+plotLR(lmFit0, alpha=0.3) + labs(title='1차 다항식에 적합 결과 : 내삽')
+plotLR(lmFit1, alpha=0.3) + labs(title='2차 다항식에 적합 결과 : 내삽')
+plotLR(lmFit2, alpha=0.3) + labs(title='3차 다항식에 적합 결과 : 내삽')
+plotLR(lmFit3, alpha=0.3) + labs(title='4차 다항식에 적합 결과 : 내삽')
+plotLR(lmFit4, alpha=0.3) + labs(title='5차 다항식에 적합 결과 : 내삽')
+plotLR(lmFit5, alpha=0.3) + labs(title='6차 다항식에 적합 결과 : 내삽')
+plotLR(lmFit6, alpha=0.3) + labs(title='7차 다항식에 적합 결과 : 내삽')
+plotLR(lmFit7, alpha=0.3) + labs(title='8차 다항식에 적합 결과 : 내삽')
+plotLR(lmFit8, alpha=0.3) + labs(title='9차 다항식에 적합 결과 : 내삽')
+plotLR(lmFit9, alpha=0.3) + labs(title='10차 다항식에 적합 결과 : 내삽')
+
+plotLR(lmFit0, x = seq(-10,10,0.1), alpha=0.3) + labs(title='1차 다항식에 적합 결과 : 외삽')
+plotLR(lmFit1, x = seq(-10,10,0.1), alpha=0.3) + labs(title='2차 다항식에 적합 결과 : 외삽')
+plotLR(lmFit2, x = seq(-10,10,0.1), alpha=0.3) + labs(title='3차 다항식에 적합 결과 : 외삽')
+plotLR(lmFit3, x = seq(-8,8,0.1), alpha=0.3) + labs(title='4차 다항식에 적합 결과 : 외삽')
+plotLR(lmFit4, x = seq(-8,8,0.1), alpha=0.3) + labs(title='5차 다항식에 적합 결과 : 외삽')
+plotLR(lmFit5, x = seq(-8,8,0.1), alpha=0.3) + labs(title='6차 다항식에 적합 결과 : 외삽')
+plotLR(lmFit6, x = seq(-8,8,0.1), alpha=0.3) + labs(title='7차 다항식에 적합 결과 : 외삽')
+plotLR(lmFit7, x = seq(-8,8,0.1), alpha=0.3) + labs(title='8차 다항식에 적합 결과 : 외삽')
+plotLR(lmFit8, x = seq(-8,8,0.1), alpha=0.3) + labs(title='9차 다항식에 적합 결과 : 외삽')
+plotLR(lmFit9, x = seq(-8,8,0.1), alpha=0.3) + labs(title='10차 다항식에 적합 결과 : 외삽')
+```
+
+
+
+

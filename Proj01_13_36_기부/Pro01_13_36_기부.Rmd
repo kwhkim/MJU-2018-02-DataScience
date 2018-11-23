@@ -1,0 +1,479 @@
+---
+title: "자존감과 기부 총액 간의 상관관계"
+author: "김현지, 황수민"
+date: "2018년 10월 30일"
+output: html_document
+---
+  
+  
+### 들어가며
+  
+우리나라의 연간 기부 총액은 11조 원 정도로, 비영리조직의 자선활동을 위한 기금을 안정적으로 확보하기 위해서는 기업 차원의 후원뿐만 아니라 개인 기부자들의 지속적인 참여가 필요하다고 한다. 많은 자선단체들이 다양한 방법으로 개인 기부자들에게 기부를 유도하고 있지만, 동정심에 의한 기부 행위는 지속적인 참여가 이루어지지 않는다는 결과를 낳았다.
+
+
+기부의 심리적 동기를 분석하는 분야에서는 기부 동기를 크게 '이기적 동기[^1]', '이타적 동기[^2]'로 나누고 있다. 동정심에 의한 기부, 즉 이타적 동기에 의한 기부가 지속적인 참여가 이루어지지 않는다면 이기적 동기에 의한 기부는 지속적인 참여가 이루어지는지 궁금해졌다.
+
+
+따라서, 자존감[^3]이 개인의 심리적 요소로 사회적 행동에 대한 예측, 결과, 매개 변인으로 활용될 수 있다는 연구 결과[^4]를 바탕으로 우리는 자존감이 기부 행위에도 영향을 미치는지 분석하고 나아가 성별, 최종 학력, 소득이라는 요소가 자존감에 영향을 미쳐 기부 총액에도 영향을 주는지 알아보고자 한다. 우리는 **남성**일수록, **고학력자**일수록, **고소득자**일수록 자존감이 높으며 기부 총액 또한 많을 것이라는 가설을 세워 분석을 진행하였다.
+
+
+사용한 데이터는 '2015년 10차 한국복지패널조사[^5]'로, 표본의 수가 13,647개로 보다 정확한 분석에 충분한 양이 될 것이라고 생각했다. 또한 연간 기부 총액에 관한 정보와 개인의 자존감을 분석할 수 있을 만한 질문문항들이 많으며, 근로, 생활 실태 및 만족도, 사회적 환경에 대한 인식 등 여러 조사 문항이 있어 다양한 분석이 가능할 것이라 생각되어 선정하게 되었다.
+
+
+
+[^1]:세금 감면, 명예 및 체면 등의 보상에서 기인함.
+[^2]:보상에 대한 기대 없이 타인을 이롭게 하려는 것에서 기인.
+[^3]:있는 그대로의 자신을 믿고 인정하는 주관적인 자기 확신. 자신에 대한 존엄성이 타인들의 외적인 인정이나 칭찬에 의한 것이 아니라 자신 내부의 성숙된 사고와 가치에 의해 얻어지는 개인의 의식을 말한다.
+[^4]:문영숙 외 1, '[기부 동기와 기부 의도에 영향을 미치는 심리적 요인](http://www.dbpia.co.kr/Journal/ArticleDetail/NODE06599763)', 한국광고홍보학회, 2015
+[^5]:출처 [Koweps 한국 복지패널](https://www.koweps.re.kr:442/data/data/list.do)
+
+
+---
+  
+  
+  
+#### 0. 데이터 불러오기
+  
+  
+먼저 데이터를 불러오기 위한 `foreign` 패키지와 구문 작성 및 그래프 작성에 필요한 `dplyr`, `ggplot2`, `lattice` 패키지를 로드한다. 
+
+```{r message=FALSE, warning=FALSE}
+library(foreign)
+library(dplyr)
+library(ggplot2)
+library(lattice)
+library(gridExtra)
+```
+
+
+다음으로 `read.spss()`를 이용해 데이터를 불러온다. 사용할 데이터가 sav 파일이므로 `to.data.frame=TRUE`를 통해 데이터 프레임으로 바꾼다.
+
+```{r message=FALSE, warning=FALSE}
+
+data <- read.spss(file = "한국복지패널가구원.sav", to.data.frame=TRUE)
+
+```
+
+
+`head()`를 이용해 데이터의 일부를 확인한 뒤, `str()`을 사용해서 데이터 속성을 확인한다. 또한 `dim()`을 이용해 행의 개수를 확인한다.
+
+```{r message=FALSE, warning=FALSE}
+
+head(data, 5)
+str(data)
+dim(data)
+
+```
+
+
+---
+  
+  
+앞서 확인한 것과 같이 변수명을 알 수 없으므로 `rename()`을 사용해서 변수명을 변경한다. `ifelse()`를 이용해 birth 행의 여성을 'F', 남성을 'M'으로 변경하고, aver_wage를 300만원 단위로 나눈 뒤 `mutate()`를 이용해 변수를 추가한다. 또한 데이터 분리할 때 이용하기 위해 num이라는 변수를 추가한다. `select()`를 이용해 분석에 필요한 열만 추출해서 newdata에 집어넣는다.
+```{r message=FALSE, warning=FALSE}
+
+newdata <- data %>% 
+  rename(donate = p1004_5,  # 연간 기부 총액(단위 : 만원)
+         good1 = p1005_20,  # 나는 가치있는 사람이다 (1<2<3<4)
+         bad1 = p1005_22,   # 나는 실패한 사람이라는 느낌이 든다
+         bad2 = p1005_24,   # 자랑할 것이 별로 없다
+         bad3 = p1005_28,   # 내 자신이 쓸모없는 사람이라는 느낌
+         bad4 = p1005_18,   # 사람들이 나를 싫어하는듯한 느낌
+         bad5 = p1005_19,   # 뭘 해나갈 엄두가 나지 않음
+         bad6 = p1005_29,   # 내가 좋지 않은 사람이라고 생각한다
+         edu_level = p1007_3aq1, # 최종 학력 (1 : 중졸 이하, 2 : 고졸, 중퇴 3 : 전문대 재학/중퇴/졸업, 4: 4년제 대학 재학/중퇴/졸업 5 : 대학원 이상)
+         aver_wage = p1002_8aq1, # 일한 달 평균 임금(단위 : 만원)
+         birth = p1005_3aq11) %>% # 출산 경험 여부(남 : 0, 여 : 1, 2)
+  mutate(num = c(1:13647),
+         gender = ifelse(birth == 1 | birth == 2, "F",
+                         ifelse(birth == 0, "M", NA)),
+         wage = ifelse(aver_wage>=2100, "A",
+                       ifelse(aver_wage >= 1800, "B",
+                              ifelse(aver_wage >= 1500, "C",
+                                     ifelse(aver_wage >= 1200, "D",
+                                            ifelse(aver_wage >= 900, "E",
+                                                   ifelse(aver_wage >= 600, "F",
+                                                          ifelse(aver_wage >= 300, "G", "H")))))))) %>% 
+  select(num, donate, good1, bad1, bad2, bad3, bad4, bad5, bad6, edu_level, wage, aver_wage, gender)
+
+head(newdata, 5)
+```
+
+
+자존감 항목에서 같은 숫자여도 질문이 긍정적인지 부정적인지에 따라 의미가 다르므로 이를 통일시켜준다. `data.frame`과 `c()`를 이용해 데이터 프레임을 만든 뒤 left_join한다. 
+```{r message=FALSE, warning=FALSE}
+
+Good <- data.frame(good1=c(1,2,3,4),    
+                   good=c(4,3,2,1))
+
+dat <- left_join(newdata, Good, by= "good1")
+
+head(dat, 5)
+
+```
+
+
+자존감 점수를 합해 self 변수를 추가한 뒤 자존감 데이터를 생성한다.
+```{r message=FALSE, warning=FALSE}
+self_dat <- dat %>%        
+  select(num, gender, edu_level, wage, good, bad1, bad2, bad3, bad4, bad5, bad6) %>%   mutate(self=good+ bad1+ bad2+ bad3+ bad4+ bad5+ bad6)
+
+
+head(self_dat, 5)
+```
+
+
+자존감 데이터와 기존 데이터를 left_join 한다. 각 변수마다 고유한 값이 없기 때문에 num을 기준으로 [성별, 자존감, 기부 총액], [최종 학력, 자존감, 기부 총액], [소득, 자존감, 기부 총액] 데이터를 생성한다. 
+```{r message=FALSE, warning=FALSE}
+
+gender_dat <- left_join(self_dat, dat, by = c('num', 'gender'))
+gender_dat <- gender_dat %>% select(gender, self, donate)
+
+head(gender_dat,5)
+
+edu_dat <- left_join(self_dat, dat, by = c('num', 'edu_level'))
+edu_dat <- edu_dat %>% select(edu_level, self, donate)
+
+head(edu_dat, 5)
+
+wage_dat <- left_join(self_dat, dat, by = c('num', 'wage'))
+wage_dat <- wage_dat %>% select(wage, self, donate)
+
+head(wage_dat, 5)
+
+```
+
+
+---
+
+
+#### 1. 성별에 따른 자존감 - 기부 총액
+
+분석을 시작하기 전에 데이터 타입을 변경한 뒤 `summary()`를 이용하여 데이터를 확인한다.
+```{r message=FALSE, warning=FALSE, eval= FALSE}
+
+as.character(gender_dat$gender)
+as.numeric(gender_dat$self)
+as.numeric(gender_dat$donate)
+```
+
+```{r message=FALSE, warning=FALSE}
+summary(gender_dat)
+
+```
+
+boxplot을 이용하여 이상치를 확인한 뒤 극단치를 결측처리한다.
+```{r message=FALSE, warning=FALSE}
+
+boxplot(gender_dat$self)
+boxplot(gender_dat$self)$stats
+
+```
+
+`boxplot()$stats`를 이용해 자존감 항목의 통계치를 출력했을 때 7~18을 벗어나면 극단치로 분류된다는 것을 알 수 있다. 극단치를 결측 처리한 뒤 `table(is.na())`를 이용해 결측값을 확인한다.
+```{r message=FALSE, warning=FALSE}
+
+gender_dat$self <- ifelse(gender_dat$self < 7 | gender_dat$self > 18 , NA, gender_dat$self)
+
+table(is.na(gender_dat$self))
+
+```
+
+기부 총액 항목의 통계치를 출력했을 때 0 ~ 85를 벗어나면 극단치로 분류됨을 알 수 있다. 마찬가지로 극단치를 결측 처리한 뒤 결측치를 확인한다.
+```{r message=FALSE, warning=FALSE}
+
+boxplot(gender_dat$donate)
+boxplot(gender_dat$donate)$stats
+
+gender_dat$donate <- ifelse(gender_dat$donate < 0 | gender_dat$donate > 85 , NA, gender_dat$donate)
+
+table(is.na(gender_dat$donate))
+
+```
+
+조건부 2변수 시각화 중 `x, y 이산형`을 통해 나타낸다.
+```{r message=FALSE, warning=FALSE}
+
+xyplot(donate ~ self | gender, gender_dat)
+
+```
+
+이를 통해 성별에 관계 없이 자존감 수치가 12 이하이고 연간 기부 총액이 40만원 이하인 사람이 많음을 알 수 있다.
+
+
+`group_by()`, `summarise()`, `filter(!is.na())`를 이용해 결측값을 제외한 평균 자존감, 평균 기부 총액 수치를 확인한다.
+```{r message=FALSE, warning=FALSE}
+# 1. 성별 - 평균 자존감
+gender_dat %>% 
+  group_by(gender) %>% 
+  summarise(mean_self = mean(self, na.rm = T)) %>% 
+  filter(!is.na(mean_self))
+
+# 2. 성별 - 평균 기부 총액
+gender_dat %>% 
+  group_by(gender) %>% 
+  summarise(mean_don = mean(donate, na.rm = T)) %>% 
+  filter(!is.na(mean_don))
+
+```
+이를 통해 여성과 남성의 평균 자존감 수치와 평균 연간 기부 총액은 각각 10.5, 10.0, 17만원, 20.8만원임을 알 수 있다.
+
+
+시각화를 통해서도 알 수 있다. 평균 자존감과 평균 기부 총액의 결측치를 제거한 뒤 `ggplot()`을 사용해서 각각 성별-평균 자존감, 성별-평균 연간 기부 총액 그래프를 만든다. 
+```{r message=FALSE, warning=FALSE}
+
+gender_data <- gender_dat %>% 
+  group_by(gender) %>% 
+  summarise(mean_self = mean(self, na.rm = T),
+            mean_don = mean(donate, na.rm = T)) %>% 
+  filter(!is.na(mean_self) | !is.na(mean_don))
+
+genderplot1 <- ggplot(data= gender_data, mapping = aes(x= gender, y= mean_self, fill= gender))+
+  geom_col()
+
+genderplot1 + labs(title = "성별 - 평균 자존감", x='성별', y='평균 자존감')+ scale_fill_brewer(palette = "Spectral", name = '성별', label = c('여성', '남성'))
+
+genderplot2 <- ggplot(data= gender_data, mapping = aes(x= gender, y= mean_don, fill= gender))+ 
+  geom_col()
+
+genderplot2 + labs(title = "성별 - 평균 기부 총액", x='성별', y='평균 기부 총액')+ scale_fill_brewer(palette = "Spectral", name = '성별', label = c('여성', '남성'))
+
+```
+
+시각화 결과, 가설과는 다르게 평균적으로 여성의 자존감이 더 높았지만, 연간 기부 총액은 적음을 알 수 있다.
+
+
+---
+
+
+#### 2. 최종 학력에 따른 자존감 - 기부 총액
+
+분석을 시작하기 전에 데이터 타입을 변경한 뒤 `summary()`를 이용하여 데이터를 확인한다.
+```{r message=FALSE, warning=FALSE, eval= FALSE}
+
+as.numeric(edu_dat$edu_level)
+as.numeric(edu_dat$self)
+as.numeric(edu_dat$donate)
+```
+
+```{r message=FALSE, warning=FALSE}
+summary(edu_dat)
+
+```
+
+
+boxplot을 이용하여 이상치를 확인한다. `boxplot()$stats`를 이용해 최종 학력, 자존감, 연간 기부 총액 항목의 통계치를 출력했을 때 각각 1 ~ 5, 7 ~ 18, 0 ~ 85를 벗어나면 극단치로 분류된다는 것을 알 수 있다.
+```{r message=FALSE, warning=FALSE}
+
+boxplot(edu_dat$edu_level)
+boxplot(edu_dat$edu_level)$stats
+
+boxplot(edu_dat$self)
+boxplot(edu_dat$self)$stats
+
+boxplot(edu_dat$donate)
+boxplot(edu_dat$donate)$stats
+
+```
+
+
+`ifelse()`를 이용해 극단치를 결측 처리한 뒤 `table(is.na())`를 이용해 결측값을 확인한다.
+```{r message=FALSE, warning=FALSE}
+
+edu_dat$edu_level <- ifelse(edu_dat$edu_level < 1 | edu_dat$edu_level > 5 , NA, edu_dat$edu_level)
+
+table(is.na(edu_dat$edu_level))
+
+edu_dat$self <- ifelse(edu_dat$self < 7 | edu_dat$self > 18 , NA, edu_dat$self)
+
+table(is.na(edu_dat$self))
+
+edu_dat$donate <- ifelse(edu_dat$donate < 0 | edu_dat$donate > 85 , NA, edu_dat$donate)
+
+table(is.na(edu_dat$donate))
+
+```
+
+
+2변수의 시각화를 통해 최종 학력과 연간 기부 총액에 대해 살펴봤을 때, 최종 학력이 중졸 이하이거나 대학원 이상인 경우 기부를 한 경험이 없음을 알 수 있다.
+```{r message=FALSE, warning=FALSE}
+
+plot(donate ~ edu_level, data=edu_dat)
+
+```
+
+
+`group_by()`, `summarise()`, `filter(!is.na())`를 이용해 결측값을 제외한 평균 자존감과 평균 기부 총액을 확인한다.
+```{r message=FALSE, warning=FALSE}
+
+# 1. 최종 학력 - 평균 자존감
+edu_dat %>% 
+  group_by(edu_level) %>% 
+  summarise(mean_self = mean(self, na.rm = T)) %>% 
+  filter(!is.na(edu_level))
+
+# 2. 최종 학력 - 평균 기부 총액
+edu_dat %>% 
+  group_by(edu_level) %>% 
+  summarise(mean_don = mean(donate, na.rm = T)) %>% 
+  filter(!is.na(edu_level))
+
+```
+
+
+
+
+최종 학력과 자존감, 최종 학력과 기부 총액을 `group_by()`로 나누어 분석했을 때 상관관계를 알기 어려우므로 `cor.test()`를 이용해 상관계수를 분석한다.
+```{r message=FALSE, warning=FALSE}
+
+cor.test(edu_dat$edu_level, edu_dat$self)
+cor.test(edu_dat$edu_level, edu_dat$donate)
+
+```
+
+최종 학력-자존감 사이에는 약 -0.33으로 음의 상관관계가, 최종 학력-기부 총액 사이에는 약   0.12로 양의 상관관계를 보인다. 따라서 고학력자일수록 자존감이 낮지만 기부는 많이하는 성향을 보임을 알 수 있다. 이를 시각화를 통해서도 살펴볼 수 있다. 
+
+```{r message=FALSE, warning=FALSE}
+
+edu_data <- edu_dat %>% 
+  group_by(edu_level) %>% 
+  summarise(mean_self = mean(self, na.rm = T),
+            mean_don = mean(donate, na.rm = T)) %>% 
+  filter(!is.na(mean_self) | !is.na(mean_don))
+
+ggplot(edu_data, aes(edu_level, y= mean_self))+ geom_segment(aes(xend= edu_level, yend= mean_self), y=0, color='red')+ geom_point(size=3, color= 'navy')+
+  theme(axis.text.x = element_text(angle=65, vjust= 0.6))+
+  labs(title="최종 학력에 따른 평균 자존감", caption="1 : 중졸 이하\n 2: 고졸, 중퇴\n 3: 전문대 재학, 중퇴, 졸업\n 4: 4년제 대학 재학, 중퇴, 졸업\n 5 : 대학원 이상", x="최종학력", y='평균 자존감')+ theme_gray()
+
+
+ggplot(edu_data, aes(edu_level, y= mean_don))+ geom_segment(aes(xend= edu_level, yend= mean_don), y=0, color='red')+ geom_point(size=3, color= 'navy')+
+  theme(axis.text.x = element_text(angle=65, vjust= 0.6))+
+  labs(title="최종 학력에 따른 평균 기부총액", caption="1 : 중졸 이하\n 2: 고졸, 중퇴\n 3: 전문대 재학, 중퇴, 졸업\n 4: 4년제 대학 재학, 중퇴, 졸업\n 5 : 대학원 이상", x="최종학력", y='평균 자존감')+ theme_gray()
+
+
+
+```
+
+시각화 결과, 고학력자일수록 자존감이 높고 기부 총액이 많을 것이라는 가설과 달리 평균적으로 고학력자일수록 자존감이 낮지만 기부 총액은 많음을 알 수 있다. 
+
+
+#### 3. 소득에 따른 자존감 - 기부 총액
+
+분석을 시작하기 전에 데이터 타입을 변경한 뒤 `summary()`를 이용하여 데이터를 확인한다.
+```{r message=FALSE, warning=FALSE, eval= FALSE}
+
+as.character(wage_dat$wage)
+as.numeric(wage_dat$self)
+as.numeric(wage_dat$donate)
+```
+
+```{r message=FALSE, warning=FALSE}
+summary(wage_dat)
+
+```
+
+
+boxplot을 이용하여 이상치를 확인한다. `boxplot()$stats`를 이용해 자존감, 연간 기부 총액 항목의 통계치를 출력했을 때 각각 7 ~ 18, 0 ~ 85 를 벗어나면 극단치로 분류된다는 것을 알 수 있다.
+```{r message=FALSE, warning=FALSE}
+
+boxplot(wage_dat$self)
+boxplot(wage_dat$self)$stats
+
+boxplot(wage_dat$donate)
+boxplot(wage_dat$donate)$stats
+
+```
+
+
+`ifelse()`를 이용해 극단치를 결측 처리한 뒤 `table(is.na())`를 이용해 결측값을 확인한다.
+```{r message=FALSE, warning=FALSE}
+
+wage_dat$self <- ifelse(wage_dat$self < 7 | wage_dat$self > 18 , NA, wage_dat$self)
+
+table(is.na(wage_dat$self))
+
+wage_dat$donate <- ifelse(wage_dat$donate < 0 | wage_dat$donate > 85 , NA, wage_dat$donate)
+
+table(is.na(wage_dat$donate))
+
+```
+
+조건부 2변수 시각화 중 `x, y 이산형`을 통해 나타낸다. 시각화를 통해 사람들은 대부분 월 평균 소득이 0 ~ 1200만원 미만임을 알 수 있다.
+```{r message=FALSE, warning=FALSE}
+
+xyplot(donate ~ self | wage, wage_dat)
+
+```
+
+결측치를 제거한 새로운 데이터를 생성한 뒤 `facet_grid()`를 이용해 소득별로 자존감과 기부 총액의 관계를 보인다. 
+```{r message=FALSE, warning=FALSE}
+
+wag_data <- wage_dat %>% 
+  group_by(wage) %>% 
+  filter(!is.na(wage))
+
+wageplot <- ggplot(wag_data, aes(self, donate)) + geom_col() 
+wageplot + facet_grid(. ~ wage) + labs(title = '소득별 자존감-기부 총액',
+                                       x='자존감', y='기부 총액',
+                                       caption = 'A : 2,100만원 이상\n B : 1,800만원 이상 2,100만원 미만\n C : 1,500만원 이상 1,800만원 미만\n D : 1,200만원 이상 1,500만원 미만\n E : 900만원 이상 1,200만원 미만\n F: 600만원 이상 900만원 미만\n G : 300만원 이상 600만원 미만\n H : 300만원 미만')
+
+```
+
+`group_by()`, `summarise()`, `filter(!is.na())`를 이용해 결측값을 제외한 평균 자존감과 평균 기부 총액을 확인한다.
+```{r message=FALSE, warning=FALSE}
+
+# 1. 소득 - 평균 자존감
+wage_dat %>% 
+  group_by(wage) %>% 
+  summarise(mean_self = mean(self, na.rm = T)) %>% 
+  filter(!is.na(wage))
+
+# 2. 소득 - 평균 기부 총액
+wage_dat %>% 
+  group_by(wage) %>% 
+  summarise(mean_don = mean(donate, na.rm = T)) %>% 
+  filter(!is.na(wage))
+
+```
+
+월 평균 소득이 '2100만원 이상(A)'인 사람들은 평균 자존감이 가장 높은 집단이며 평균 기부 총액은 0원으로 가장 낮았고, 월 평균 소득이 '1200만원 이상 1500만원 미만(D)'인 사람들은 평균 자존감이 가장 낮은 집단이며 평균 기부 총액이 33만원으로 가장 높았다. 이 역시 자존감이 낮을수록 기부를 많이 함을 알 수 있다.
+
+
+
+```{r message=FALSE, warning=FALSE}
+# 소득 구간 별 평균 자존감과 평균 기부금액 비교
+
+wage <- wage_dat %>%
+  group_by(wage) %>% 
+  summarise(mean_self=mean(self, na.rm=T),
+           mean_don= mean(donate, na.rm = T)) %>% 
+  select(wage, mean_self, mean_don) %>% 
+  filter(!is.na(wage))
+
+head(wage, 5)
+
+ggplot(data = wage, aes(x= wage, y= mean_self, size= mean_don))+ 
+  geom_point(color= 'skyblue',alpha= 0.7)+
+  ylim(7, 10)+
+  labs(title= "소득 구간 별 평균 자존감 및 평균 기부 총액", x= "소득구간", y= "평균 자존감", caption='A: 2,100만원 이상 \n B: 1,800만원 이상 2,100만원 미만 \n C: 1,500만원 이상 1,800만원 미만 \n D: 1,200만원 이상 1,500만원 미만 \n E: 900만원 이상 1,200만원 미만 \n F: 600만원 이상 900만원 미만 \n G: 300만원 이상 600만원 미만 \n H: 300만원 미만')
+
+```
+  
+  각 소득 구간 별로 평균 자존감의 크기와 각 구간의 기부금을 버블의 크기로 표현해 보았더니, 소득이 낮아질수록 자존감이 높아지는 경향을 보이며 기부금의 크기는 작아짐을 알 수 있다.
+
+
+
+
+---
+
+### 마치며
+
+우리는 이기적 동기를 자극하여 지속적이고 자발적인 기부를 유도하기 위한 방안을 얻기 위한 분석을 진행했다. 이기적 동기는 개인의 심리적 요소와 직결되어 나타날 것으로 보았고, 그 중에서도 자존감이 높을수록 기부를 많이 할 것이라고 생각했다.
+
+성별, 최종 학력, 소득을 자존감에 영향을 미칠 수 있는 변수로 지정해 분석했다. 남자, 고학력자, 고소득자일수록 자존감이 높아 기부를 많이 할 것이라는 가설과 달리 분석 결과는 여자, 저학력자, 저소득자들이 자존감이 더 높았으며 자존감이 낮을수록 기부를 많이하는 경향을 보였다. 분석을 통해 우리가 세운 가설이 틀렸음을 알 수 있었지만, 이 분석에는 한계점이 분명히 존재한다.
+
+첫째, 데이터에 결측치가 굉장히 많았다. 그 예로 연간 기부 총액 데이터(donate)는 13,647개의 데이터 중 1,198의 데이터만 들어있었다. 많은 사람들이 기부를 하지 않았을 수도 있지만, 기부를 했음에도 불구하고 기입하지 않았을 가능성도 있다. 둘째, 기부액과 기부 횟수가 비례하지 않을 수 있다. 따라서 복지패널조사 데이터와 기부 데이터를 함께 분석하고, 시계열 분석을 함으로써 보다 명확한 결론을 추론할 수 있을 것이다.
+  
+남자, 고학력자, 고소득자의 자존감이 낮게 나오는 원인을 '매슬로의 동기이론'에서 찾아볼 수 있다. 이 이론에 따르면 하위 단계의 욕구(생리적, 안전적, 소속감의 욕구)가 어느 정도 충족되면 상위 단계의 욕구(자존감 욕구)에 대한 결핍을 느껴 이를 추구하게 된다고 한다. 따라서 상대적으로 의식주에 문제가 없으며 안정적인 생활을 영위하는 집단에서는 자존감 결핍이 발생할 수 있다는 것이다. 또한 자존감이 낮을수록 기부를 많이하는 경향 역시 기부라는 행위를 통해 자존감 욕구를 충족시키려 한다는 추론을 할 수 있었다.
+
+따라서 남자, 고학력자, 고소득자를 대상으로 기부를 유도하는 것이 좋으며, 자존감 상승이라는 보상에 기인한 이기적 동기의 기부를 통해 개인 기부자들의 지속적 참여를 유도해야 한다.
