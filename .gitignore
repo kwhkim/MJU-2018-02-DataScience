@@ -10,4 +10,6 @@ salary*.pdf
 00_Instructor/git.*.html
 *.ods#
 =/*.*
+prepare*.*
+
 
