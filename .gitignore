@@ -11,3 +11,4 @@
 =/*.*
 my.path 
 # for git diff -> git apply
+*.sav
