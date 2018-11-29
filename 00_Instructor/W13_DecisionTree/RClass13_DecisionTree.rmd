@@ -1,0 +1,14 @@
+---
+title: "W13_Decision Tree"
+author: "KwH Kim"
+date: "2018년 11월 29일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 의사결정나무(Decision Tree)
+
+### 예. 
