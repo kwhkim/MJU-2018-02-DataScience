@@ -23,22 +23,22 @@ knitr::opts_chunk$set(echo = TRUE)
     - 따라서, $Y|x \sim \mathcal{N}(\beta_0+\beta_1 x, \sigma^2)$.
 * 로지스틱 회귀 모형 
     - $p_i = \mathbb{E}[y_i | x_i]$일 때, $\log \frac{p_i}{1-p_i} = \beta_0 + \beta_1 x_i$.
-    - $y_i | x_i ~ \text{bern}(p_i)$
+    - $y_i | x_i \sim \text{bern}(p_i)$. ($\text{bern}$: 베르누이 분포)
     - 결과 변수가 '참 또는 거짓'처럼 이산적이며, 이항분포를 따른다.
     - 로그 우도 $\log \frac{p}{1-p}$는 계수의 선형 함수이다.
-    - $i$-번째 관찰값 $y_i$가 '참'일 확률 $p_i$는 $\mathbb{E}[Y|x]$가 같다.
+    - $i$-번째 관찰값 $y_i$가 '참'일 확률 $p_i$는 $\mathbb{E}[Y|x]$와 같다.
 
 ### 로지스틱의 가정
 
 - **L**inearity : $g(\mathbb{E}[Y|x])$는 계수의 선형함수이다.
 - **I**ndependence : $x$가 주어졌을 때, $Y$의 분포는 서로 독립이다.
 - ~~**N**ormality~~ : 오차의 분포는 이항분포이다. 일반화 선형모형(GLM; Generalized Linear Model)에서는 $Y|x$의 분포가 이항분포, 다항분포, 푸와송 분포 등으로 확장된다.
-- ~~**E**qual Variance~~ : 오차의 분산은 오차의 분포에 따라 예측 변수 값에 따라 달라질 수 있다.
+- ~~**E**qual Variance~~ : 오차의 분산은 오차의 분포와 예측 변수 값에 따라 달라질 수 있다. ($y$에 링크 함수가 적용된 값의 분산은 일정하지만, $y$의 분산은 그렇지 않음을 유의하자.)
 
 #### 몇 가지 용어
 
 * 승산(odds) : 어떤 사건의 확률이 $p$일 때, 승산은 $\frac{p}{1-p}$이다.
-* 승산비(odds ratio) : 두 사건의 승산의 비율. 한 사건의 확률이 $p_1$이고, 다른 사건의 확률이 $p_2$일 때, 승산비는 $\frac{p_1}{1-p_1}/\frac{p_2}{1-p_2}$이다. 또는 확률의 변화를 나타낼 수도 있다. 확률의 변화를 나타낼 때 승산비는 두 승산의 비율로 생각할 수 있다. 예를 들어 $0.3$의 확률이 $0.5$로 증가했다면, 승산은 $0.3/0.7=0.42$에서 $0.5/0.5=1$로 증가했으면 승산비의 비율은 $1/0.42 = 2.380952$가 된다.
+* 승산비(odds ratio) : 두 사건의 승산의 비율. 한 사건의 확률이 $p_1$이고, 다른 사건의 확률이 $p_2$일 때, 승산비는 $\frac{p_1}{1-p_1}/\frac{p_2}{1-p_2}$이다. 또는 확률의 변화를 나타낼 수도 있다. 확률의 변화를 나타낼 때 승산비는 두 승산의 비율로 생각할 수 있다. 예를 들어 $0.3$의 확률이 $0.5$로 증가했다면, 승산은 $0.3/0.7=0.42$에서 $0.5/0.5=1$로 증가하며 승산의 비율은 $1/0.42 = 2.380952$가 된다.
 * 로짓(logit) : 로그 승산($\log \frac{p}{1-p}$)
 * 로지스틱(logistic) 함수(로짓의 역함수) : $\frac{1}{1+\exp(-x)}$
 
@@ -108,16 +108,30 @@ fit0 # 계수 및 model fit(Null Deviance, Residual Deviance, AIC) 확인
 * 로지스틱 회귀분석 계수의 해석
     - 로짓(logit)은 선형적이다.
     - $x$의 수준에 따라 $x$의 영향이 달라진다.
-    - [로지스틱 회귀에서 계수는 예측변수 1 증가에 따른 두 승산의 승산비로 해석할 수 있다.](https://bookdown.org/jefftemplewebb/IS-6489/logistic-regression.html) ($\frac{p_2/(1-p_2)}{p_1/(1-p_1)} = \exp(\beta_1)$)
+    - [로지스틱 회귀에서 계수는 예측변수 1 증가에 따른 새로운 승산과 기존 승산의 로그 승산비로 해석할 수 있다.](https://bookdown.org/jefftemplewebb/IS-6489/logistic-regression.html) ($\frac{p_2/(1-p_2)}{p_1/(1-p_1)} = \exp(\beta_1)$)
     
 ```{r}
 summary(fit0)
 coef(fit0)
 confint(fit0)
+```
 
+* 절편 `(Intercept)`와 `distance`의 계수의 의미
+    - `(Intercept)`: `distance`가 0일 때, $\log\frac{p}{p-1}$. 따라서 $\beta_0$는 `switchYes`의 로그 승산(logit)이다. (로짓 0은 확률 1/2.) $\exp(\beta_0)$는 `switchYes`의 승산(odds)이 된다. 0.60에 함수 `invlogit`하면 확률 `r invlogit(.60)`된다.
+    - `distance`의 계수: $\exp(-0.00814)$는 `distance`가 1 증가할 때, 증가 이전 확률을 $p_0$, 증가 이후의 확률을 $p_1$이라고 했을 때, 두 확률의 승산비 $\frac{p_1/(1-p_1)}{p_0/(1-p_0)}$가 된다. 만약 $p_0$이 0.65이라면, $\frac{p_1/(1-p_1)}{0.65/(1-0.65)} = \exp(-0.00814)$에서 0.648이 된다.
+    - $\frac{p}{1-p}=\text{odds}$에서 $p=\frac{\text{odds}}{1+\text{odds}}$.
+    
+```{r}
+newdat = data.frame(distance = c(0,1))
+predict(fit0, newdat, type='response')
+```
+    
+* 로지스틱 회귀분석 시각화
+
+```{r}
 newdat = data.frame(distance = seq(0, 500, 10))
 predy <- predict(fit0, newdata=newdat, type='link', se.fit=TRUE)
-head(predy) # predy$fit, $se.fit, 
+#head(predy) # predy$fit, $se.fit, 
 prob = 0.95
 predy$lwr <- predy$fit + qnorm((1-prob)/2)*predy$se.fit
 predy$upr <- predy$fit + qnorm(1-(1-prob)/2)*predy$se.fit
@@ -131,8 +145,6 @@ dfPredy <-
                      upr = invlogit(upr),
                      fit = invlogit(fit))
 ```
-
-* 로지스틱 회귀분석 시각화
 
 ```{r}
 library(effects)
@@ -300,7 +312,7 @@ plot(effect('Age*Housing.Rent', fit2),  type='response')
 
 * 분리(seperation) 문제  
 
-* 결과변수가 지나치게 불균형인 경우 : 예) 실제 양성이 99%라면 무조건 양성으로 탐지할 때, 정확률은 99%이다.
+* 결과변수가 지나치게 불균형인 경우 : 예) 실제 양성이 99%라면 무조건 양성으로 탐지할 때, 정확도(accuracy)은 99%이다.
 
 ### 모형평가
 
