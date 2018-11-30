@@ -1,0 +1,103 @@
+---
+title: "homework_1116"
+author: "홍영화"
+date: "2018년 11월 16일"
+output: html_document
+---
+
+##전처리
+```{r}
+library(dplyr)
+library(ggplot2)
+library(data.table)
+
+salary_raw <- read.table('http://data.princeton.edu/wws509/datasets/salary.dat',header=T)
+
+salary <- salary_raw
+
+str(salary)
+summary(salary)
+colSums(is.na(salary))
+
+```
+
+##상관계수, 회귀계수
+```{r}
+cor(salary$yd,salary$sl, method='pearson') #상관계수
+
+sal_lm <- lm(sl~yd, data=salary)
+coef(sal_lm)   #회귀계수 #sl = 17502.3 + 390.6*yd
+
+summary(sal_lm) #p-value가 0.05보다 충분히 작아 통계적으로 유의미하다고 판단된다. 하지만 이 유의미성은 Adjusted R-squared 값이 0.4445이므로, 44%의 설명력을 가진다고 할 수 있다.
+
+```
+
+##회귀계수의 95% 신뢰구간
+```{r}
+confint(sal_lm, level=0.95)
+
+```
+
+##정규성 확인
+```{r}
+library(car)
+par(mfrow=c(1,2))
+qqPlot(salary$sl)
+qqPlot(salary$yd)
+```
+
+##회귀모델 평가
+```{r}
+par(mfrow = c(2, 2))
+plot(sal_lm)
+
+```
+
+##선형 회귀 그래프
+```{r}
+with(salary, plot(yd, sl))
+abline(coef(lm(sl ~ yd, data = salary)),col='red')
+title(main='Regression plot A')
+```
+
+```{r}
+ggplot(data=salary, aes(x=yd, y=sl)) + 
+  geom_point() +
+  geom_smooth(method=lm)+
+  ggtitle('Regression plot B')
+
+```
+
+##조건부 선형 회귀
+```{r}
+##yd을 평균값 기준으로 less와 more 2개의 수준으로 나누어 보았다.
+salary <- salary %>% 
+  mutate(yd_group = ifelse(yd <=16,'less',
+                           ifelse(yd <=35,'more',NA)))
+
+##조건부 회귀 그래프
+ggplot(salary, aes(x=yd, y=sl, color=yd_group))  + 
+  geom_point() + geom_smooth(method=lm)+
+  ggtitle('Conditional Regression plot')
+
+```
+
+##모평균 차이에 대한 추정
+```{r}
+#two sample t-test
+t.test(sl~yd_group,data=salary, conf.level = 0.95)
+
+```
+
+##선형 회귀분석 결과
+
+###1.결과변수 sl은 예측변수 yd과 선형관계에 있다고 할 수 있다. sl = 17502.3 + 390.6*yd이라는 회귀 모델은 통계적으로 유의미하며 44%의 설명력을 가진다.
+
+###2.그런데 yd를 평균값을 기준으로 나누어보니, yd의 before그룹은 *sl과 강한 선형 관계*를 보였지만, yd의 after그룹은 *sl과 선형 관계가 성립되지 않는다고* 판단된다.
+
+###3.따라서 결과변수 sl은 예측변수 yd가 평균값보다 작을 경우에만, 영향을 크게 받는다고 할 수 있다.
+
+
+
+
+
