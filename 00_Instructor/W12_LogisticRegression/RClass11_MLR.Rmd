@@ -218,6 +218,12 @@ anova(fitMLm01, fitMLm02)
     - `anova`를 통해 설명력이 유의미하게 높은지 검정이 가능하다.
 
 ### 범주형 변수에 대한 선형 회귀 분석(3개 이상의 범주일 때)
+*체중=B0+B1X1+B2X2
+gender = 'F', 'M', '중성'
+genderM    0    1    0
+gender중성 0    0    1
+
+*이경우 여지 평균 B0, 중성평균 B0+B2
 
 ```{r}
 # Prestige Data
@@ -247,6 +253,10 @@ modelmat2[c(1,28,31),]  # prof, bc, wc
 * 구조 모형 
     - 원인-결과 모형
     - 한 변수를 변화시킬 때 나타나는 효과를 추정할 수 있다.
+    - 예1) 교육연수가 높을수록 연봉이 높다.
+    - 예2) 신발사이즈가 클수록 아이큐가 높다. -> age와 신발크기, 아이큐의 상관관계 때문에 age 변수
+      누락시 신발사이즈의 계수가 과대평가 될 수 있음.
+    
 * 예측 모형
     - 주어진 관찰값으로 결과 변수의 값을 예측하기 위한 모형
     - 계수 해석 : 다른 예측 변수가 고정되어 있을 때, 주어진 예측 변수가 1 더 큰 사례에 대한 결과변수 평균의 증가량
@@ -257,8 +267,9 @@ modelmat2[c(1,28,31),]  # prof, bc, wc
 print(getwd())
 library(car)
 datIQ <- read.csv('./data_iq.csv', row.names=1)
-fitA <- lm(iq ~ age, datIQ)
+fitA <- lm(iq ~ footsize, datIQ)
 fitB <- lm(iq ~ age + footsize, datIQ)
+confint(fitA)
 summary(fitA)
 summary(fitB)
 compareCoefs(fitA, fitB)
@@ -310,11 +321,8 @@ summary(fit)
 * `00_Instructor/Davis.txt`을 불러 읽은 후 자료를 plot하고 보고된 체중과 실제 체중의 관계에 대해 분석하세요.
 
 ```{r eval=FALSE, include=FALSE}
-library(readr)
-Davis <- read.fwf("./00_Instructor/prepare/Davis.txt",
-                  widths=c(-5,1,-1,3,-1,3,-1,3,-1,3), skip=1)
-colnames(Davis) <- c('gender', 'weight', 'height', 'Rweight', 'Rheight')
-str(Davis)
+
+
 Davis %>% mutate(Rweight = as.numeric(as.character(Rweight)),
                  Rheight = as.numeric(as.character(Rheight))) -> Davis
                  
