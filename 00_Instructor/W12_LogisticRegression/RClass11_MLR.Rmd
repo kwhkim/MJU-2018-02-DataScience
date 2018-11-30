@@ -311,13 +311,12 @@ summary(fit)
 
 ```{r eval=FALSE, include=FALSE}
 library(readr)
-Davis <- read.fwf("./00_Instructor/prepare/Davis.txt",
+Davis <- read.fwf("./Davis.txt",
                   widths=c(-5,1,-1,3,-1,3,-1,3,-1,3), skip=1)
 colnames(Davis) <- c('gender', 'weight', 'height', 'Rweight', 'Rheight')
 str(Davis)
 Davis %>% mutate(Rweight = as.numeric(as.character(Rweight)),
                  Rheight = as.numeric(as.character(Rheight))) -> Davis
-                 
 
 ggplot(Davis, aes(x=weight, y=Rweight, col=gender)) + 
   geom_abline(intercept=0, slope=1, alpha=0.4, linetype='dashed') +
@@ -351,7 +350,7 @@ ggplot(DavisCorrected, aes(x=weight, y=Rweight, col=gender)) +
 3. 강건한(robust) 방법을 사용한다.
     - 강건한 방법은 오차 분산(error variance)가 정규분포가 아닐 때에도 효율적인 추정이 가능하다. 이때 이상치는 비중가 축소된다. 하지만 영향점에 대해서는 해결이 불가능하다.
 
----
+----
 
 ## 다중 회귀 분석에 나타날 수 있는 문제점과 해결책
 
@@ -445,27 +444,27 @@ plotLR = function(fit, x=NULL, xmult=10, ...) {
     coord_cartesian(xlim=0.9*(range(x)-mean(range(x)))+mean(range(x)))
 }
 
-plotLR(lmFit0, alpha=0.3) + labs(title='1차 다항식에 적합 결과 : 내삽')
-plotLR(lmFit1, alpha=0.3) + labs(title='2차 다항식에 적합 결과 : 내삽')
-plotLR(lmFit2, alpha=0.3) + labs(title='3차 다항식에 적합 결과 : 내삽')
-plotLR(lmFit3, alpha=0.3) + labs(title='4차 다항식에 적합 결과 : 내삽')
+plotLR(lmFit0, alpha=0.3) + labs(title='fitted to 1st order polynomial : interpolation')
+plotLR(lmFit1, alpha=0.3) + labs(title='fitted to 2nd order polynomial : interpolation')
+plotLR(lmFit2, alpha=0.3) + labs(title='fitted to 3rd order polynomial : interpolation')
+plotLR(lmFit3, alpha=0.3) + labs(title='fitted to 4th order polynomial : interpolation')
 plotLR(lmFit4, alpha=0.3) + labs(title='5차 다항식에 적합 결과 : 내삽')
-plotLR(lmFit5, alpha=0.3) + labs(title='6차 다항식에 적합 결과 : 내삽')
-plotLR(lmFit6, alpha=0.3) + labs(title='7차 다항식에 적합 결과 : 내삽')
-plotLR(lmFit7, alpha=0.3) + labs(title='8차 다항식에 적합 결과 : 내삽')
-plotLR(lmFit8, alpha=0.3) + labs(title='9차 다항식에 적합 결과 : 내삽')
-plotLR(lmFit9, alpha=0.3) + labs(title='10차 다항식에 적합 결과 : 내삽')
+#plotLR(lmFit5, alpha=0.3) + labs(title='6차 다항식에 적합 결과 : 내삽')
+#plotLR(lmFit6, alpha=0.3) + labs(title='7차 다항식에 적합 결과 : 내삽')
+#plotLR(lmFit7, alpha=0.3) + labs(title='8차 다항식에 적합 결과 : 내삽')
+#plotLR(lmFit8, alpha=0.3) + labs(title='9차 다항식에 적합 결과 : 내삽')
+#plotLR(lmFit9, alpha=0.3) + labs(title='10차 다항식에 적합 결과 : 내삽')
 
-plotLR(lmFit0, x = seq(-10,10,0.1), alpha=0.3) + labs(title='1차 다항식에 적합 결과 : 외삽')
-plotLR(lmFit1, x = seq(-10,10,0.1), alpha=0.3) + labs(title='2차 다항식에 적합 결과 : 외삽')
-plotLR(lmFit2, x = seq(-10,10,0.1), alpha=0.3) + labs(title='3차 다항식에 적합 결과 : 외삽')
-plotLR(lmFit3, x = seq(-8,8,0.1), alpha=0.3) + labs(title='4차 다항식에 적합 결과 : 외삽')
-plotLR(lmFit4, x = seq(-8,8,0.1), alpha=0.3) + labs(title='5차 다항식에 적합 결과 : 외삽')
-plotLR(lmFit5, x = seq(-8,8,0.1), alpha=0.3) + labs(title='6차 다항식에 적합 결과 : 외삽')
-plotLR(lmFit6, x = seq(-8,8,0.1), alpha=0.3) + labs(title='7차 다항식에 적합 결과 : 외삽')
-plotLR(lmFit7, x = seq(-8,8,0.1), alpha=0.3) + labs(title='8차 다항식에 적합 결과 : 외삽')
-plotLR(lmFit8, x = seq(-8,8,0.1), alpha=0.3) + labs(title='9차 다항식에 적합 결과 : 외삽')
-plotLR(lmFit9, x = seq(-8,8,0.1), alpha=0.3) + labs(title='10차 다항식에 적합 결과 : 외삽')
+plotLR(lmFit0, x = seq(-10,10,0.1), alpha=0.3) + labs(title='fitted to 1st order polynomial : extrapolation')
+plotLR(lmFit1, x = seq(-10,10,0.1), alpha=0.3) + labs(title='fitted to 2nd order polynomial : extrapolation')
+plotLR(lmFit2, x = seq(-10,10,0.1), alpha=0.3) + labs(title='fitted to 3rd order polynomial : extrapolation')
+plotLR(lmFit3, x = seq(-8,8,0.1), alpha=0.3) + labs(title='fitted to 4th order polynomial : extrapolation')
+plotLR(lmFit4, x = seq(-8,8,0.1), alpha=0.3) + labs(title='fitted to 5th order polynomial : extrapolation')
+#plotLR(lmFit5, x = seq(-8,8,0.1), alpha=0.3) + labs(title='6차 다항식에 적합 결과 : 외삽')
+#plotLR(lmFit6, x = seq(-8,8,0.1), alpha=0.3) + labs(title='7차 다항식에 적합 결과 : 외삽')
+#plotLR(lmFit7, x = seq(-8,8,0.1), alpha=0.3) + labs(title='8차 다항식에 적합 결과 : 외삽')
+#plotLR(lmFit8, x = seq(-8,8,0.1), alpha=0.3) + labs(title='9차 다항식에 적합 결과 : 외삽')
+#plotLR(lmFit9, x = seq(-8,8,0.1), alpha=0.3) + labs(title='10차 다항식에 적합 결과 : 외삽')
 ```
 
 --- 
