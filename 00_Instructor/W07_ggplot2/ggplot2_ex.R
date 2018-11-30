@@ -25,5 +25,14 @@ ggplot(df_exam_long, aes(x=as.factor(class), y=value, col=key)) +
 
 # position = 'identity', 'jitter', 'dodge', 'stack', 'fill'
 
+ggplot(df_exam, aes(x=as.factor(as.character(class)), y=math)) +
+  geom_boxplot(col='red') +
+  geom_boxplot(aes(y=english), col='blue') +
+  geom_boxplot(aes(y=science), col='yellow')
+
+df_exam_long <- df_exam %>% gather("key", "value", math:science)
+
+ggplot(df_exam_long, aes(x=as.factor(class), y=value, col=key)) + 
+  geom_boxplot()
 
 

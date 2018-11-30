@@ -311,7 +311,7 @@ summary(fit)
 
 ```{r eval=FALSE, include=FALSE}
 library(readr)
-Davis <- read.fwf("./00_Instructor/prepare/Davis.txt",
+Davis <- read.fwf("C://Users//gfdss//Desktop//datascience//homework1//MJU-2018-02-DataScience//00_Instructor//W12_LogisticRegression//Davis.txt",
                   widths=c(-5,1,-1,3,-1,3,-1,3,-1,3), skip=1)
 colnames(Davis) <- c('gender', 'weight', 'height', 'Rweight', 'Rheight')
 str(Davis)

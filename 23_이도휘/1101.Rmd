@@ -1,0 +1,152 @@
+---
+---
+# **연령별**
+```{r}
+
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(outliers)
+
+a <- read.csv("C://Users//gfdss//Desktop//응데 과제//연령별.csv", stringsAsFactors = F)
+
+colnames(a) <- c("age", "death", "total", "na", "na1", "na2", "na3", "na4", "na5")
+head(a)
+a %>% select(c(1, 3)) %>%
+  slice(c(3, 5, 7, 9, 11, 13, 15, 17, 19)) %>% 
+  mutate("age"= as.factor(age), "total" = gsub(",", "", total)) %>%
+  mutate("total"=as.numeric(total))-> b
+head(b)
+summary(b)
+
+quantile(b$total, na.rm=T)
+IQR(b$total, na.rm=T)
+boxplot(b)
+b$out
+
+ggplot(data=b, mapping=aes(age, total, fill=age)) +
+  geom_bar(stat="identity", width=0.5) +
+  coord_cartesian(ylim=c(0, 2000)) +
+  labs(title="age") +
+  scale_fill_brewer(palette = "Purples")
+```
+
+**outlier**
+*age는 factor형 데이터라 outlier를 파악할 없다.
+*total(연령별 사망자수)의 이상치 범위는 283.5~549이다. 이 값을 벗어난 ourlier가 한 개 존재함을 boxplot을 통해 알 수 있다.
+
+
+# **연령별 인구 대비** 
+```{r}
+
+f <- read.csv("C://Users//gfdss//Desktop//응데 과제//연령별인구조사.csv",  stringsAsFactors = F)
+colnames(f) <- c("state", "age0", "pop0", "age", "pop")
+f %>% mutate("age"=as.factor(age)) %>%
+  select(c(4,5)) ->g
+head(g)
+
+left_join(b, g, by="age") ->h
+h%>% mutate("age"=as.factor(age)) %>%
+  slice(c(1:7)) %>%
+  mutate("tp"=(total/pop)*100)-> h1
+head(h1)
+summary(h1)
+
+quantile(h1$tp, na.rm=T)
+IQR(h1$tp, na.rm=T)
+boxplot(h1$tp, na.rm=T)
+h1$out
+
+
+ggplot(h1, aes(age, tp, fill=age)) +
+  geom_bar(stat="identity", width=0.5) +
+  labs(title="death/population&age") +
+  scale_fill_brewer(palette = "RdPu")
+  
+
+```
+
+**outlier**
+*연령별 인구대비 사망자수(tp)의 이상치 범위는 0.0045에서 0.0074이며 이 범위에 포함되지 않는 outlier가 한 개 존재함을 boxplot을 통해 알 수 있다. 
+
+
+# **연령별 시간대별**
+```{r}
+
+c <- read.csv("C://Users//gfdss//Desktop//응데 과제//시간대별.csv", stringsAsFactors = F)
+colnames(c) <- c("age", "death", "total", "t0t2", "t2t4", "t4t6", "t6t8", "t8t10", "t10t12", "t12t14", "t14t16", "t16t18", "t18t20", "t20t22", "t22t24")
+head(c)
+
+c %>% slice(c(1, 3, 5, 7, 9, 11, 13, 15, 17, 19)) %>%
+  mutate("age"=as.factor(age), "death"=as.factor(death), "total" = gsub(",", "", total)) %>%
+  mutate("total"=as.numeric(total)) -> q
+summary(q)
+
+
+q %>%  select(c(age, t0t2:t22t24)) %>%
+  slice(c(2:9)) %>%
+  gather(key='key', value='value', c(t0t2:t22t24)) -> d
+colnames(d) <- c("age", "time", "total")
+head(d)
+
+quantile(d$total, na.rm=T)
+IQR(d$total, na.rm=T)
+boxplot(d$total, na.rm=T)
+d$out
+
+ggplot(d, aes(time, total, fill=time)) +
+  facet_wrap(facet=.~age) +
+  geom_bar(stat="identity") +
+  labs(title="age&time") +
+  scale_fill_brewer(palette = "Paired")
+
+```
+
+**outlier**
+*시간대별 사망자수(total)에서 이상치 범주는 14~52.25이며 이 때 outlier가 약 10개정도 존재함을 boxplot을 통해 알 수 있다.
+
+
+# **시군구 기상상태별** 
+```{r}
+
+w <- read.csv("C://Users//gfdss//Desktop//응데 과제//시군구 날씨별.csv", stringsAsFactors = F)
+colnames(w) <- c("state", "state2", "total", "clean", "cloudy", "rain", "fog", "snow", "etc", "none")
+head(w)
+
+w %>% mutate("state"= as.factor(state), "total" = gsub(",", "", total), "clean" = gsub(",", "", clean), "cloudy"=as.numeric(cloudy), "rain"=as.numeric(rain), "fog"=as.numeric(fog), "snow"=as.numeric(snow), "etc"=as.numeric(etc)) %>%
+  mutate("total"=as.numeric(total), "clean"=as.numeric(clean))-> w3 
+w3 %>%select(c(1,3,4,5,6,7,8,9)) %>%
+  slice(c(2,28,45,54,65,71,77,83,85,117,136,149,166,181,204,228,250))-> w1
+head(w1)
+summary(w1)
+
+
+boxplot(w1$total, w1$clean, w1$cloudy, w1$rain, w1$fog, w1$snow, w1$etc, na.rm=T)
+w1$out
+
+
+ggplot(w1, aes(state, total, fill=state)) +
+  geom_bar(stat="identity") 
+
+w1 %>% 
+  gather(key='key', value='value', clean, cloudy, rain, fog, snow, etc) %>%
+  mutate("key"=as.factor(key))->w2
+colnames(w2) <- c("state", "total", "whether", "n")
+head(w2)
+
+
+
+ggplot(w2, aes(state, n, fill=whether)) +
+  geom_bar(stat="identity", position = "dodge") +
+  labs(title= "whether&state") +
+  scale_fill_brewer(palette = "Pastel1")
+
+ggplot(w2, aes(state, n, fill=whether)) +
+  geom_bar(stat="identity", position = "dodge") +
+  coord_polar(theta="y") +
+  labs(title= "whether&state polar") +
+  scale_fill_brewer(palette = "Pastel1")
+```
+
+**outlier**
+*모든 날씨 범주에서 outlier가 1개씩 존재함을 boxplot을 통해 알 수 있다.

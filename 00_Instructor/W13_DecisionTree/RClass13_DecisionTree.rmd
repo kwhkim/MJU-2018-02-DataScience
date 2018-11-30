@@ -1,0 +1,323 @@
+---
+title: "W13_Decision Tree"
+author: "KwH Kim"
+date: "2018년 11월 29일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 의사결정나무(Decision Tree)
+
+### 예. `carData::Wells`
+
+* 자료의 시각화 
+
+```{r plot, collapse=T, hold=T}
+library(dplyr)
+library(ggplot2)
+data(Wells, package='carData')
+Wells_cut <- 
+  Wells %>% summarise(min = min(distance), max = max(distance), by = (max-min)/20)  
+Wells <- 
+  Wells %>% mutate(distCut = cut(distance, 
+                                 breaks=seq(Wells_cut$min, Wells_cut$max, Wells_cut$by))) 
+ggplot(data=Wells, aes(x=distCut, col=switch, fill=switch)) + geom_bar() +
+  theme(axis.text.x=element_text(angle=60)) 
+
+ggplot(data=Wells, aes(x=distCut, col=switch, fill=switch)) + geom_bar(position = "fill" ) + 
+  geom_rug(aes(x=distCut, y=0.5), position=position_jitter(width=0.2), 
+           alpha=0.02, sides='b', col='black') +
+  theme(axis.text.x=element_text(angle=90)) 
+
+ggplot(data=Wells, aes(x=distCut, col=switch, fill=switch)) + geom_bar(position = "fill" ) +
+  facet_grid(association~.) + 
+  theme(axis.text.x=element_text(angle=90)) +
+  geom_abline(intercept=0.5, slope=0, linetype='dotted')
+
+Wells_cut <- 
+  Wells %>% summarise(min = min(education), max = max(education), by = (max-min)/5)  
+Wells <- 
+  Wells %>% mutate(eduCut = cut(education, 
+                                breaks=seq(Wells_cut$min, Wells_cut$max, Wells_cut$by))) 
+
+ggplot(data=Wells, aes(x=distCut, col=switch, fill=switch)) + geom_bar(position = "fill" ) +
+  facet_grid(eduCut~association) + 
+  theme(axis.text.x=element_text(angle=90)) +
+  geom_abline(intercept=0.5, slope=0, linetype='dotted')
+
+ggplot(data=Wells, aes(x=distCut, col=switch, fill=switch)) + geom_bar() +
+  facet_grid(eduCut~association) + 
+  theme(axis.text.x=element_text(angle=90)) +
+  geom_abline(intercept=0.5, slope=0, linetype='dotted')
+```
+
+* `rpart::rpart`를 활용하여 의사결정나무(decision tree) 만들고 시각화하기
+
+```{r rpart, collapse=T}
+library(effects)
+library(rpart)
+library(caret) # confusionMatrix
+Wells <- 
+  Wells %>% select(switch, arsenic, distance, education, association)
+tmodel2 <- rpart(switch ~ distance, data=Wells)
+summary(tmodel2)
+#par(mar=c(5.1, 4.1, 5.1, 2.1)) # default c(5.1, 4.1, 4.1, 2.1)
+plot(tmodel2, main='Decision Tree: switch ~ distance')
+text(tmodel2)
+
+library(rpart)
+tmodel3 <- rpart(switch ~ distance+ arsenic, data=Wells)
+summary(tmodel3)
+plot(tmodel3, main='Decision Tree: switch ~ dist + arsenic')
+text(tmodel3)
+
+library(rpart)
+tmodel4 <- rpart(switch ~ ., data=Wells)
+summary(tmodel4)
+plot(tmodel4, main='Decision Tree: switch ~ .')
+text(tmodel4)
+```
+
+* 의사결정나무(decision tree)
+    - 결과 변수 예측에 가장 도움이 되는 예측 변수 분리을 재귀적으로 찾아내는 방법
+    - 노드(Node) : 예측 변수에 값에 따라 결과 예측 값이 분리(split)되는 지점(뿌리노드, 잎노드).
+    - 특징
+        - 해석하기 편리하다.
+        - 그리디(greedy) 알고리즘을 사용하며, 재귀적이다.
+        - 변수 선택(Variable Selection)이 자동으로 이루어진다.
+        - 결측치에 대해 따로 신경 쓸 필요가 없다.
+        - 방법에 따라 과적합되기 쉽다.
+
+* 로지스틱 회귀 분석과 비교
+
+```{r}
+# Logistic Regression with no interaction
+lmodel4 <- glm(switch ~ ., data=Wells,
+               family=binomial(link='logit'))
+summary(lmodel4)
+plot(allEffects(lmodel4))
+
+# Logistic Regression with interactions
+lmodel5 <- glm(switch ~ .^2, data=Wells,
+               family=binomial(link='logit'))
+summary(lmodel5)
+plot(allEffects(lmodel5), multiline=TRUE)
+
+predT4 <- predict(tmodel4, type='class')
+predL4 <- ifelse(predict(lmodel4, type='response') > 0.5, "yes", "no") %>% factor(levels = c("no", "yes")) 
+predL5 <- ifelse(predict(lmodel5, type='response') > 0.5, "yes", "no") %>% factor(levels = levels(Wells$switch))
+
+# 의사결정나무와 로지스틱 회귀분석 예측 비교
+addmargins(table(predT4, predL4))
+addmargins(table(predT4, predL5))
+
+# 혼동행렬
+confusionMatrix(predT4, Wells$switch, positive='yes')
+confusionMatrix(predL4, Wells$switch, positive='yes')
+confusionMatrix(predL5, Wells$switch, positive='yes')
+```
+
+* 의사결정나무의 복잡도 조절(`rpart.control`)
+
+```{r}
+# minsplit : 노드의 최소 관찰 수
+# minbucket : 최종 노드의 최소 관찰 수
+# cp : 복잡도 모수(complexity parameter). 분기에 필요한 적합도 증가
+# maxdepth : 최대 깊이
+library(rpart.plot)
+data(Wells, package='carData')
+fit0 <- rpart(switch ~ ., data=Wells)
+summary(fit0)
+rpart.plot(fit0)
+fit1 <- rpart(switch ~ ., data=Wells, control = rpart.control(maxdepth=2))
+rpart.plot(fit1)
+fit3 <- rpart(switch ~ ., data=Wells, control = rpart.control(cp=0.005, minsplit=20, minbucket=7))
+rpart.plot(fit3)
+```
+
+### 예 : `GermanCredit` 데이터
+
+```{r}
+data('GermanCredit', package='caret')
+summary(GermanCredit)
+fit <- rpart(Class ~ ., data = GermanCredit)
+plot(fit, main="Decision Tree for German Credit")
+text(fit)
+
+library(rpart.plot)
+rpart.plot(fit)
+
+#pdf("GermanCredit_DT.pdf", width=14, height=8)
+##png("GermanCredit_DT.png", width=600, height=800)
+#rpart.plot(fit, main="Decision Tree for German Credit")
+#dev.off()
+```
+
+## 모형 검증(model validation)
+
+* 모형 검증 : 새로운 데이터를 기반으로 모형을 평가하는 것.
+
+* 홀드 아웃(hold-out) 데이터 
+    - 데이터의 일부를 검증을 위해 따로 떼어 놓은 것. 
+    - 모형 적합(훈련)에는 홀드 아웃 데이터를 제외한 데이터만을 사용한다. 
+    - 홀드 아웃 데이터의 크기가 클수록 모형을 정확하게 평가할 수 있지만, 훈련 데이터의 크기가 작아지기 때문에 (전체 데이터를 활용하여 훈련할 때와 대비해서) 모형의 성능을 과소추정할 가능성이 높아진다. 
+    
+* 다중 교차 검증(multifold cross-validation, k-fold cross validation)
+    - 전체 데이터를 서로 중복되지 않게 k개로 나눈 후 이중 하나를 홀드 아웃 데이터로 사용한다.
+    - 홀드 아웃 데이터의 우연성을 해소하기 위해, 서로 다른 홀드 아웃 데이터와 훈련 데이터를 사용하여 훈련과 검증을 반복한다.
+    - k번의 검증 결과를 평균한다.
+    
+* 반복 홀드 아웃 검증(repeated hold-out validation)
+    - 홀드 아웃 데이터와 훈련 데이터의 분리를 여러 번 반복하여 평가 결과를 평균한다.
+    
+* 반복 다중 교차 검증(repeated k-fold cross validation)
+    - 다중 교차 검증을 반복한다.
+    
+```{r cv}
+# 홀드-아웃 데이터를 활용한 모형 검증
+nRepeat = 10; propTrain = 0.8;
+nTrain = nrow(Wells) * propTrain
+nVal = nrow(Wells) - nTrain # cf) nVal = nrow(Wells)*(1-propTrain)
+
+iTrain <- sample(1:nrow(Wells), nTrain)
+datTrain <- Wells %>% slice(iTrain)
+datVal <- Wells %>% slice(-iTrain) # Data for Validation
+
+fit <- glm(switch ~ ., data=datTrain, family=binomial)
+
+yPredVal <- ifelse(predict(fit, newdata=datVal, type='response') > 0.5, "yes", "no") %>%
+  factor(levels=c("no", "yes"))
+yTrue <- datVal$switch
+confusionMatrix(yPredVal, yTrue, positive='yes')
+confusionMatrix(yPredVal, yTrue, positive='yes')$overall["Accuracy"]
+
+
+# 반복 검증
+nRepeat = 10; propTrain = 0.8;
+nTrain = nrow(Wells) * propTrain
+nVal = nrow(Wells) - nTrain # cf) nVal = nrow(Wells)*(1-propTrain)
+accVal <- rep(NA, nRepeat)
+for (iRepeat in 1:nRepeat) { # iRepeat=1
+  # 전체 데이터 셋의 80%를 훈련 데이터로 사용한다.
+  iTrain <- sample(1:nrow(Wells), nTrain)
+  datTrain <- Wells %>% slice(iTrain)
+  datVal <- Wells %>% slice(-iTrain) # Data for Validation
+  
+  fit <- glm(switch ~ ., data=datTrain, family=binomial)
+  
+  yPredVal <- ifelse(predict(fit, newdata=datVal, type='response') > 0.5, "yes", "no") %>%
+    factor(levels=c("no", "yes"))
+  yTrue <- datVal$switch
+  accVal[iRepeat] <- confusionMatrix(yPredVal, yTrue, positive='yes')$overall["Accuracy"]
+}
+plot(accVal, type='b')
+mean(accVal)
+```
+
+```{r}
+# 의사 결정 나무 반복 검증
+nRepeat = 10; propTrain = 0.8;
+nTrain = nrow(Wells) * propTrain
+nVal = nrow(Wells) - nTrain # cf) nVal = nrow(Wells)*(1-propTrain)
+accVal <- rep(NA, nRepeat)
+for (iRepeat in 1:nRepeat) { # iRepeat=1
+  # 전체 데이터 셋의 80%를 훈련 데이터로 사용한다.
+  iTrain <- sample(1:nrow(Wells), nTrain)
+  datTrain <- Wells %>% slice(iTrain)
+  datVal <- Wells %>% slice(-iTrain) # Data for Validation
+  
+  fit <- rpart(switch ~ ., data=datTrain)
+  
+  yPredVal <- predict(fit, newdata=datVal, type='class')
+  yTrue <- datVal$switch
+  accVal[iRepeat] <- confusionMatrix(yPredVal, yTrue, positive='yes')$overall["Accuracy"]
+  # sum(yPredVal==yTrue)/length(yPredVal)
+}
+plot(accVal, type='b', main='accuracy for decision tree')
+mean(accVal)  
+
+# 상호작용을 포함한 로지스틱 회귀 검증
+nRepeat = 10; propTrain = 0.8;
+nTrain = nrow(Wells) * propTrain
+nVal = nrow(Wells) - nTrain # cf) nVal = nrow(Wells)*(1-propTrain)
+accVal <- rep(NA, nRepeat)
+for (iRepeat in 1:nRepeat) { # iRepeat=1
+  # 전체 데이터 셋의 80%를 훈련 데이터로 사용한다.
+  iTrain <- sample(1:nrow(Wells), nTrain)
+  datTrain <- Wells %>% slice(iTrain)
+  datVal <- Wells %>% slice(-iTrain) # Data for Validation
+  
+  fit <- glm(switch ~ .^2, data=datTrain, family=binomial)
+  
+  yPredVal <- ifelse(predict(fit, newdata=datVal, type='response') > 0.5, "yes", "no") %>%
+    factor(levels=c("no", "yes"))
+  yTrue <- datVal$switch
+  accVal[iRepeat] <- confusionMatrix(yPredVal, yTrue, positive='yes')$overall["Accuracy"]
+}
+
+```
+```{r}
+# 상호작용을 포함한 로지스틱 회귀 검증: 과적합의 예
+data(Wells, package='carData')
+Wells <- Wells %>% sample_n(50)
+nRepeat = 10; propTrain = 0.8;
+nTrain = nrow(Wells) * propTrain
+nVal = nrow(Wells) - nTrain # cf) nVal = nrow(Wells)*(1-propTrain)
+accVal <- rep(NA, nRepeat)
+accTrain <- rep(NA, nRepeat)
+for (iRepeat in 1:nRepeat) { # iRepeat=1
+  # 전체 데이터 셋의 80%를 훈련 데이터로 사용한다.
+  iTrain <- sample(1:nrow(Wells), nTrain)
+  datTrain <- Wells %>% slice(iTrain)
+  datVal <- Wells %>% slice(-iTrain) # Data for Validation
+  
+  fit <- glm(switch ~ .^2, data=datTrain, family=binomial)
+  yPredTrain <- ifelse(predict(fit, type='response') > 0.5, "yes", "no") %>%
+    factor(levels=c("no", "yes"))
+  yTrue <- datTrain$switch
+  accTrain[iRepeat] <- confusionMatrix(yPredTrain, yTrue, positive='yes')$overall["Accuracy"]
+  
+  yPredVal <- ifelse(predict(fit, newdata=datVal, type='response') > 0.5, "yes", "no") %>%
+    factor(levels=c("no", "yes"))
+  yTrue <- datVal$switch
+  accVal[iRepeat] <- confusionMatrix(yPredVal, yTrue, positive='yes')$overall["Accuracy"]
+}
+
+# 훈련 셋에서의 정확도와 검정셋에서의 정확도 비교
+library(tidyr)
+dat = data.frame(train = accTrain, val = accVal)
+datPlot <- dat %>% gather("key", "value", train:val)
+ggplot(data=datPlot, aes(x=key, y=value)) + geom_boxplot()
+
+cat("훈련셋에서 정확도 평균\n")
+mean(accTrain)
+cat("검증셋에서 정확도 평균\n")
+mean(accVal) 
+```
+
+* `caret`의 `createDataPartition` 
+
+```{r, cv2}
+iTrain <- createDataPartition(y = Wells$switch, p = 0.8)
+
+iTrains <- createDataPartition(y = Wells$switch, times = 10, p = 0.8, list=TRUE)
+iTrain <- iTrains[[1]]
+
+iTrains <- createFolds(y = Wells$switch, k = 5, list = FALSE, returnTrain = TRUE)
+iTrain <- iTrains[[1]]
+```
+
+---
+
+### 데이터의 중요성
+
+> Garbage In, Garbage Out(GIGO)
+
+* 데이터의 품질
+    - 크기(표본 크기)
+    - 정확성
+    - 대표성
+

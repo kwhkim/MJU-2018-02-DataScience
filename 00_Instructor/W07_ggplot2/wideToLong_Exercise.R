@@ -19,7 +19,18 @@ summary(dat)
 #     gender는 범주형(factor)으로,
 #     salary도 수치형으로 변환하세요.
 
+dat <- dat %>% mutate(id=as.factor(id),
+               year=as.numeric(year),
+               height=as.numeric(height),
+               weight=as.numeric(weight),
+               gender=as.factor(gender))
+summary(dat)
+
 # 01+. salary의 경우 ","를 ""로 변환한 후 수치형으로 변환해야 합니다.
+
+dat <- dat %>% mutate(salary=gsub(",", "", salary))
+dat <- dat %>% mutate(salary=as.numeric(salary))
+summary(dat)
 
 # 02. 다음의 datHeight와 datWeight는 동일한 사람의 키와 체중이 들어 있습니다. 
 #     어떤 사람의 키와 체중을 하나의 데이터 프레임으로 만드세요
@@ -27,11 +38,22 @@ library(dplyr)
 datHeight <- dat %>% select(id, gender, name, year, height) %>% arrange(height)
 datWeight <- dat %>% select(id, gender, name, year, weight) %>% arrange(weight)
 
+left_join(datHeight, datWeight, by="name")
+dat <- left_join(datHeight, datWeight, by=c("id", "gender", "year", "name"))
+
 # 03. 다음의 plot은 사람마다 다른 키, 성별에 따른 키를 보여줍니다.
 #     키와 체중을 하나의 plot에 그려보세요.
 library(ggplot2)
 ggplot(dat, aes(x=name, y=height)) + geom_point()
 ggplot(dat, aes(x=name, y=weight)) + geom_point()
+
+*방법1
+dat2 <- dat %>% gather("key", "value", height, weight)
+ggplot(dat2, aes(x=name, y=value, col=key)) + geom_point()
+
+*방법2
+ggplot(dat, aes(x=height, y=weight)) + geom_point() +
+geom_label(aes(label=name), nudge_x=3)
 
 # 04. 다음의 data를 활용하여 사람마다 키의 변천을 그래프로 나타내세요.
 datHeight2017to2018 <- 
@@ -52,3 +74,11 @@ datHeight2019to2020 <-
             row.names = c(NA, 8L), class = "data.frame", 
             .Names = c("id", "gender", "name", "y2019", "y2020"))
 
+*방법1
+library(ggplot2)
+dat <- full_join(datHeight2017to2018, datHeight2019to2020, by=c('id', 'gender', 'name'))
+
+dat2 <- dat %>% gather("key", "value", y2017:y2020)
+head(dat2)
+
+dat3 <- dat2 %>% 
