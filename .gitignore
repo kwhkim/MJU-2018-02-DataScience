@@ -8,8 +8,10 @@
 00_Instructor/prepare/*.*
 salary*.pdf
 00_Instructor/git.*.html
+*.html
 *.ods#
 =/*.*
 my.path 
 # for git diff -> git apply
 *.sav
+prepare*.*

@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE)
 * 로지스틱 회귀 모형 
     - $p_i = \mathbb{E}[y_i | x_i]$일 때, $\log \frac{p_i}{1-p_i} = \beta_0 + \beta_1 x_i$.
     - $y_i | x_i \sim \text{bern}(p_i)$. ($\text{bern}$: 베르누이 분포)
-    - 결과 변수가 '참 또는 거짓'처럼 이산적이며, 이항분포를 따른다.
+    - 결과 변수가 '참 또는 거짓'처럼 이산적이며, 베르누이 분포를 따른다.
     - 로그 우도 $\log \frac{p}{1-p}$는 계수의 선형 함수이다.
     - $i$-번째 관찰값 $y_i$가 '참'일 확률 $p_i$는 $\mathbb{E}[Y|x]$와 같다.
 
@@ -276,13 +276,14 @@ plot(allEffects(fit1), type='response')
 
 #plot(allEffects(fit1), type='link')
 
-plot(effect('Age*Housing.Rent', fit1),  type='response')
+#plot(effects('Age*Housing.Rent', fit1),  type='response')
 plot(allEffects(fit1), type='response', multiline=TRUE, confint=list(style='bands'))
 ```
 
 #### 상호작용을 포함한 다중 로지스틱 회귀
 
 ```{r}
+
 fit2 <- glm(Class ~ Age * Housing.Rent, data=GermanCredit, family=binomial)
 library(arm)
 binnedplot(fitted(fit2), 
@@ -303,7 +304,7 @@ plot(allEffects(fit2), type='response')
 plot(allEffects(fit2), type='response', multiline=TRUE)
 #plot(allEffects(fit1), type='link')
 
-plot(effect('Age*Housing.Rent', fit2),  type='response')
+#plot(effects('Age*Housing.Rent', fit2),  type='response')
 ```
 
 ### 발생 가능한 문제들
