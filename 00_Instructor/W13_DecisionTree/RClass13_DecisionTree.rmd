@@ -306,7 +306,7 @@ iTrain <- createDataPartition(y = Wells$switch, p = 0.8)
 iTrains <- createDataPartition(y = Wells$switch, times = 10, p = 0.8, list=TRUE)
 iTrain <- iTrains[[1]]
 
-iTrains <- createFolds(y = Wells$switch, k = 5, list = FALSE, returnTrain = TRUE)
+iTrains <- createFolds(y = Wells$switch, k = 5, list = TRUE, returnTrain = TRUE)
 iTrain <- iTrains[[1]]
 ```
 
