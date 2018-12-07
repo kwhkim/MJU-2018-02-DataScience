@@ -1,0 +1,198 @@
+---
+title: "의사 결정 나무의 분산 줄이기"
+author: "김권현"
+date: "2018년 12월 7일"
+output: html_document
+---
+
+### 의사 결정 나무의 장점과 단점
+
+* 장점
+    - 비선형성, 상호작용을 자동적으로 찾아낸다.
+        - 숫자형, 범주형 데이터에 대해 전처리 없이 사용할 수 있다.
+    - 자동적으로 변수를 선택한다.
+    - 결측치에 대해서도 자동적으로 처리한다.
+    - 결과를 해석하기 비교적 쉽다.
+* 단점
+    - **과적합되기 쉽다.**
+    - **분산이 크다.**
+         - 동일한 모집단에서 추출한 표본 자료에 대해서 다른 구조를 만들어 낼 가능성이 크다.
+    - 다른 알고리즘에 비해 예측 정확성이 낮을 수 있다.
+
+### 과적합, 모형 복잡도, 그리고 모형 분산
+
+* 과적합(overfitting) : 훈련에 사용된 자료에 대해서는 예측이 정확하지만, 새로운 자료에 대해서는 예측이 부정확해지는 현상.
+* 모형 분산(model variance) : 동일한 모집단에서 추출된 자료에 대한 적합된 모형의 변동성.
+    - 모형 분산은 모집단의 실제 모형, 표본 크기, 그리고 적합하는 모형의 함수이다.
+    * 모형 복잡도(model complexity) : 모형이 나타낼 수 있는 데이터의 다양성.
+* 모형 편향(model bias) : 실제 데이터의 구조를 모형이 정확히 나타낼 수 없을 때 나타나는 모형 평균과 실제 평균의 차이
+    - 예를 들어 2차 곡선을 선형회귀모형에 적합할 때 나타나는 예측값과 실제 평균의 차이
+    - 모형 복잡도가 실제 데이터 구조보다 낮을 때 나타난다.
+
+### 배깅(Bagging)
+
+- **부트스트랩 애그리게이션(Bootstrap Aggregation)**의 약자이다.
+- 여러 모형을 동시에 활용하여 예측을 하는 **앙상블(ensemble) 방법**의 하나이다.
+- 주어진 데이터에서 부트스트랩 샘플을 뽑아서 의사결정나무를 만든다.
+- 최종 모형은 여러 의사결정나무의 평균이 된다. 
+- 의사결정나무의 **모형 분산**을 줄이기 위해 사용될 수 있다.
+- 일반적으로 **과적합** 확률 또한 낮아진다.
+
+### 랜덤포레스트(Random Forest)
+
+* 우리말로 '무작위 숲'이라고 번역할 수도 있겠다. 의사결정'나무'가 여러 개 모여있다의 의미에서 '숲'이다.
+* 붓스트랩은 사례를 임의(random)하게 선택하여 새로운 데이터를 만든다.
+* 랜덤포레스트는 변수까지 임의(random)로 선택하여 새로운 데이터를 만들고, 그 데이터를 통해 의사결정나무를 생성한다.
+
+### 예. 스팸 탐지하기
+
+```{r message=FALSE, warning=FALSE}
+library(rpart) ## rpart
+library(rpart.plot) ## rpart.plot
+library(dplyr) ## %>%
+library(caret) ## createFolds
+library(tidyr) ## gather
+library(ipred) ## bagging
+library(randomForest) ## randomForest
+
+# 데이터 설명 : https://archive.ics.uci.edu/ml/datasets/spambase
+datSpam <- read.csv('https://archive.ics.uci.edu/ml/machine-learning-databases/spambase/spambase.data', sep=',', header=FALSE)
+head(datSpam)
+datSpam <- datSpam %>% mutate(V58 = factor(V58))
+#summary(datSpam)
+```
+
+* 데이터 및 과제 설명
+    - 스팸 : 광고, "빨리 돈 벌기" 사기, 행운의 편지 등
+    - `V58` : 스팸인지 여부(1=스팸, 0=정상)
+        - `summary(datSpam$V58)`을 보면 전체 데이터에서 39%가 스팸임을 알 수 있다.
+    - 정상 메일을 스팸으로 오탐지하는 확률을 최대한 낮출 필요가 있다.
+    
+    
+#### 1. 의사결정나무의 분산 확인하기
+
+```{r}
+iTrains <- createFolds(y = datSpam$V58, k = 5, list = TRUE, returnTrain = TRUE)
+
+#datSpamTest <- datSpam %>% slice(1811:1820)
+nsamp = 10
+datSpamTest <- datSpam %>% slice(1:nsamp)
+#datSpamTest <- datSpam %>% sample_n(nsamp)
+
+fit <- list(NA, NA, NA, NA, NA)
+for (i in 1:5) {
+  datSpamTrain <- datSpam %>% slice(iTrains[[i]])
+  fit[[i]] <- rpart(V58 ~ ., data = datSpamTrain)
+  rpart.plot(fit[[i]])
+}
+
+pred <- data.frame(i=factor(1:10, levels=1:10),
+                   pred1 = predict(fit[[1]], newdata = datSpamTest, type='prob')[,2], 
+                   pred2 = predict(fit[[2]], newdata = datSpamTest, type='prob')[,2],
+                   pred3 = predict(fit[[3]], newdata = datSpamTest, type='prob')[,2],
+                   pred4 = predict(fit[[4]], newdata = datSpamTest, type='prob')[,2],
+                   pred5 = predict(fit[[5]], newdata = datSpamTest, type='prob')[,2])
+
+predG <- pred %>% gather("key", "value", 2:5) 
+predG %>% ggplot(aes(x=i, y=value, col=key, group=key)) +
+  geom_point() + 
+  geom_line()
+
+#predG %>% ggplot(aes(x=i, y=value, col=key, group=key)) +
+#  facet_wrap(~key) + 
+#  geom_point() + 
+#  geom_line()
+```
+
+* 7번째, 10번째 데이터는 모형에 따라서 예측값이 다르게 나타남을 확인할 수 있다.
+
+
+#### 2. 배깅으로 분산 줄이기
+
+```{r}
+#iTrains <- createFolds(y = datSpam$V58, k = 5, list = TRUE, returnTrain = TRUE)
+
+# i=1
+fit <- list(NA, NA, NA, NA, NA)
+for (i in 1:5) {
+  datSpamTrain <- datSpam %>% slice(iTrains[[i]])
+  fit[[i]] <- bagging(V58 ~ ., data = datSpamTrain)
+  #rpart.plot(fit[[i]])
+}
+
+pred <- data.frame(i=factor(1:10, levels=1:10),
+                   pred1 = predict(fit[[1]], newdata=datSpamTest, type='prob')[,2], 
+                   pred2 = predict(fit[[2]], newdata=datSpamTest, type='prob')[,2],
+                   pred3 = predict(fit[[3]], newdata=datSpamTest, type='prob')[,2],
+                   pred4 = predict(fit[[4]], newdata=datSpamTest, type='prob')[,2],
+                   pred5 = predict(fit[[5]], newdata=datSpamTest, type='prob')[,2])
+
+predG <- pred %>% gather("key", "value", pred1:pred5) 
+predG %>% ggplot(aes(x=i, y=value, col=key, group=key)) +
+  geom_point() + 
+  geom_line()
+
+#predG %>% ggplot(aes(x=i, y=value, col=key, group=key)) +
+#  facet_wrap(~key) + 
+#  geom_point() + 
+#  geom_line()
+```
+
+* 동일한 데이터에 대해 배깅(BAG; Bootstrap AGgregation) 결과는 배깅을 하지 않은 의사결정나무에 비해 분산이 작아졌음을 확인할 수 있다.
+
+
+#### 3. 랜덤포레스트 활용하기
+
+```{r}
+#iTrains <- createFolds(y = datSpam$V58, k = 5, list = TRUE, returnTrain = TRUE)
+# i=1
+
+fit <- list(NA, NA, NA, NA, NA)
+for (i in 1:5) {
+  datSpamTrain <- datSpam %>% slice(iTrains[[i]])
+  fit[[i]] <- randomForest(V58 ~ ., data = datSpamTrain)
+  #rpart.plot(fit[[i]])
+}
+
+#nsamp=10
+#datSpamTest <- datSpam %>% slice(1:nsamp)
+#datSpamTest <- datSpam %>% slice(1811:1820)
+#datSpamTest <- datSpam %>% sample_n(nsamp)
+
+pred <- data.frame(i=factor(1:nsamp, levels=1:nsamp),
+                   pred1 = predict(fit[[1]], datSpamTest, type='prob')[,2], 
+                   pred2 = predict(fit[[2]], datSpamTest, type='prob')[,2],
+                   pred3 = predict(fit[[3]], datSpamTest, type='prob')[,2],
+                   pred4 = predict(fit[[4]], datSpamTest, type='prob')[,2],
+                   pred5 = predict(fit[[5]], datSpamTest, type='prob')[,2])
+
+predG <- pred %>% gather("key", "value", pred1:pred5) 
+predG %>% ggplot(aes(x=i, y=value, col=key, group=key)) +
+  geom_point() + 
+  geom_line()
+
+#predG %>% ggplot(aes(x=i, y=value, col=key, group=key)) +
+#  facet_wrap(~key) + 
+#  geom_point() + 
+#  geom_line()
+```
+
+---
+
+* R 함수 정리
+    - 의사결정나무 : `rpart::rpart`
+    - 배깅 : `ipred::bagging`
+    - 랜덤포레스트 : `randomForest::randomForest`
+
+### 예2. german credit data
+
+```{r, eval=F}
+datTrain <- read.csv('train.csv', row.names = 1)
+summary(datTrain)
+
+datTest <- read.csv('test.csv', row.names = 1)
+summary(datTest)
+```
+
+* 위의 데이터는 훈련(train) 데이터와 검증(test) 데이터가 분리되어 있습니다. 훈련 데이터를 통해 의사결정나무, 배깅, 랜덤 포레스트을 훈련시킨 후, 각 모형을 검증 데이터로 검증해보세요.
+
