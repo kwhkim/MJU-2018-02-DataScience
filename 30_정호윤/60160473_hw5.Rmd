@@ -1,0 +1,135 @@
+---
+title: "30_assignment5"
+author: "30_정호윤"
+date: "2018년 12월 14일"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#데이터 불러오기
+```{r}
+bbh_raw <- read.csv(file='BaseballHitters.csv', header=T, row.names=1)
+
+bbh <- bbh_raw
+```
+
+#데이터 살펴보기
+```{r}
+summary(bbh)
+```
+
+#데이터 전처리 및 결측치 확인 
+```{r}
+library(dplyr)
+bbh <- bbh[-c(177,294,44,220,215,25,81,111,107,284,216,36,18,56,91,320,113,194,321,151,7,19,242,123,221,230,45,277,54,228,156,298,92,121,181,243,191,68,118,55,264,153,125,102,75,32,303,317,106,252,149,70,316,293,40,310,90,100,258,15),]
+
+table(is.na(bbh))
+bbh <- bbh[complete.cases(bbh), ]
+table(is.na(bbh))
+
+bbh <- bbh %>%
+  select(-league87,-team87,-firstName,-lastName)
+```
+
+#선형회귀분석
+
+```{r}
+lm1 <- lm(salary87 ~ . , data=bbh)
+
+print(lm1)
+print(summary(lm1))
+
+# H86 & W86 의 p-value값 유의미
+# Adjusted R-squared:  0.634 
+# p-value: < 2.2e-16
+```
+
+```{r}
+# H86 & W86 의 p-value값 유의미
+lm2 <- lm(salary87 ~ H86 + W86, data=bbh)
+summary(lm2)
+```
+
+# MSE
+```{r}
+mean((bbh$salary87 - predict(lm1))^2)
+```
+
+# 의사결정나무
+```{r}
+library(effects)
+library(rpart)
+library(caret)
+```
+
+```{r}
+tmodel1 <- rpart(salary87 ~ . , data=bbh)
+summary(tmodel1)
+
+plot(tmodel1, main='Decision Tree: salary87 ~ . ')
+text(tmodel1)
+```
+
+```{r}
+tmodel2 <- rpart(salary87 ~ H86 , data=bbh)
+summary(tmodel2)
+
+plot(tmodel2, main='Decision Tree: salary87 ~ H86 ')
+text(tmodel2)
+```
+
+```{r}
+tmodel3 <- rpart(salary87 ~ W86 , data=bbh)
+summary(tmodel3)
+
+plot(tmodel3, main='Decision Tree: salary87 ~ W86 ')
+text(tmodel3)
+```
+
+```{r}
+tmodel4 <- rpart(salary87 ~ H86 + W86 , data=bbh)
+summary(tmodel3)
+
+plot(tmodel4, main='Decision Tree: salary87 ~ H86 + W86 ')
+text(tmodel4)
+```
+
+#로지스틱 선형회귀분석과 비교
+```{r}
+# Logistic Regression with no interaction
+#lmodel1 <- glm(salary87 ~ H86 + W86 , data=bbh,
+#               family=binomial(link='logit'))
+
+#summary(lmodel1)
+#plot(allEffects(lmodel1))
+
+# Logistic Regression with interactions
+#lmodel2 <- glm(salary87 ~ ., data=bbh,
+#               family=binomial(link='logit'))
+
+#summary(lmodel2)
+#plot(allEffects(lmodel2), multiline=TRUE)
+
+
+#predT4 <- predict(tmodel4, type='class')
+#predL4 <- ifelse(predict(lmodel1, type='response') > 0.5, "yes", "no") %>% #factor(levels = c("no", "yes")) 
+
+#predL5 <- ifelse(predict(lmodel2, type='response') > 0.5, "yes", "no") %>% factor(levels = levels(bbh$salary87))
+
+# 의사결정나무와 로지스틱 회귀분석 예측 비교
+#addmargins(table(predT4, predL4))
+#addmargins(table(predT4, predL5))
+
+# 혼동행렬
+#confusionMatrix(predT4, bbh$salary87, positive='yes')
+#confusionMatrix(predL4, bbh$salary87, positive='yes')
+#confusionMatrix(predL5, bbh$salary87, positive='yes')
+```
+
+
+
+
