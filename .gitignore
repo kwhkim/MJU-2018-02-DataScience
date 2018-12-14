@@ -8,6 +8,9 @@
 00_Instructor/prepare/*.*
 salary*.pdf
 00_Instructor/git.*.html
+*.html
 *.ods#
 =/*.*
+prepare*.*
+
 

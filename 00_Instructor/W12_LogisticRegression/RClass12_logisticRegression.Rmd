@@ -264,13 +264,14 @@ plot(allEffects(fit1), type='response')
 
 #plot(allEffects(fit1), type='link')
 
-plot(effect('Age*Housing.Rent', fit1),  type='response')
+#plot(effects('Age*Housing.Rent', fit1),  type='response')
 plot(allEffects(fit1), type='response', multiline=TRUE, confint=list(style='bands'))
 ```
 
 #### 상호작용을 포함한 다중 로지스틱 회귀
 
 ```{r}
+
 fit2 <- glm(Class ~ Age * Housing.Rent, data=GermanCredit, family=binomial)
 library(arm)
 binnedplot(fitted(fit2), 
@@ -291,7 +292,7 @@ plot(allEffects(fit2), type='response')
 plot(allEffects(fit2), type='response', multiline=TRUE)
 #plot(allEffects(fit1), type='link')
 
-plot(effect('Age*Housing.Rent', fit2),  type='response')
+#plot(effects('Age*Housing.Rent', fit2),  type='response')
 ```
 
 ### 발생 가능한 문제들
