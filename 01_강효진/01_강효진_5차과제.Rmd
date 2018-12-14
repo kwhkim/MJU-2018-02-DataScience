@@ -1,0 +1,92 @@
+---
+title: "01_강효진_5차과제"
+author: "01_HyojinKang"
+date: "2018 / 12 / 14"
+output: html_document
+---
+
+##1. 데이터 전처리
+
+###(1) 데이터 불러오기
+```{r warning=FALSE}
+library(rpart)
+library(ipred)
+library(dplyr)
+
+baseball <- read.csv('C:/Users/Usr/Desktop/MJU-2018-02-DataScience/00_Instructor/W11_MultipleRegression/BaseballHitters.csv')
+
+head(baseball)
+```
+
+###(2) 데이터 전처리
+```{r warning=FALSE}
+##사용할 수 없는 변수 제거
+baseball <- baseball[,!(names(baseball) %in% c("league87", "team87"))]
+head(baseball)
+
+##훈련데이터 만들기
+baseball_fit <- baseball[-c(177,294,44,220,215,25,81,111,107,284,216,36,18,56,91,320,113,194,321,151,7 ,19,242,123,221,230,45,277,54,228,156,298,92,121,181,243,191,68,118,55,264,153 ,125,102,75,32,303,317,106,252,149,70,316,293,40,310,90,100,258,15),]
+
+is.na(baseball_fit$salary87) #결측치 확인
+
+baseball_fit <-  baseball_fit %>%
+  filter(!is.na(salary87)) #결측치 제거
+
+head(baseball_fit)
+
+##검증데이터 만들기
+baseball_test <- baseball[c(177,294,44,220,215,25,81,111,107,284,216,36,18,56,91,320,113,194,321,151,7 ,19,242,123,221,230,45,277,54,228,156,298,92,121,181,243,191,68,118,55,264,153 ,125,102,75,32,303,317,106,252,149,70,316,293,40,310,90,100,258,15),]
+
+is.na(baseball_test$salary87) #결측치 확인
+
+baseball_test <-  baseball_test %>%
+  filter(!is.na(salary87)) #결측치 제거
+
+head(baseball_test)
+```
+---
+
+##2. 모형 적합
+
+ 모형적합을 할 때, 우선 전체 변수로 ```salary87```을 예측하였고, 변수 설명(https://rdrr.io/cran/ISLR/man/Hitters )을 살펴본 결과, 메이저리그에 있던 기간(년)을 의미하는 ```years```변수와, 선수생활을 한 기간 동안의 홈런 개수를 의미하는 ```careerHR```변수가 유의미한 결과를 도출할 것이라고 판단하여 각각을 나누어 적합해보았다.
+
+###(1) 의사결정나무
+```{r warning=FALSE}
+##salary87을 전체 변수로 예측한 결과
+DT_fitall <- rpart(salary87 ~ ., data = baseball_fit)
+print(predict(DT_fitall, newdata = baseball_test))
+mean((baseball_test$salary87 - predict(DT_fitall, newdata = baseball_test))^2)
+
+##salary87을 years로 예측한 결과
+DT_fit_years <- rpart(salary87 ~ years, data = baseball_fit)
+print(predict(DT_fit_years, newdata = baseball_test))
+mean((baseball_test$salary87 - predict(DT_fit_years, newdata = baseball_test))^2)
+
+##salary87을 years와 careerHR과 그 상호작용을 포함하여 예측한 결과
+DT_fit_yearhr <- rpart(salary87 ~ years + careerHR, data = baseball_fit)
+print(predict(DT_fit_yearhr, newdata = baseball_test))
+mean((baseball_test$salary87 - predict(DT_fit_yearhr, newdata = baseball_test))^2)
+```
+
+ 각각의 MSE 값을 살펴보면, 전체 변수로 예측했을 때 가장 크게 나타나며, ```years```와 ```careerHR```를 같이 사용하여 예측했을 때 가장 작게 나타난다. 따라서, 의사결정나무에서 두 변수를 사용한 모형을 선택하였다.
+ 
+
+###(2)배깅 결정나무
+```{r warning=FALSE}
+B_fitall <- bagging(salary87 ~ ., data = baseball_fit)
+print(predict(B_fitall, newdata = baseball_test, type='prob'))
+mean((baseball_test$salary87 - predict(B_fitall, newdata = baseball_test, type='prob'))^2)
+
+B_fit_years <- bagging(salary87 ~ years, data = baseball_fit)
+print(predict(B_fit_years, newdata = baseball_test, type='prob'))
+mean((baseball_test$salary87 - predict(B_fit_years, newdata = baseball_test, type='prob'))^2)
+
+B_fit_yearhr <- bagging(salary87 ~ years + careerHR, data = baseball_fit)
+print(predict(B_fit_yearhr, newdata = baseball_test, type='prob'))
+mean((baseball_test$salary87 - predict(B_fit_yearhr, newdata = baseball_test, type='prob'))^2)
+```
+
+ 배깅 결정나무에서도, 의사결정나무와 동일한 결과가 도출된다.(```year```변수와 ```careerHR```변수를 같이 사용했을 때 MSE 값이 가장 작게 나타난다.) 따라서, 가장 마지막 모형을 선택하였다.
+
+###(3) 결론
+ 이론적으로, 배깅 결정나무는 의사결정나무에 비해 과적합 확률이 낮고, 모형분산을 줄여 더 정확한 예측을 가능하게 만든다. 본 모형적합 과정을 통해서도, 비슷한 결과를 도출하였다. 의사결정나무와 배깅 결정나무의 결과(```year```변수와 ```careerHR```변수를 같이 사용하여 예측했을 때 MSE값이 가장 작다.)는 동일하게 나타나지만, 전체적인 MSE값이 배깅 결정나무에서 더 작게 나타나는 것으로 보아, 배깅 결정나무가 더 정확한 예측을 가능하도록 한다는 것을 알 수 있다.
