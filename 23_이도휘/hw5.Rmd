@@ -57,7 +57,7 @@ head(predba1)
 ```{r}
 mean((bagging1$y[1:80] - predict(bagging1))^2) #237957.1
 mean((b.fit$y[1:80] - predict(b.fit))^2) #241244.5
-
+RMSE(b.fit$y[1:80]-predict(b.fit)^2)
 
 ```
 
@@ -70,3 +70,5 @@ mean((b.fit$y[1:80] - predict(b.fit))^2) #241244.5
 * MSE 추정 결과, bagging이 randomForest보다 MSE 값이 작다. 따라서 Bagging이 더 적합함을 알 수 있다. 
 
 -
+
+
