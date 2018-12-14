@@ -1,0 +1,177 @@
+---
+title: "Artificial Neural Network"
+author: "김권현"
+date: "2018년 12월 7일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 인공신경망(ANN; Artificial Neural Network)
+
+## 가장 기본적인 3층 인공신경망
+
+$$h_k(x_1, x_2, \cdots, x_P) = \text{sigmoid} \left(\beta_{k0} + \sum_{j=1}^P \beta_{kj}x_j \right)$$
+
+$$ f(x_1, x_2, \cdots, x_P) = \gamma_0 + \sum_{j=1}^H \gamma_j h_j$$
+
+- $P$: 예측변수의 갯수, $H$: 히든노드의 갯수, $h_k$: $k$-번째 히든노드의 출력, $f$: 최종 출력 함수.
+
+- 전체 모수(parameter)의 갯수 = $H(P+1)+H+1$
+
+* 학습에 영향을 주는 요인들
+    - 손실 함수 : $SSE = \sum_{i} (y_i - f(x_i1, x_i2, \cdots, x_iP))^2$
+    - 모수 초기화 
+    - 모수 최적화 
+        - 경사 하강법(Gradient Descent Algorithm) : 역전파(Backpropagation) 알고리즘
+        
+* 인공신경망을 구성하는 요소
+    - 입력층(input layer)
+    - 노드 사이의 연결 구조 
+        - FCN(Fully Connected Network) 
+        - CNN(Convolutional Neural Network)
+    - 활성화 함수(activation function)
+    - 출력층(output layer)
+    
+* 예: [텐서플로우 놀이터](https://playground.tensorflow.org/#activation=tanh&batchSize=10&dataset=circle&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=4,2&seed=0.18148&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&xSquared=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false)
+
+* 인공신경망의 장점
+    - 상호작용과 비선형성을 모형화할 수 있다.
+    - UFA(Universal Function Approximation)이 가능하다.
+
+* 인공신경망의 단점
+    - 과적합이 되기 쉽다.
+    - 전역 최적점을 찾기 어렵다.
+  
+
+## 구현 1 : `nnet::nnet`, `caret::avNNet`
+
+```{r NN, eval=F}
+nnet(formula, data, size, linout)
+# size = # of hidden nodes
+# linout : TRUE = linear output 
+#          FALSE = softmax
+
+caret::avNNet
+# 인공신경망은 weight의 초기값에 따라 국소최적점이 달라진다.
+# avNNet은 초기값을 다르게 설정하여 국소최적점을 구하고
+# 이렇게 구한 모형을 평균해서 예측한다.
+
+train(method='nnet')
+train(method='avNNet')
+# caret의 train 함수는 주어진 모형(method)에 대해
+# 사전 처리(preProcess)와 하이퍼파라미터 최적화를 수행한다.
+```
+
+## 구현 2 : `keras`
+
+* [설치](https://keras.rstudio.com/)
+
+```{r, eval=F}
+install.packages('keras')
+library(keras)
+install_keras()
+```
+
+
+## 예: `baseballHitters.csv`
+
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+
+iTest <- c(177,294,44,220,215,25,81,111,107,284,216,36,18,56,91,320,113,194,
+           321,151,7 ,19,242,123,221,230,45,277,54,228,156,298,92,121,181,
+           243,191,68,118,55,264,153 ,125,102,75,32,303,317,106,252,149,70,
+           316,293,40,310,90,100,258,15)
+
+#dat <- read.csv('00_Instructor/W11_MultipleRegression/BaseballHitters.csv', row.names=1)
+dat <- read.csv('../W11_MultipleRegression/BaseballHitters.csv', row.names=1)
+#sum(is.na(datTrain$salary87))
+#sum(is.na(datTest$salary87))
+datTrain <- dat %>% slice(-iTest) %>% filter(!is.na(salary87))
+datTest <- dat %>% slice(iTest) %>% filter(!is.na(salary87))
+
+nrow(datTrain); sum(complete.cases(datTrain))
+nrow(datTest); sum(complete.cases(datTest))
+
+summary(datTrain)
+
+datTrain0 <- datTrain 
+datTest0 <- datTest
+# %>% select(-firstName, -lastName, -league87, -team87)
+
+datTrain <- datTrain0 %>% 
+  mutate(avAB = careerAB/years,
+         avH = careerH/years,
+         avHR = careerHR/years,
+         avR = careerR/years,
+         avRBI = careerRBI/years,
+         avW = careerRBI/years) 
+
+datTest <- datTest0 %>% 
+  mutate(avAB = careerAB/years,
+         avH = careerH/years,
+         avHR = careerHR/years,
+         avR = careerR/years,
+         avRBI = careerRBI/years,
+         avW = careerRBI/years) 
+
+colnames(datTrain)
+
+library(nnet); library(caret)
+if (file.exists('nnet_s100_Sal87.RData')) {
+  load(file = 'nnet_s100_Sal87.RData')  
+} else {
+  fit <- nnet(salary87 ~ . - firstName - lastName - league87 - team87,
+              data = datTrain,
+              size=100, linout=TRUE,
+              MaxNWts = 100000,
+              maxit = 100000) 
+  save(fit, file='nnet_s100_Sal87.RData')
+}
+
+RMSE(predict(fit)[,1], datTrain$salary87)
+RMSE(predict(fit, newdata=datTest)[,1], datTest$salary87)
+
+pred1 = data.frame(pred=predict(fit)[,1], sal87=datTrain$salary87, data='train')
+pred2 = data.frame(pred=predict(fit, newdata=datTest)[,1], sal87=datTest$salary87, data='test')
+datPlot = rbind(pred1, pred2)
+
+ggplot(datPlot, aes(x=sal87, y=pred, col=data)) + 
+  geom_point() + 
+  geom_abline(intercept= 0, slope=1, linetype='dotted') + 
+  facet_wrap(~ data)
+```
+
+```{r message=FALSE, warning=FALSE}
+#https://stackoverflow.com/questions/44774516/parallel-processing-in-r-in-caret
+library(doParallel)
+cls = makeCluster(3)
+registerDoParallel(cls)
+
+if (file.exists('avNNet_s100_Sal87.RData')) {
+  load('avNNet_s100_Sal87.RData')
+} else {
+  fit <- avNNet(salary87 ~ . - firstName - lastName - league87 - team87,
+                data = datTrain,
+                size=100, linout=TRUE,
+                MaxNWts = 20000,
+                maxit = 10000)  # allowParallel = TRUE by default
+  save(fit, file='avNNet_s100_Sal87.RData')
+}
+                
+RMSE(predict(fit), datTrain$salary87)
+#predict(fit, newdata=datTest, type='raw')
+RMSE(predict(fit, newdata=datTest), datTest$salary87)
+
+pred1 = data.frame(pred=predict(fit), sal87=datTrain$salary87, data='train')
+pred2 = data.frame(pred=predict(fit, newdata=datTest), sal87=datTest$salary87, data='test')
+datPlot = rbind(pred1, pred2)
+
+ggplot(datPlot, aes(x=sal87, y=pred, col=data)) + 
+  geom_point() + 
+  geom_abline(intercept= 0, slope=1, linetype='dotted') + 
+  facet_wrap(~ data)
+```

@@ -1,0 +1,17 @@
+Baseball player's salary (Major League, at the beginning of 1987 season)
+
+AB = At Bat
+H = Hits
+HR = Home Runs
+R = Runs scored
+RBI = Runs Batted In
+BB = Base on Balls(Walks)
+PO = Put-Outs
+A = Assists
+E = Error
+
+OBP = On Base Percentage
+
+Position = MI(Middle Infielder), C(Catcher), CF(Center Field), DH(Designated Hitter)
+
+

@@ -1,0 +1,153 @@
+---
+title: "비지도학습"
+author: "김권현"
+date: "2018년 12월 8일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# 비지도 학습(Unsupervised Learning)
+
+## 주성분분석(PCA; Principal Component Analysis)
+
+* 적용 대상 : 변수 갯수가 많고, 서로 상관이 클 때
+* 목적 : 자료의 **분산**을 가장 잘 설명하는 성분(component)를 찾아낸다. 
+* 탐색적자료분석(exploratory data analysis), 차원 축소(dimension reduction), 또는 자료의 시각화(visualization)를 위해 사용된다.
+* 주성분(PC; Principal Component)은 기존 변수의 선형 결합이다. 
+
+$$\text{PC} = w_1 x_1 + w_2 x_2 + \cdots + w_p x_p$$
+
+* 각 성분은 서로 **직교**한다. 따라서, $k$-번째 주성분(PC; Principal Component)과 $l$-번째 주성분은 서로 직교한다.
+
+$$w_{k1}w_{l1} + w_{k2}w_{l2} + \cdots + w_{kp}w_{lp} = 0$$
+
+$$\text{PC}_k = w_{k1} x_1 + w_{k2} x_2 + \cdots + w_{kp} x_p, \ \ w_{1i}^2 + w_{2i}^2 + \cdots + w_{pi}^2 = 1$$
+
+### 2변수의 경우
+
+다음의 조건을 만족하는 두 주성분을 구하고자 한다.
+
+$$PC_1 = w_{11} x_1 + w_{12} x_2$$
+$$PC_2 = w_{21} x_1 + w_{22} x_2$$
+
+이때 $PC_1^2 + PC_2^2 = x_1^2 + x_2^2$을 만족해야 한다면 다음과 같이 전개할 수 있다.
+
+$$PC_1^2 + PC_2^2 = (w_{11} x_1 + w_{12} x_2)^2 + (w_{21} x_1 + w_{22} x_2)^2$$
+
+그리고 모든 $x_1$, $x_2$에 대해 위의 식이 성립하려면 $w_{11}^2 + w_{21}^2 = 1$, $w_{21}^2 + w_{22}^2 =1$과 $w_{11}+w_{12} + w_{21}w_{22} = 0$을 만족해야 한다. 이는 2차원 평면 상에서 회전 변환을 취한 것과 같다.
+
+
+### 예: `BaseballHitters.csv`
+
+```{r message=FALSE, warning=FALSE}
+iTest <- c(177,294,44,220,215,25,81,111,107,284,216,36,18,56,91,320,113,194,
+           321,151,7 ,19,242,123,221,230,45,277,54,228,156,298,92,121,181,
+           243,191,68,118,55,264,153 ,125,102,75,32,303,317,106,252,149,70,
+           316,293,40,310,90,100,258,15)
+
+#dat <- read.csv('./00_Instructor/W11_MultipleRegression/BaseballHitters.csv', row.names=1)
+dat <- read.csv('../W11_MultipleRegression/BaseballHitters.csv', row.names=1)
+#getwd()
+#sum(is.na(datTrain$salary87))
+#sum(is.na(datTest$salary87))
+library(dplyr)
+datTrain <- dat %>% slice(-iTest) %>% filter(!is.na(salary87))
+datTest <- dat %>% slice(iTest) %>% filter(!is.na(salary87))
+
+fitPCA <- prcomp(~ H86 + HR86, data=datTrain, scale.=TRUE)
+par(mfcol=c(1,2))
+datTrain$i = 1:nrow(datTrain)
+plot(H86 ~ HR86, data=datTrain, pch='')
+text(datTrain$HR86, datTrain$H86, labels= datTrain$i, add=T)
+biplot(fitPCA)
+par(mfcol=c(1,1))
+
+fitPCA <- prcomp(~ AB86 + H86 + HR86 + R86 + RBI86 + W86, data=datTrain, scale.=TRUE)
+#pdf('biplot.pdf', height=12, width=12)
+biplot(fitPCA)
+#dev.off()
+
+fitPCA <- prcomp(~ . - firstName - lastName - salary87 - league87 - team87 - position86 - PO86 - division86 - team86 - league86, data=datTrain, scale.=TRUE)
+biplot(fitPCA)
+
+# 참고 : https://www.datacamp.com/community/tutorials/pca-analysis-r
+#        http://hongiiv.tistory.com/594?category=316921
+```
+
+### 몇 가지 유의사항
+
+* 대부분 사전처리(표준화; 평균 0, 표준편차 1)가 필요하다.
+    - 변수의 단위 1의 의미를 비슷하게 맞춰야 한다.
+* 상관이 큰 변수의 갯수가 많을 수록 그 변수들을 나타내는 성분이 제1주성분이 된다.
+
+---
+
+## 군집화
+
+* K-평균 군집화(K-means Clustering)
+* 위계적(계층적) 군집화(Hierarchical Clustering)
+
+### K-평균 군집화
+
+* K-평균의 군집은 군집 평균으로 대표될 수 있다.
+* 한 군집 내의 대상들은 다른 군집의 군집 평균보다 같은 군집의 군집 평균에 더 가깝다.
+* 군집의 군집 평균은 동일한 군집의 평균이 된다.
+* 알고리즘
+    - 1. 군집의 갯수를 정한다.
+    - 2. 각 군집에 대해 군집 평균을 설정한다.
+    - 3. 모든 대상에 대해 군집 평균이 가까운 군집으로 군집화한다.
+    - 4. 모든 군집에 대해 군집 평균을 다시 구한다.
+    - 5. 조건이 맞으면 종료하고, 그렇지 않으면 2번으로 되돌아간다.
+
+### 위계적 군집화
+
+* 위계적 군집화는 병합(agglomerative) 군집화와 분할(divisive) 군집화로 나뉜다.
+* 병합 군집화는 모든 사례에서 시작해서 가까운 사례를 묶어 군집을 구성한다.
+* 분할 군집화는 모든 사례에서 시작해서 가장 먼 사례를 분할한다.
+
+### 예: `USArrests`에 대한 PCA
+
+```{r, eval=F}
+fit <- prcomp(USArrests)
+plot(fit)
+biplot(fit)
+
+fit$center
+fit$scale
+fit$rotation
+
+fit0 <- prcomp(~ . - UrbanPop, data=USArrests) 
+# prcomp(~ Murder + Assault + Rape, data=USArrests)
+print(fit0)
+
+fit <- prcomp(~ . - UrbanPop, data=USArrests, center=TRUE, scale.=TRUE) 
+print(fit)
+biplot(fit)
+```
+
+### 예: `USArrests`에 대한 $k$-평균 군집화
+
+```{r}
+kmeans(USArrests, 2)
+fit <- kmeans(USArrests, 3)
+plot(USArrests, col=fit$cluster)
+```
+
+### 예: `USArrests`에 대한 위계적 군집화
+
+```{r}
+fit <- hclust(dist(USArrests))
+plot(fit)
+```
+
+## 군집화 정리
+
+* 군집화의 목적 : 군집 내의 유사도는 크고, 군집 간의 유사도는 작은 군집을 찾아낸다.
+
+* 변수의 단위(예. m, cm, mm 등)가 중요한 영향을 미친다. 모든 변수의 단위를 적절히 조정해야 한다. 한 가지 방법은 모든 변수를 평균 0, 표준편차 1로 변환하는 것이다(표준화; standardization).
+    
+* 군집화 방법과 군집 갯수에 따라 서로 다른 군집화 결과가 나타나기 마련이다.
+

@@ -1,0 +1,407 @@
+---
+title: "Linear Regression"
+author: "KwH. Kim"
+date: "2018년 11월 9일"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(fig.height=3)
+knitr::opts_chunk$set(fig.width=4)
+library(ggplot2)
+```
+
+## 기초 통계학
+
+* 통계학의 두 가지 주제: 서술 통계(descriptive statistics), 추론 통계(inferential statistics)
+
+* 모집단(population)/표본(sample)
+
+* 모수(parameter)/추정량(estimator)
+   - 모수의 예
+       - 통계 요약치
+           - 집중경향치 : 평균(mean), 중앙값(median), 최빈값(mode), 절사평균(trimmed mean)
+           - 변산성 측정치 : 범위(range), 사분점간 범위(inter-quartile range), 분산(variance)
+           
+* 모평균의 추정방법(모평균 추정량)
+    - 표본 평균
+    - 표본 중앙값
+   
+* 추정량의 좋은 성질
+    - 비편향성(unbiasedness) 
+        - 편향적인 추정량의 예 : $\sum_{i=1}^n \frac{(X_i - \bar{X})^2}{n}$ 
+    - 일치성(consistency)
+    - 효율성(efficiency)
+
+* 가설 검정 
+    - 영가설(귀무가설; null hypothesis), 검정통계량(test statistics)
+    - 유의수준(significance level), 오류율(error rate), 기각역(critical region)
+    - 효과크기(effect size)
+    - 검정력(power)
+    
+## 예: 모평균 추정하기
+```{r populationMean, collapse=TRUE, fig.show='hold'}
+getwd()
+dat <- read.csv(file='./LR_weight_n100.csv', header=T, row.names=1)
+t.test(dat$height)
+t.test(dat$weight)
+
+```
+
+## 예: 모평균의 차이 추정하기
+```{r populationMeanDif, collapse=TRUE, fig.show='hold'}
+t.test(height ~ gender, dat)
+t.test(weight ~ gender, dat)
+
+ggplot(dat, aes(x=gender, y=height, col=gender)) + 
+  #geom_point(alpha=0.2, col='black') + 
+  geom_boxplot(width=0.3) +
+  #geom_boxplot(width=0.3, alpha=0.2) + 
+  guides(colour='none', fill='none') + 
+  scale_x_discrete(labels=c('Female', 'Male')) +
+  labs(title='남녀의 키 분포 비교')
+```
+
+    
+---
+
+## 회귀(Regression) 분석(Analysis)
+
+* 독립변수(independent variable), 종속변수(dependent variable)
+* 설명변수(Explanatory variable), 반응변수(Response variable)
+* 예측변수(Predictor variable), 결과변수(Outcome variable)
+
+$$ \mathbb{E}[Y | x_1, x_2, ..., x_p] = f(x_1, x_2, ..., x_p) $$
+
+---
+
+## 단순선형회귀(Simple Linear Regression) 분석
+
+### 모형
+
+$$ y= \beta_0 + \beta_1 x + e, e \sim N(0, \sigma^2)$$
+$$ E[Y | x] = \beta_0 + \beta_1 x + e $$
+
+### 가정(LINE)
+
+- **L**inearity(선형성) : 예측변수(predictor)가 1 증가할 때, 결과변수(outcome variable) 평균의 증가는 일정하다.
+- **I**ndependence(독립성) : 예측변수의 값이 주어졌을 때, 결과변수의 분포는 다른 결과변수와 독립이다.
+- **N**ormality(정규성) : 오차의 분포는 정규분포이다.
+- **E**qual variance(등분산성) : 오차의 분포는 등분산(homoscedasticity)이다. 이분산(heteroscedasticity)이 아니다.
+
+### 예: 키로 체중 예측하기
+```{r SLR, collapse=T, fig.show='hold'}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+getwd()
+dat <- read.csv(file='./LR_weight_n100.csv', header=T, row.names=1)
+
+# 01. 데이터 살펴보기
+ggplot(dat, aes(x=height, y=weight)) + geom_point() + labs(title="01. 데이터 살펴보기")
+
+# 02. 회귀분석
+fitLm <- lm(weight ~ height, dat)
+print(fitLm)
+print(summary(fitLm))
+
+# 03. 회귀분석 결과를 시각화하기
+## a
+plot(weight ~ height, dat, main='03. 회귀분석 결과 시각화 a'); abline(fitLm)
+
+## b
+ggplot(dat, aes(x=height, y=weight)) + geom_point() + 
+  geom_smooth(method="lm") + labs(title='03. 회귀분석 결과 시각화 b')
+
+## c
+ggplot(dat, aes(x=height, y=weight)) + geom_point() +
+  geom_abline(intercept = fitLm$coefficients["(Intercept)"],
+              slope = fitLm$coefficients["height"]) + 
+  labs(title='03. 회귀분석 결과 시각화 c')
+
+# 04. 회귀분석 가정 검토
+#par(mfrow=c(2,2),oma = c(0, 0, 2, 0))
+plot(fitLm, main='04. 회귀분석 가정 검토') # plot(fitLm, which=1:6)
+## a. x와 y의 관계가 선형적인가?
+## b. 잔차가 정규성을 띄는가?
+## c. 잔차가 등분산인가?
+## d. 특이값(계수 추정에 큰 영향을 미치는 값)이 존재하는가?
+
+# 05. 계수의 추정값과 신뢰구간
+confint(fitLm)
+confint(fitLm, level=0.99)
+
+# 06. 새로운 predictor에 대한 예상값 구하기
+newdat = data.frame(height=c(160, 170, 180))
+predict(fitLm, newdat)
+predict(fitLm, newdat, interval="confidence") # 회귀선
+predict(fitLm, newdat, interval="prediction") # 새로운 관찰
+
+# 07. 시각화 
+## 07a
+newdat = data.frame(height=150:190)
+newy <- predict(fitLm, newdat)
+datPred <- cbind(newdat, newy)
+ggplot(dat, aes(x=height, y=weight)) + geom_point() + 
+  geom_line(data=datPred, aes(x=height, y=newy)) +
+  labs(title='07. 시각화a : 회귀직선')
+
+## 07b
+newdat = data.frame(height=140:200)
+newy <- predict(fitLm, newdat, interval="confidence")
+datPred <- cbind(newdat, newy)
+ggplot(dat, aes(x=height, y=weight)) + geom_point() + 
+  geom_ribbon(data=datPred, aes(x=height, y=fit, ymin=lwr, ymax=upr), alpha=0.2) +
+  geom_line(data=datPred, aes(x=height, y=fit)) +
+  coord_cartesian(xlim=c(150,190))+
+  labs(title='07. 시각화b : 회귀직선의 신뢰구간')
+
+## 07c
+newdat = data.frame(height=140:200)
+newy <- predict(fitLm, newdat, interval="prediction")
+datPred <- cbind(newdat, newy)
+ggplot(dat, aes(x=height, y=weight)) + geom_point() + 
+  geom_ribbon(data=datPred, aes(x=height, y=fit, ymin=lwr, ymax=upr), alpha=0.2) +
+  geom_line(data=datPred, aes(x=height, y=fit)) +
+  coord_cartesian(xlim=c(150,190)) +
+  labs(title='07. 시각화c : 새로운 관찰값에 대한 예측구간')
+
+## 07d
+newdat = data.frame(height=140:200)
+yconf <- data.frame(predict(fitLm, newdat, interval="confidence"))
+ypred <- data.frame(predict(fitLm, newdat, interval="prediction"))
+ypred$height <- yconf$height <- newdat$height
+datPred <- full_join(yconf, ypred, by=c('height', 'fit'))
+ggplot(dat, aes(x=height, y=weight)) + geom_point() +
+  geom_ribbon(data=datPred, aes(x=height, y=fit, ymin=lwr.x, ymax=upr.x), alpha=0.2) +
+  geom_ribbon(data=datPred, aes(x=height, y=fit, ymin=lwr.y, ymax=upr.y), alpha=0.2) +
+  geom_line(data=datPred, aes(x=height, y=fit)) +
+  coord_cartesian(xlim=c(150,190)) + 
+  labs(title='07. 시각화d', 
+       subtitle='회귀선의 신뢰구간과 새로운 예측값에 대한 예측구간')
+
+## ! Each interval is pointwise.
+
+```
+
+### 몇 가지 유의할 부분
+
+- 계수의 크기는 계수의 유의성과 다르다
+    - 키와 체중의 관계에서 키 또는 체중의 측정 단위를 달리하면 계수를 임의로 증가 혹은 감소시킬 수 있다. 
+- 이상점 또는 영향점에 주의 한다.
+
+```{r outlier, echo=FALSE, fig.height=3, fig.width=6, message=FALSE, warning=FALSE}
+dat <- data.frame(x=c(1,2,3,4,
+                      1,2,3,4,8),
+                  y=c(1.1, 1.4, 1.9, 2.6, 
+                      1.1, 1.4, 1.9, 2.6, 6.5),
+                  g=c('A', 'A', 'A', 'A',
+                      'B', 'B', 'B', 'B', 'B'))
+fit0 <- lm(y ~ x, data=dat %>% filter(g=="A"))
+#coef(fit0)
+ggplot(dat, aes(x=x, y=y))+ geom_point(aes(shape=g)) + 
+  geom_abline(intercept=coef(fit0)["(Intercept)"],
+              slope = coef(fit0)["x"], linetype='dotted') +
+  geom_smooth(method='lm') +
+  coord_cartesian(ylim=c(-1,7)) + 
+  guides(shape='none') +
+  facet_wrap(~g) +
+  labs(title="이상점이 있는 경우 1")
+
+
+dat <- data.frame(x=c(1,2,3,4,
+                      1,2,3,4,8),
+                  y=c(1.1, 1.4, 1.9, 2.6, 
+                      1.1, 1.4, 1.9, 2.6, 2.5),
+                  g=c('A', 'A', 'A', 'A',
+                      'B', 'B', 'B', 'B', 'B'))
+fit0 <- lm(y ~ x, data=dat %>% filter(g=="A"))
+#coef(fit0)
+ggplot(dat, aes(x=x, y=y))+ geom_point(aes(shape=g)) + 
+  geom_abline(intercept=coef(fit0)["(Intercept)"],
+              slope = coef(fit0)["x"], linetype='dotted') +
+  geom_smooth(method='lm') + facet_wrap(~g) +
+  coord_cartesian(ylim=c(-1,7)) + 
+  guides(shape='none') +
+  labs(title="이상점이 있는 경우 2")
+
+dat <- data.frame(x=c(1,2,3,4,
+                      1,2,3,4,8),
+                  y=c(1.1, 1.4, 1.9, 2.6, 
+                      1.1, 1.4, 1.9, 2.6, 4.4),
+                  g=c('A', 'A', 'A', 'A',
+                      'B', 'B', 'B', 'B', 'B'))
+fit0 <- lm(y ~ x, data=dat %>% filter(g=="A"))
+#coef(fit0)
+ggplot(dat, aes(x=x, y=y))+ geom_point(aes(shape=g)) + 
+  geom_abline(intercept=coef(fit0)["(Intercept)"],
+              slope = coef(fit0)["x"], linetype='dotted') +
+  geom_smooth(method='lm') + facet_wrap(~g) +
+  coord_cartesian(ylim=c(-1,7)) + 
+  guides(shape='none') +
+  labs(title="이상점이 있는 경우 3")
+
+dat <- data.frame(x=c(1,2,3,4,
+                      1,2,3,4,2.5),
+                  y=c(1.1, 1.4, 1.9, 2.6, 
+                      1.1, 1.4, 1.9, 2.6, 3.75),
+                  g=c('A', 'A', 'A', 'A',
+                      'B', 'B', 'B', 'B', 'B'))
+fit0 <- lm(y ~ x, data=dat %>% filter(g=="A"))
+#coef(fit0)
+ggplot(dat, aes(x=x, y=y))+ geom_point(aes(shape=g)) + 
+  geom_abline(intercept=coef(fit0)["(Intercept)"],
+              slope = coef(fit0)["x"], linetype='dotted') +
+  geom_smooth(method='lm') + facet_wrap(~g) +
+  coord_cartesian(ylim=c(-1,7)) + 
+  guides(shape='none') +
+  labs(title="이상점이 있는 경우 4")
+
+dat <- data.frame(x=c(1,2,3,4,
+                      1,2,3,4,2.5),
+                  y=c(1.1, 1.4, 1.9, 2.6, 
+                      1.1, 1.4, 1.9, 2.6, -0.25),
+                  g=c('A', 'A', 'A', 'A',
+                      'B', 'B', 'B', 'B', 'B'))
+fit0 <- lm(y ~ x, data=dat %>% filter(g=="A"))
+#coef(fit0)
+ggplot(dat, aes(x=x, y=y))+ geom_point(aes(shape=g), col='blue') + 
+  geom_abline(intercept=coef(fit0)["(Intercept)"],
+              slope = coef(fit0)["x"], linetype='dotted') +
+  geom_smooth(method='lm', col='black') + facet_wrap(~g) +
+  coord_cartesian(ylim=c(-1,7)) + 
+  guides(shape='none') +
+  labs(title="이상점이 있는 경우 5")
+```  
+
+### 비선형적 관계인 경우
+
+- 예측변수 또는 결과변수를 변환(transformation)할 수 있다.
+    - 이때 LINE의 가정이 어떻게 변하는지 유의하자.
+    - 자주 쓰이는 변환 함수 : $\log x$, $\frac{1}{x}$, $\sqrt{x}$, $x^2$, ...
+
+### 상관계수(Correlation Coefficient)
+
+$$ r_{xy} = \frac{\sum_{i=1}^n (x_i - \hat{x})(y_i - \hat{y})}{(n-1)s_x s_y} $$
+
+```{r correlation, echo=FALSE, fig.height=6, fig.width=8, message=FALSE, warning=FALSE}
+# correlation의 의미?
+library(dplyr)
+beta = c(0, 0.5, 1, 2)
+errstd = c(0, 0.1, 0.3, 1)
+param = expand.grid(beta=beta, errstd=errstd)
+
+n=1000
+x <- runif(n, 0, 1)
+
+i=1
+dat = list()
+vCor = rep(NA, nrow(param))
+for (i in 1:nrow(param)) {
+  
+  beta= param %>% slice(i) %>% select(beta) %>% unlist
+  errstd= param %>% slice(i) %>% select(errstd) %>% unlist
+  
+  y <- beta*x + rnorm(n, 0, errstd)
+  dat[[i]] = data.frame(x=x, y=y, beta=beta, errstd=errstd)
+  vCor[i] = cor(x,y)
+}
+
+dfCor <- data.frame(beta = param$beta, errstd=param$errstd, corr=vCor)
+datPlot <- do.call(rbind, dat)
+
+datPlot <- datPlot %>% mutate(beta=factor(beta), errstd=factor(errstd))
+
+library(ggplot2)
+ggplot(datPlot, aes(x=x, y=y)) + 
+  facet_grid(beta ~ errstd) + 
+  geom_point(alpha=0.3) + 
+  geom_smooth(method='lm', size=0.1) + 
+  labs(title='기울기와 오차 표준편차의 변화에 따른 상관계수의 변화',
+       subtitle='선형모형의 경우')
+
+library(tidyr)
+dfCor %>% spread(errstd, corr) %>% print(digits=3)
+```
+
+
+### 문제
+
+* <http://data.princeton.edu/wws509/datasets/#salary>의 자료를 통해 `sl`와 `yd`의 관계를 선형 회귀로 분석하시오.
+
+* 예측변수와(또는) 결과변수를 변환(transformation)한 후에 회귀 분석을 할 때, 위에서 설명한 LINE 가정은 어떻게 바뀌는지 설명하시오.
+
+
+### 예2: 성별로 키 예측하기
+```{r SLRweight, collapse=T, fig.show='hold'}
+library(ggplot2)
+getwd()
+dat <- read.csv(file='./LR_weight_n100.csv', header=T, row.names=1)
+
+# 01. 데이터 살펴보기
+ggplot(dat, aes(x= gender, y=weight)) + geom_point() + labs(title="01. 데이터 살펴보기")
+
+# 02. 회귀분석
+fitLm <- lm(weight ~ gender, dat)
+print(fitLm)
+print(summary(fitLm))
+
+# 03. 회귀분석 결과를 시각화하기
+## a
+plot(weight ~ gender, dat, main='03. 회귀분석 결과 시각화 a');
+datModel <- model.matrix(~gender+weight, dat)
+
+plot(weight ~ genderM, datModel)
+fitLmModel <- lm(weight ~ genderM, data.frame(datModel))
+abline(fitLmModel)
+
+## b
+ggplot(data.frame(datModel), aes(x=genderM, y=weight)) + geom_point() + 
+  geom_smooth(method="lm") + labs(title='03. 회귀분석 결과 시각화 b')
+
+```
+
+### 두 단순 선형 모형을 평가하기
+
+* 실제 $y$와 예측된 $y$의 차이
+    - 평균제곱오차(MSE; Mean Squared Error) : $\frac{\sum{(\hat{y_i}-y_i)^2}}{n}$ 
+    - 제곱근평균제곱오차(RMSE; Root Mean Squared Error) : $\sqrt{\frac{(\sum{\hat{y_i}-y_i)^2}}{n}}$
+    - 평균절대오차(MAE; Mean Absolute Error) : $\frac{\sum{|\hat{y_i}-y_i|}}{n}$ 
+* 전체 분산 중에서 설명된 분산의 비율
+    - 결정계수(the coefficient of determination) : $R^2 = \mathbb{C}or(y, \hat{y})^2 = \frac{\mathbb{V}\text{ar}[y]-\text{MSE}}{\mathbb{V}\text{ar}[y]}$
+    
+```{r, collapse=T}
+library(caret) #https://stackoverflow.com/questions/53272166/cant-install-caret-package-in-r
+# 01. lm(weight ~ height, dat)과 lm(weight ~ gender, dat)
+dat <- read.csv(file='./LR_weight_n100.csv', header=T, row.names=1)
+fitA <- lm(weight ~ height, dat)
+fitB <- lm(weight ~ gender, dat)
+
+# 02. 모형 평가
+## MSE
+mean((dat$weight - predict(fitA))^2)
+mean((dat$weight - predict(fitB))^2)
+
+## RMSE
+RMSE(dat$weight, predict(fitA)) #sqrt(mean((dat$weight - predict(fitA))^2))
+RMSE(dat$weight, predict(fitB)) #sqrt(mean((dat$weight - predict(fitB))^2))
+
+## MAE
+MAE(dat$weight, predict(fitA)) 
+RMSE(dat$weight, predict(fitB))
+
+## 결정계수
+summary(fitA)$r.squared # cor(dat$weight, predict(fitA))^2
+summary(fitB)$r.squared
+```
+    
+
+
+
+
+
+    
+  
+
+
