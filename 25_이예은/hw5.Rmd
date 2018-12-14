@@ -1,0 +1,63 @@
+---
+title: "hw5"
+author: "25_yeeun"
+date: '2018 12 14 '
+output: html_document
+---
+
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+library(rpart.plot)
+library(caret)
+library(ipred)
+```
+
+
+
+* 데이터 불러들이기
+
+```{r}
+dat <- read.csv(file='/Users/iyeeun/rproject/MJU-2018-02-DataScience/00_Instructor/W11_MultipleRegression/BaseballHitters.csv', header=T, row.names=1)
+
+head(dat)
+```
+
+
+* 데이터 전처리
+
+```{r warning=FALSE}
+table(is.na(dat))
+mean(dat$salary87, na.rm=T)
+dat$salary87 <- ifelse(is.na(dat$salary87), 541, dat$salary87)
+table(is.na(dat))
+
+dat_train <- dat[-c(177,294,44,220,215,25,81,111,107,284,216,36,18,56,91,320,113,194,321,151,7 ,19,242,123,221,230,45,277,54,228,156,298,92,121,181,243,191,68,118,55,264,153 ,125,102,75,32,303,317,106,252,149,70,316,293,40,310,90,100,258,15),]
+dat_test <- dat[c(177,294,44,220,215,25,81,111,107,284,216,36,18,56,91,320,113,194,321,151,7 ,19,242,123,221,230,45,277,54,228,156,298,92,121,181,243,191,68,118,55,264,153 ,125,102,75,32,303,317,106,252,149,70,316,293,40,310,90,100,258,15),]
+```
+
+
+* 모형적합과 모형검증
+
+```{r message=FALSE, warning=FALSE}
+dat_train<-dat_train %>% select(salary87,careerAB,careerR,PO86,AB86,R86)
+dat_test <-dat_test %>% select(salary87,careerAB,careerR,PO86,AB86,R86)
+
+#다중선형회귀
+fit<-lm(salary87~.,dat_train)
+summary(fit)
+
+summary(predict(fit,newdata=dat_test))
+mean( (dat$salary87-predict(fit,newdata=dat_test))^2)
+
+#배깅결정나무
+fit<-rpart(salary87~.,data=dat_train)
+fit1<- bagging(salary87 ~., data = dat_train)
+fit2<- bagging(salary87 ~., data = dat_train)
+fit3<- bagging(salary87 ~., data = dat_train)
+fit4<- bagging(salary87 ~., data = dat_train)
+fit5<- bagging(salary87 ~., data = dat_train)
+
+summary(predict(fit5,newdata=dat_test, type='prob'))
+mean((dat$salary87[60:322] - predict(fit5, newdata=dat_test))^2)
+
+```
