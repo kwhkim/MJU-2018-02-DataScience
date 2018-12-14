@@ -1,0 +1,81 @@
+---
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+| 주	| 날짜   | 계획 	| 시행 	|
+|-----|--------	|--------	|--------	|
+| 1   | 09/07 | 과목소개    	   | 개교기념일 	|
+| 2   | 09/14 | 자료수집     	   | 과목소개	|
+| 3  	| 09/21 | 관심 자료 발표   | R 데이터 타입    	|
+| 4 	| 09/28 | 데이터 전처리 1  | 데이터 읽어오기      	|
+| 5 	| 10/05 | 데이터 전처리 2  | 집단별 함수 적용      	|
+| 6 	| 10/12 | R 그래픽스       | `dplyr`, `join`, `tidyr`      	|
+| 7 	| 10/19 | R 프로그래밍     | R 그래픽스     	|
+| 5 	| 10/26 | 보충             | R 프로그래밍      	|
+| 5 	| 11/02 | 중간고사      	 | 중간고사      	|
+| 5 	| 11/09 | 선형회귀모형분석 | 단순선형회귀모형      	|
+| 5 	| 11/16 | 혼합모형분석 	   | 다중선형회귀모형      	|
+| 5 	| 11/23 | 주성분분석, 요인분석, 문항반응이론| 로지스틱회귀모형      	|
+| 5 	| 11/30 | 경로분석, 구조방정식            	| 의사결정나무      	|
+| 5 	| 12/07 | 텍스트마이닝     | 인공신경망모형      	|
+| 5 	| 12/14 | 발표      	 | **비지도학습방법**(주성분분석), 정리      	|
+| 5 	| 12/21 | 기말고사      	 | 기말고사      	|
+
+
+## 지도 학습과 비지도 학습
+
+* 지도학습(Supervised Learning)
+    - 회귀(Regression) : 선형회귀모형, 회귀나무(Regression Tree), 인공신경망 등
+    - 분류(Classification) : 로지스틱회귀, 의사결정나무, 인공신경망 등
+
+* 비지도학습(Unsupervised Learning)
+    - 차원축소(Dimension reduction) : 주성분분석(pca; principal component anlaysis)
+    - 군집화(clustering, segmentation) 
+        - 계층적 군집화(Hierarchical Clustering)
+        - K-평균 알고리즘(K-means algorithm)
+
+    
+## 중요한 개념
+
+* 예측 모형 vs. 원인-결과 모형
+    - 회귀모형 $y = \beta_0 + \beta_1 x_1 + \beta_2 x_2$에서 $\beta_2$의 의미를 예측 모형과 원인-결과 모형을 구분하여 설명하시오.
+    
+* 추정량의 좋은 성질
+    - 일치성(Consistency)
+    - 비편향성(Unbiasedness)
+    - 효율성(Efficiency)
+
+* 비선형성(non-linearity)과 상호작용(interaction)
+
+* 모형 검증(model validation), 교차 검증(cross validation)
+
+* 과적합(overfitting), 모형 편향과 분산(model bias and variance)
+
+
+## 그 밖의 내용
+    
+* 예측정확도(Prediction Accuracy) vs. 모형해석가능성(Model Interpretability)
+* 베이지안(Bayesian) 방법
+* 잠재변수(Latent Variable)
+* 정형 데이터(Structured Data) vs. 비정형데이터(Unstructured Data)
+    - 정형 데이터 : 테이블 형태로 정리할 수 있는 데이터
+    - 비정형 데이터 : 테이블 형태로 정리할 수 없는 데이터
+        - 사진, 텍스트(Text), 오디오(Audio) 등
+* 빅데이터의 효용성
+* 신호와 소음(Signal and Noise)
+
+----
+
+## 참고 자료
+
+* [Cross Valided](https://stats.stackexchange.com/), [Stack Exchange](https://stackoverflow.com)
+* [Kaggle](kaggle.com)
+* R로 배우는 실무 데이터 과학(Practical Data Science with R)
+* [ISLR(An Introduction to Statistical Learning)](
+https://www-bcf.usc.edu/~gareth/ISL/)
+* [Introduction to Data Mining](https://www.amazon.com/Introduction-Mining-Whats-Computer-Science/dp/0133128903/ref=sr_1_1?ie=UTF8&qid=1544751354&sr=8-1&keywords=introduction+to+data+mining)
+
