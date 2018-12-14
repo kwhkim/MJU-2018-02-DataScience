@@ -8,10 +8,16 @@
 00_Instructor/prepare/*.*
 salary*.pdf
 00_Instructor/git.*.html
+*.html
 *.ods#
 =/*.*
 <<<<<<< HEAD
+<<<<<<< HEAD
 LR_weight_n100.csv
 =======
+=======
+prepare*.*
+
+>>>>>>> upstream/master
 
 >>>>>>> upstream/master
