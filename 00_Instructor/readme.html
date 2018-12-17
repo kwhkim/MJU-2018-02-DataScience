@@ -1885,7 +1885,172 @@ df02 &lt;- df01 %&gt;% gather('변수', '값', height:weight)</code></pre>
 </ul></li>
 <li><p>참고 : 과제 제출은 수업 시간 바로 전에 해주세요.</p></li>
 </ul>
+<div class="section level3">
+<h3>채점결과</h3>
+<table>
+<thead>
+<tr class="header">
+<th align="center">순번</th>
+<th align="center">기본점수</th>
+<th align="center">사전 처리</th>
+<th align="center">MSE</th>
+<th align="center">MSE점수(만점 = 2)</th>
+<th align="center">총점</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">110639</td>
+<td align="center">1.2</td>
+<td align="center">3.2</td>
+</tr>
+<tr class="even">
+<td align="center">3</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">5</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">9</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">68831(첫 번째 것은 잘못된 방법)</td>
+<td align="center">2</td>
+<td align="center">4</td>
+</tr>
+<tr class="odd">
+<td align="center">13</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">119315.7(첫 번째 것은 잘못된 방법)</td>
+<td align="center">1.1</td>
+<td align="center">3.1</td>
+</tr>
+<tr class="even">
+<td align="center">15</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">70703.5</td>
+<td align="center">1.9</td>
+<td align="center">3.9</td>
+</tr>
+<tr class="odd">
+<td align="center">19</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">(검증데이터를 사용하지 않음)</td>
+<td align="center"></td>
+<td align="center">2</td>
+</tr>
+<tr class="even">
+<td align="center">23</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">(검증데이터를 사용하지 않음)</td>
+<td align="center"></td>
+<td align="center">2</td>
+</tr>
+<tr class="odd">
+<td align="center">25</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">240584</td>
+<td align="center">0.6</td>
+<td align="center">2.6</td>
+</tr>
+<tr class="even">
+<td align="center">27</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="odd">
+<td align="center">28</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">30</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">(검증 데이터를 사용하지 않음)</td>
+<td align="center"></td>
+<td align="center">2</td>
+</tr>
+<tr class="odd">
+<td align="center">31</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">32</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">(잘못된 방법)</td>
+<td align="center"></td>
+<td align="center">2</td>
+</tr>
+<tr class="odd">
+<td align="center">34</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr class="even">
+<td align="center">35</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">67875(첫 번째 것은 잘못된 방법)</td>
+<td align="center">2</td>
+<td align="center">4</td>
+</tr>
+<tr class="odd">
+<td align="center">36</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">(잘못된 방법)</td>
+<td align="center"></td>
+<td align="center">2</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><p>MSE 점수 계산 식 : <code>2-2*(본인 MSE-최소 MSE)/본인 MSE</code></p>
+<pre class="{r}"><code>2-2*(c(110639, 68831, 119315.7, 70703.5, 240584, 67875)-67875)/c(110639, 68831, 119315.7, 70703.5, 240584, 67875)</code></pre></li>
+<li><p>오차를 구하거나, 잔차를 구할 때 다음과 같은 메시지가 뜨는 것은 두 벡터의 길이가 다르기 때문이며, 이는 뭔가 잘못되고 있다는 것을 의미합니다. 가장 흔한 예는 학습 데이터에 대한 예측을 검증 데이터에 대한 예측과 비교하거나, 학습데이터의 y를 검증 데이터에 대한 예측과 비교를 하는 것 등입니다.</p></li>
+</ul>
+<pre><code>Warning message:
+In sal - dat2[[&quot;salary87&quot;]] :
+  longer object length is not a multiple of shorter object length</code></pre>
+<ul>
+<li><p><code>predict</code>를 사용해서 모형 검증을 실시할 때, 선형모형을 사용할 때에도 <code>predict(linearModel, newdata= )</code>식으로 <code>newdata</code>에 검증 데이터(모형 학습에 사용되지 않은 데이터)를 사용해야 합니다.</p></li>
+<li><p>자세한 사항은 <code>00_Instructor/HW05solution.rmd</code>를 참조하기 바랍니다.</p></li>
+</ul>
 <hr />
+</div>
 </div>
 <div id="--" class="section level2">
 <h2>기말고사 예상 문제</h2>
