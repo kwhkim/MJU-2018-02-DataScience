@@ -1,0 +1,126 @@
+---
+title: "homework5"
+author: "19_jeongmin"
+date: "2018년 12월 13일"
+output: html_document
+---
+
+
+## 모형 검정
+
+* 패키지 불러오기
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+library(dplyr)
+library(caret)
+library(car)
+library(rpart)
+library(rpart.plot)
+library(ipred)
+library(tidyr)
+```
+
+* 데이터 사전처리
+```{r}
+dat <- read.csv(file='C:/rproject/MJU-2018-02-DataScience/00_Instructor/W11_MultipleRegression/BaseballHitters.csv', header=T, row.names=1)
+head(dat)
+
+#모형 적합에 사용할 자료만 추출
+data <- dat[-c(177,294,44,220,215,25,81,111,107,284,216,36,18,56,91,320,113,194,321,151,7 ,19,242,123,221,230,45,277,54,228,156,298,92,121,181,243,191,68,118,55,264,153 ,125,102,75,32,303,317,106,252,149,70,316,293,40,310,90,100,258,15),]
+head(data)
+summary(data)
+
+# na값 제거
+data <- data %>%
+  filter(!is.na(salary87))
+```
+
+
+
+1. 선형회귀모형
+```{r}
+fit1 <- lm(salary87~years+careerH+careerRBI, data=data)
+fit2 <- lm(salary87~(years+careerH+careerRBI)^2, data=data)
+
+summary(fit1)
+summary(fit2)
+
+```
+
+상호작용 변수를 넣은 것과 안 넣은 것으로 두 모형을 설정하였다.
+
+```{r}
+AIC(fit1)
+AIC(fit2)
+
+anova(fit1, fit2)
+
+mean(fit1$residuals^2)
+mean(fit2$residuals^2)
+```
+AIC와 MSE를 비교했을 때 상호작용 변수를 추가한 두번째 모형이 더 적합하다.
+
+
+
+2. 배깅 결정나무
+
+* 의사결정나무 분산확인
+```{r}
+iTrains <- createFolds(y = data$salary87, k = 5, list = TRUE, returnTrain = TRUE)
+iTrains[[1]]
+
+nsamp = 10
+datTest <- data %>% slice(1:nsamp)
+
+fit <- list(NA, NA, NA, NA, NA)
+for (i in 1:5) {
+  datTrain <- data %>% slice(iTrains[[i]])
+  fit[[i]] <- rpart(salary87~years+careerH+careerRBI, data = datTrain)
+  rpart.plot(fit[[i]])
+}
+
+pred <- data.frame(i=factor(1:10, levels=1:10),
+                   pred1 = predict(fit[[1]], newdata = datTest, type='vector'), 
+                   pred2 = predict(fit[[2]], newdata = datTest, type='vector'),
+                   pred3 = predict(fit[[3]], newdata = datTest, type='vector'),
+                   pred4 = predict(fit[[4]], newdata = datTest, type='vector'),
+                   pred5 = predict(fit[[5]], newdata = datTest, type='vector'))
+
+predG <- pred %>% gather("key", "value", 2:5) 
+predG %>% ggplot(aes(x=i, y=value, col=key, group=key)) +
+  geom_point() + 
+  geom_line()
+```
+
+2,3,8,9번째 데이터는 모형에 따라서 예측값이 다르게 나온다는 것을 알 수 있다.
+
+* 배깅으로 분산 줄이기
+```{r}
+fit <- list(NA, NA, NA, NA, NA)
+for (i in 1:5) {
+  datTrain <- data %>% slice(iTrains[[i]])
+  fit[[i]] <- bagging(salary87~years+careerH+careerRBI, data = datTrain)
+}
+
+pred <- data.frame(i=factor(1:10, levels=1:10),
+                   pred1 = predict(fit[[1]], newdata=datTest, type='vector'), 
+                   pred2 = predict(fit[[2]], newdata=datTest, type='vector'),
+                   pred3 = predict(fit[[3]], newdata=datTest, type='vector'),
+                   pred4 = predict(fit[[4]], newdata=datTest, type='vector'),
+                   pred5 = predict(fit[[5]], newdata=datTest, type='vector'))
+
+predG <- pred %>% gather("key", "value", pred1:pred5) 
+predG %>% ggplot(aes(x=i, y=value, col=key, group=key)) +
+  geom_point() + 
+  geom_line()
+```
+
+동일한 데이터에 대해 배깅결과는 배깅을 하지 않은 의사결정나무에 비해 분산이 작아졌음을 확인할 수 있다.
+
+
+* MSE 결과
+```{r}
+fit<- bagging(salary87~years+careerH+careerRBI,datTrain)
+mean((datTrain$salary87 - predict(fit))^2)
+```
+
