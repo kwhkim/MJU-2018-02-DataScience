@@ -143,7 +143,9 @@ library(dplyr)</code></pre>
 <pre><code>## The following objects are masked from 'package:base':
 ## 
 ##     intersect, setdiff, setequal, union</code></pre>
-<pre class="r"><code>baseball &lt;- read.csv('C:/Users/Usr/Desktop/MJU-2018-02-DataScience/00_Instructor/W11_MultipleRegression/BaseballHitters.csv')
+<pre class="r"><code>print(getwd())</code></pre>
+<pre><code>## [1] &quot;D:/git/MJU-2018-02-DataScience/01_강효진&quot;</code></pre>
+<pre class="r"><code>baseball &lt;- read.csv('../00_Instructor/W11_MultipleRegression/BaseballHitters.csv')
 
 head(baseball)</code></pre>
 <pre><code>##   X firstName  lastName AB86 H86 HR86 R86 RBI86 W86 years careerAB careerH
@@ -307,8 +309,8 @@ print(predict(DT_fitall, newdata = baseball_test))</code></pre>
 ##  178.1191  428.4994  612.2101  178.1191  178.1191  178.1191  612.2101 
 ##        43        44        45        46        47 
 ##  178.1191  178.1191 2033.7561  428.4994  612.2101</code></pre>
-<pre class="r"><code>mean((baseball_test$salary87 - predict(DT_fitall, newdata = baseball_test))^2)</code></pre>
-<pre><code>## [1] 257307.8</code></pre>
+<pre class="r"><code>sqrt(mean((baseball_test$salary87 - predict(DT_fitall, newdata = baseball_test))^2))</code></pre>
+<pre><code>## [1] 507.2552</code></pre>
 <pre class="r"><code>##salary87을 years로 예측한 결과
 DT_fit_years &lt;- rpart(salary87 ~ years, data = baseball_fit)
 print(predict(DT_fit_years, newdata = baseball_test))</code></pre>
@@ -326,8 +328,8 @@ print(predict(DT_fit_years, newdata = baseball_test))</code></pre>
 ##  189.3542  757.2191  782.8413  189.3542  674.3840  757.2191  189.3542 
 ##        43        44        45        46        47 
 ##  189.3542  189.3542  674.3840  757.2191 1128.1250</code></pre>
-<pre class="r"><code>mean((baseball_test$salary87 - predict(DT_fit_years, newdata = baseball_test))^2)</code></pre>
-<pre><code>## [1] 159507.5</code></pre>
+<pre class="r"><code>sqrt(mean((baseball_test$salary87 - predict(DT_fit_years, newdata = baseball_test))^2))</code></pre>
+<pre><code>## [1] 399.3839</code></pre>
 <pre class="r"><code>##salary87을 years와 careerHR과 그 상호작용을 포함하여 예측한 결과
 DT_fit_yearhr &lt;- rpart(salary87 ~ years + careerHR, data = baseball_fit)
 print(predict(DT_fit_yearhr, newdata = baseball_test))</code></pre>
@@ -345,45 +347,45 @@ print(predict(DT_fit_yearhr, newdata = baseball_test))</code></pre>
 ##  148.3917  665.8330 1317.8900  148.3917 1051.2222  665.8330  148.3917 
 ##        43        44        45        46        47 
 ##  148.3917  148.3917  665.8330  665.8330  665.8330</code></pre>
-<pre class="r"><code>mean((baseball_test$salary87 - predict(DT_fit_yearhr, newdata = baseball_test))^2)</code></pre>
-<pre><code>## [1] 144043.9</code></pre>
+<pre class="r"><code>sqrt(mean((baseball_test$salary87 - predict(DT_fit_yearhr, newdata = baseball_test))^2))</code></pre>
+<pre><code>## [1] 379.5312</code></pre>
 <p>각각의 MSE 값을 살펴보면, 전체 변수로 예측했을 때 가장 크게 나타나며, <code>years</code>와 <code>careerHR</code>를 같이 사용하여 예측했을 때 가장 작게 나타난다. 따라서, 의사결정나무에서 두 변수를 사용한 모형을 선택하였다.</p>
 </div>
 <div id="-" class="section level3">
 <h3>(2)배깅 결정나무</h3>
 <pre class="r"><code>B_fitall &lt;- bagging(salary87 ~ ., data = baseball_fit)
 print(predict(B_fitall, newdata = baseball_test, type='prob'))</code></pre>
-<pre><code>##  [1]  146.4322  740.7398  322.8711  145.9297  467.1856  778.3112 1037.6383
-##  [8]  340.0662  631.8117  637.5144  231.6515 1273.9429  470.9095  446.0231
-## [15]  187.2755  878.4785  139.5193  376.5919  605.3521  139.5193  639.8702
-## [22]  262.0280  760.5878  284.7171  151.7113  280.1281  645.4215  647.6317
-## [29] 1031.7243  324.1645  159.1926  139.5193 1072.0513  889.7685  833.8862
-## [36]  151.7113  739.5583  963.5805  161.1709  509.4431  434.7501  358.9569
-## [43]  325.4517  280.4606 1414.8758  612.3550  635.9191</code></pre>
-<pre class="r"><code>mean((baseball_test$salary87 - predict(B_fitall, newdata = baseball_test, type='prob'))^2)</code></pre>
-<pre><code>## [1] 158767.6</code></pre>
+<pre><code>##  [1]  137.3481  805.2925  426.4015  143.0281  374.1147  840.4435 1250.8569
+##  [8]  358.5036  736.2297  514.9656  211.7710 1199.6447  535.8541  495.3938
+## [15]  160.0687  806.0707  137.3481  333.3193  542.3717  137.3481  460.1355
+## [22]  193.0139  810.4539  354.6397  151.8101  272.5222  707.5361  631.5240
+## [29]  841.0442  338.5454  149.1168  137.3481 1097.5134  872.8691  761.0768
+## [36]  151.8101  723.3180  763.9622  137.3481  512.1938  437.1537  379.6582
+## [43]  382.9563  337.3710 1410.2636  565.8117  678.6631</code></pre>
+<pre class="r"><code>sqrt(mean((baseball_test$salary87 - predict(B_fitall, newdata = baseball_test, type='prob'))^2))</code></pre>
+<pre><code>## [1] 402.3646</code></pre>
 <pre class="r"><code>B_fit_years &lt;- bagging(salary87 ~ years, data = baseball_fit)
 print(predict(B_fit_years, newdata = baseball_test, type='prob'))</code></pre>
-<pre><code>##  [1]  156.1007  687.9141  248.7019  170.2670  664.6156  542.4354  818.2580
-##  [8]  170.2670  818.2580  633.0086  664.6156  633.0086  664.6156 1017.6691
-## [15]  664.6156  687.9141  156.1007  633.0086  633.0086  170.2670  717.6945
-## [22]  156.1007  717.6945  156.1007  633.0086  664.6156  248.7019  725.1458
-## [29]  664.6156  745.3451  156.1007  170.2670  587.9569  745.3451  664.6156
-## [36]  156.1007  756.0918  725.1458  170.2670  633.0086  756.0918  156.1007
-## [43]  156.1007  248.7019  677.4459  786.4881 1017.6691</code></pre>
-<pre class="r"><code>mean((baseball_test$salary87 - predict(B_fit_years, newdata = baseball_test, type='prob'))^2)</code></pre>
-<pre><code>## [1] 148247.3</code></pre>
+<pre><code>##  [1] 148.3732 665.0042 246.2475 161.4181 684.9838 632.7226 834.6275
+##  [8] 161.4181 834.6275 668.2316 684.9838 668.2316 684.9838 919.2888
+## [15] 684.9838 665.0042 148.3732 668.2316 668.2316 161.4181 675.3276
+## [22] 148.3732 675.3276 148.3732 668.2316 684.9838 246.2475 715.3336
+## [29] 684.9838 738.2390 148.3732 161.4181 636.6449 738.2390 684.9838
+## [36] 148.3732 750.7830 715.3336 161.4181 668.2316 750.7830 148.3732
+## [43] 148.3732 246.2475 683.2122 772.5718 919.2888</code></pre>
+<pre class="r"><code>sqrt(mean((baseball_test$salary87 - predict(B_fit_years, newdata = baseball_test, type='prob'))^2))</code></pre>
+<pre><code>## [1] 393.736</code></pre>
 <pre class="r"><code>B_fit_yearhr &lt;- bagging(salary87 ~ years + careerHR, data = baseball_fit)
 print(predict(B_fit_yearhr, newdata = baseball_test, type='prob'))</code></pre>
-<pre><code>##  [1]  152.0193  458.0913  256.1302  152.0193  816.5840  628.8010  784.6772
-##  [8]  366.8476  784.6772  415.3756  604.3498  594.1321  446.4239 1547.6485
-## [15]  604.3498  753.1844  152.0193  584.5464  415.3756  152.0193  469.3610
-## [22]  152.0193 1056.0307  239.6187  415.3756  584.5464  935.3543  714.3749
-## [29] 1141.6047  549.0303  152.0193  152.0193  997.4247  859.8724  696.8967
-## [36]  152.0193  550.5159 1340.8133  152.0193 1141.6047  550.5159  152.0193
-## [43]  152.0193  228.8248  596.2374  579.6260  560.7213</code></pre>
+<pre><code>##  [1]  149.8790  496.6354  251.4920  149.8790  807.4064  642.7525  840.6507
+##  [8]  359.2238  818.3402  483.1082  608.9935  608.9935  483.1082 1462.3377
+## [15]  608.9935  800.4314  149.8790  594.4067  483.1082  149.8790  496.6354
+## [22]  149.8790  970.7126  239.4757  483.1082  607.6707  739.1127  775.8344
+## [29] 1115.8473  543.9215  149.8790  149.8790  970.8678  855.8859  741.8029
+## [36]  149.8790  571.3435 1352.1285  149.8790 1115.8473  583.1000  149.8790
+## [43]  149.8790  177.0993  616.4116  581.8665  536.0755</code></pre>
 <pre class="r"><code>mean((baseball_test$salary87 - predict(B_fit_yearhr, newdata = baseball_test, type='prob'))^2)</code></pre>
-<pre><code>## [1] 108137</code></pre>
+<pre><code>## [1] 110639</code></pre>
 <p>배깅 결정나무에서도, 의사결정나무와 동일한 결과가 도출된다.(<code>year</code>변수와 <code>careerHR</code>변수를 같이 사용했을 때 MSE 값이 가장 작게 나타난다.) 따라서, 가장 마지막 모형을 선택하였다.</p>
 </div>
 <div class="section level3">
