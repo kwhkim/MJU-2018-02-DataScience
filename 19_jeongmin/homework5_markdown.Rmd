@@ -22,7 +22,7 @@ library(tidyr)
 
 * 데이터 사전처리
 ```{r}
-dat <- read.csv(file='C:/rproject/MJU-2018-02-DataScience/00_Instructor/W11_MultipleRegression/BaseballHitters.csv', header=T, row.names=1)
+dat <- read.csv(file='../00_Instructor/W11_MultipleRegression/BaseballHitters.csv', header=T, row.names=1)
 head(dat)
 
 #모형 적합에 사용할 자료만 추출
