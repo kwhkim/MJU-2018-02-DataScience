@@ -63,8 +63,8 @@ library(readxl)
 library(dplyr)
 library(ggplot2)
 
-crime_raw<- read.csv("C://Users//user//Documents//MJU-2018-02-DataScience//crime.csv")
-cctv_raw <- read.csv("C://Users//user//Documents//MJU-2018-02-DataScience//cctv.csv")
+crime_raw<- read.csv("crime.csv")
+cctv_raw <- read.csv("cctv.csv")
 cr <- crime_raw
 cc <- cctv_raw
 ```

@@ -11,6 +11,13 @@ salary*.pdf
 *.html
 *.ods#
 =/*.*
+<<<<<<< HEAD
+<<<<<<< HEAD
+LR_weight_n100.csv
+=======
+=======
 prepare*.*
 
+>>>>>>> upstream/master
 
+>>>>>>> upstream/master

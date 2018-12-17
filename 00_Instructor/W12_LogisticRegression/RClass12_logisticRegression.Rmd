@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
 ```
 
 ### 결과가 '0 또는 1'과 같이 이산 분포일 때 선형 회귀 모형으로 분석할 때 문제점
