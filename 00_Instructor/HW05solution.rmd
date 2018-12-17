@@ -1,0 +1,182 @@
+
+## 숙제 05 : 프로야구 선수 연봉 예측하기
+
+* 활용 모형 : 선형회귀모형, 랜덤 포레스트와 배깅
+* 제 1 방법 : 일부 변수를 활용하여 모형 적합
+* 제 2 방법 : 이름을 제외한 모든 변수를 넣어서 모형 적합
+* 제 3 방법 : 평균 타율 등 평균 변수를 생성해서 모든 변수로 모형 적합
+* 제 4 방법 : 제 2 방법의 변수에 y(연봉)에 로그를 취한 값을 결과 변수로 사용하여 모형 적합
+
+```{r}
+library(dplyr)
+library(randomForest)
+library(caret)
+
+iTest <- c(177,294,44,220,215,25,81,111,107,284,216,36,18,56,91,320,113,194,
+           321,151,7 ,19,242,123,221,230,45,277,54,228,156,298,92,121,181,
+           243,191,68,118,55,264,153 ,125,102,75,32,303,317,106,252,149,70,
+           316,293,40,310,90,100,258,15)
+
+dat <- read.csv('W11_MultipleRegression/BaseballHitters.csv', row.names=1)
+#sum(is.na(datTrain$salary87))
+#sum(is.na(datTest$salary87))
+datTrain <- dat %>% slice(-iTest) %>% filter(!is.na(salary87))
+datTest <- dat %>% slice(iTest) %>% filter(!is.na(salary87))
+
+nrow(datTrain); sum(complete.cases(datTrain))
+
+nrow(datTest); sum(complete.cases(datTest))
+
+summary(datTrain)
+
+# 선형 회귀 모형 활용하기
+fit <- lm(salary87 ~ AB86 + H86 + HR86 + R86 + RBI86 + W86 + PO86 + A86 + E86,
+          data=datTrain)
+
+# 기존의 데이터로 모형 평가하기
+RMSE(predict(fit), datTrain$salary87) 
+# 새로운 데이터로 모형 평가하기
+lm0 <- RMSE(predict(fit, newdata=datTest), datTest$salary87)
+print(lm0)
+
+pred1 = data.frame(pred=predict(fit), sal87=datTrain$salary87, data='train') 
+pred2 = data.frame(pred=predict(fit, newdata=datTest), sal87=datTest$salary87, data='test')
+datPlot = rbind(pred1, pred2)
+
+ggplot(datPlot, aes(x=sal87, y=pred, col=data)) + 
+  geom_point() + 
+  geom_abline(intercept= 0, slope=1, linetype='dotted') + 
+  facet_wrap(~ data)
+
+# 어떤 도메인 지식도 쓰지 않은 경우
+# Random Forest
+fit <- randomForest(salary87 ~ . - firstName - lastName - league87 - team87,
+                    data = datTrain)
+# 기존의 데이터로 모형 평가하기
+RMSE(predict(fit), datTrain$salary87) 
+# 새로운 데이터로 모형 평가하기
+rf <- RMSE(predict(fit, newdata=datTest), datTest$salary87)
+print(rf)
+
+pred1 = data.frame(pred=predict(fit), sal87=datTrain$salary87, data='train') 
+pred2 = data.frame(pred=predict(fit, newdata=datTest), sal87=datTest$salary87, data='test')
+datPlot = rbind(pred1, pred2)
+
+ggplot(datPlot, aes(x=sal87, y=pred, col=data)) + 
+  geom_point() + 
+  geom_abline(intercept= 0, slope=1, linetype='dotted') + 
+  facet_wrap(~ data)
+
+# 어떤 도메인 지식도 쓰지 않은 경우
+# Bagging
+
+library(ipred)
+fit <- bagging(salary87 ~ . - firstName - lastName - league87 - team87,
+               data = datTrain)
+RMSE(predict(fit), datTrain$salary87)
+print(bag <- RMSE(predict(fit, newdata=datTest), datTest$salary87))
+
+pred1 = data.frame(pred=predict(fit), sal87=datTrain$salary87, data='train')
+pred2 = data.frame(pred=predict(fit, newdata=datTest), sal87=datTest$salary87, data='test')
+datPlot = rbind(pred1, pred2)
+
+ggplot(datPlot, aes(x=sal87, y=pred, col=data)) + 
+  geom_point() + 
+  geom_abline(intercept= 0, slope=1, linetype='dotted') + 
+  facet_wrap(~ data)
+
+#====
+
+datTrain <- datTrain %>% 
+  mutate(avAB = careerAB/years,
+         avH = careerH/years,
+         avHR = careerHR/years,
+         avR = careerR/years,
+         avRBI = careerRBI/years,
+         avW = careerRBI/years) 
+
+datTest <- datTest %>% 
+  mutate(avAB = careerAB/years,
+         avH = careerH/years,
+         avHR = careerHR/years,
+         avR = careerR/years,
+         avRBI = careerRBI/years,
+         avW = careerRBI/years) 
+
+# 평균(av) 변수를 추가 시킨 경우
+# Random Forest
+
+fit <- randomForest(salary87 ~ . - firstName - lastName - league87 - team87,
+                    data = datTrain)
+RMSE(predict(fit), datTrain$salary87)
+print(rfd <- RMSE(predict(fit, newdata=datTest), datTest$salary87))
+
+pred1 = data.frame(pred=predict(fit), sal87=datTrain$salary87, data='train')
+pred2 = data.frame(pred=predict(fit, newdata=datTest), sal87=datTest$salary87, data='test')
+datPlot = rbind(pred1, pred2)
+
+ggplot(datPlot, aes(x=sal87, y=pred, col=data)) + 
+  geom_point() + 
+  geom_abline(intercept= 0, slope=1, linetype='dotted') + 
+  facet_wrap(~ data)
+
+# Bagging
+library(ipred)
+fit <- bagging(salary87 ~ . - firstName - lastName - league87 - team87,
+               data = datTrain)
+RMSE(predict(fit), datTrain$salary87)
+print(bagd <- RMSE(predict(fit, newdata=datTest), datTest$salary87))
+
+pred1 = data.frame(pred=predict(fit), sal87=datTrain$salary87, data='train')
+pred2 = data.frame(pred=predict(fit, newdata=datTest), sal87=datTest$salary87, data='test')
+datPlot = rbind(pred1, pred2)
+
+ggplot(datPlot, aes(x=sal87, y=pred, col=data)) + 
+  geom_point() + 
+  geom_abline(intercept= 0, slope=1, linetype='dotted') + 
+  facet_wrap(~ data)
+
+# y=log(salary87)로 바꾼 경우
+# Random Forest
+fit <- randomForest(log(salary87) ~ . - firstName - lastName - league87 - team87,
+                    data = datTrain)
+RMSE(exp(predict(fit)), datTrain$salary87)
+print(rfdlog <- RMSE(exp(predict(fit, newdata=datTest)), datTest$salary87))
+
+pred1 = data.frame(pred=exp(predict(fit)), sal87=datTrain$salary87, data='train')
+pred2 = data.frame(pred=exp(predict(fit, newdata=datTest)), sal87=datTest$salary87, data='test')
+datPlot = rbind(pred1, pred2)
+
+ggplot(datPlot, aes(x=sal87, y=pred, col=data)) + 
+  geom_point() + 
+  geom_abline(intercept= 0, slope=1, linetype='dotted') + 
+  facet_wrap(~ data)
+
+# y=log(salary87)로 바꾼 경우
+# Bagging
+library(ipred)
+fit <- bagging(log(salary87) ~ . - firstName - lastName - league87 - team87,
+               data = datTrain)
+RMSE(exp(predict(fit)), datTrain$salary87)
+print(bagdlog <- RMSE(exp(predict(fit, newdata=datTest)), datTest$salary87))
+
+pred1 = data.frame(pred=exp(predict(fit)), sal87=datTrain$salary87, data='train')
+pred2 = data.frame(pred=exp(predict(fit, newdata=datTest)), sal87=datTest$salary87, data='test')
+datPlot = rbind(pred1, pred2)
+
+ggplot(datPlot, aes(x=sal87, y=pred, col=data)) + 
+  geom_point() + 
+  geom_abline(intercept= 0, slope=1, linetype='dotted') + 
+  facet_wrap(~ data)
+```
+
+## 모든 모형 비교(검증 데이터에 대한 RMSE)
+ 
+| 모형 	|일부변수 | 모든 변수 	|  평균 변수 추가  	| 평균 변수 + log(y) 	|
+|:----:	|  ----:	|      ----:	|             ----:	|              ----:	|
+| 선형회귀모형 |  `r lm0` |         |          |             |
+| 랜덤포레스트 |          | `r rf`  | `r rfd`  | `r rfdlog`  |  
+|   배깅  	   |          | `r bag` | `r bagd` | `r bagdlog` |
+
+* 여기서 한 가지 주의할 점은 위의 검증 평가 결과는 우연에 의한 결과일 가능성도 있기 때문에 수업 시간에 소개했던 **교차 검증**을 사용할 필요가 있습니다. (다시 말해 위의 평가 결과가 좋다고 반드시 더 좋은 모형이라고 할 수 없습니다. 왜냐하면 그것이 우연히 좋게 나왔을 수도 있기 때문이죠. 따라서 모형 검증을 여러번 실시하는 교차 검증과 같은 방법을 사용하여 우연적 요소를 최대한 제거할 필요가 있습니다.)
+  
