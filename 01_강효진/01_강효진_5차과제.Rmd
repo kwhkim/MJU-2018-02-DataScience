@@ -13,7 +13,8 @@ library(rpart)
 library(ipred)
 library(dplyr)
 
-baseball <- read.csv('C:/Users/Usr/Desktop/MJU-2018-02-DataScience/00_Instructor/W11_MultipleRegression/BaseballHitters.csv')
+print(getwd())
+baseball <- read.csv('../00_Instructor/W11_MultipleRegression/BaseballHitters.csv')
 
 head(baseball)
 ```
@@ -55,17 +56,17 @@ head(baseball_test)
 ##salary87을 전체 변수로 예측한 결과
 DT_fitall <- rpart(salary87 ~ ., data = baseball_fit)
 print(predict(DT_fitall, newdata = baseball_test))
-mean((baseball_test$salary87 - predict(DT_fitall, newdata = baseball_test))^2)
+sqrt(mean((baseball_test$salary87 - predict(DT_fitall, newdata = baseball_test))^2))
 
 ##salary87을 years로 예측한 결과
 DT_fit_years <- rpart(salary87 ~ years, data = baseball_fit)
 print(predict(DT_fit_years, newdata = baseball_test))
-mean((baseball_test$salary87 - predict(DT_fit_years, newdata = baseball_test))^2)
+sqrt(mean((baseball_test$salary87 - predict(DT_fit_years, newdata = baseball_test))^2))
 
 ##salary87을 years와 careerHR과 그 상호작용을 포함하여 예측한 결과
 DT_fit_yearhr <- rpart(salary87 ~ years + careerHR, data = baseball_fit)
 print(predict(DT_fit_yearhr, newdata = baseball_test))
-mean((baseball_test$salary87 - predict(DT_fit_yearhr, newdata = baseball_test))^2)
+sqrt(mean((baseball_test$salary87 - predict(DT_fit_yearhr, newdata = baseball_test))^2))
 ```
 
  각각의 MSE 값을 살펴보면, 전체 변수로 예측했을 때 가장 크게 나타나며, ```years```와 ```careerHR```를 같이 사용하여 예측했을 때 가장 작게 나타난다. 따라서, 의사결정나무에서 두 변수를 사용한 모형을 선택하였다.
@@ -75,11 +76,11 @@ mean((baseball_test$salary87 - predict(DT_fit_yearhr, newdata = baseball_test))^
 ```{r warning=FALSE}
 B_fitall <- bagging(salary87 ~ ., data = baseball_fit)
 print(predict(B_fitall, newdata = baseball_test, type='prob'))
-mean((baseball_test$salary87 - predict(B_fitall, newdata = baseball_test, type='prob'))^2)
+sqrt(mean((baseball_test$salary87 - predict(B_fitall, newdata = baseball_test, type='prob'))^2))
 
 B_fit_years <- bagging(salary87 ~ years, data = baseball_fit)
 print(predict(B_fit_years, newdata = baseball_test, type='prob'))
-mean((baseball_test$salary87 - predict(B_fit_years, newdata = baseball_test, type='prob'))^2)
+sqrt(mean((baseball_test$salary87 - predict(B_fit_years, newdata = baseball_test, type='prob'))^2))
 
 B_fit_yearhr <- bagging(salary87 ~ years + careerHR, data = baseball_fit)
 print(predict(B_fit_yearhr, newdata = baseball_test, type='prob'))

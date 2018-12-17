@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #데이터 불러오기
 ```{r}
-bbh_raw <- read.csv(file='BaseballHitters.csv', header=T, row.names=1)
+bbh_raw <- read.csv(file='../00_Instructor/W11_MultipleRegression/BaseballHitters.csv', header=T, row.names=1)
 
 bbh <- bbh_raw
 ```
