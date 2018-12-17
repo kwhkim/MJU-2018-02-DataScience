@@ -1,0 +1,127 @@
+---
+title: "35_5차과제"
+author: "knock"
+date: "2018년 12월 15일"
+output: html_document
+---
+
+##### 5차과제
+
+먼저 주어진 조건에 맞게 데이터를 정제한다.
+```{r}
+library(dplyr)
+library(rpart)
+
+#데이터를 불러들이는 과정
+baseball <- read.csv(file = "../00_Instructor/W11_MultipleRegression/BaseballHitters.csv")
+
+
+bb<-baseball
+nrow(bb)
+
+#데이터의 행 삭제
+bb <- bb[-c(177,294,44,220,215,25,81,111,107,284,216,36,18,56,91,320,113,194,321,151,7 ,19,242,123,221,230,45,277,54,228,156,298,92,121,181,243,191,68,118,55,264,153 ,125,102,75,32,303,317,106,252,149,70,316,293,40,310,90,100,258,15),]
+nrow(bb)
+
+#데이터의 열 삭제
+bb <- subset(bb, select = -c(league87, team87))
+
+
+#salary87에 NA값이 있으면 후에 MSE검정에 오류가 있으므로 삭제
+bb <- bb %>% 
+  filter(!is.na(salary87))
+nrow(bb)
+
+```
+
+***
+
+##### 선형회귀분석
+
+불러들인 데이터에 대해서 86년도 변수들과 선수 경력변수(years)를 이용하여 회귀분석을 한다.
+```{r}
+fitLm0 <- lm(salary87 ~ AB86 + H86 + HR86 + R86 + RBI86 + W86 + years, bb)
+summary(fitLm0)
+
+
+#t값이 좋은 것만 뽑아보자
+fitLM1 <- lm(salary87 ~ AB86 + H86 + W86 + years, bb)
+summary(fitLM1)
+
+#t값이 좋지 않은 것을 뽑아보자
+fitLM2<- lm(salary87 ~ HR86 + R86 + RBI86, bb)
+summary(fitLM2)
+
+#득점과 득점타는 따로 빼니까 의미가 있다. 따로 빼서 보자.
+fitLM3 <- lm(salary87 ~ R86, bb)      #득점만 따로 뺐을 때,
+summary(fitLM3)
+
+fitLM4 <- lm(salary87 ~ RBI86, bb)    #득점타만 따로 뺐을 때,
+summary(fitLM4)
+
+fitLM5 <- lm(salary87 ~ years, bb)
+summary(fitLM5)
+```
+
+득점과 득점타는 전체 설명변수 중 p-value값이 가장 낮은(유의미하다고 할 수 있는) 선수 경력변수보다 R^2 값이 높지만 전체 설명변수로 들어가는 경우 p값이 커지므로 다른 변수와 다중공선성이 있는 것으로 의심된다. 이 부분을 체크하고 득점(R)과 득점타(RBI)를 제외한다. 다시 fitLM1에서 
+
+```{r}
+summary(fitLM1)
+```
+
+salary87과 양의 상관관계가 있는 것은 홈런(H), 승수(W), 선수 경력(years)이다. 이 세 변수를 이용하여 보자
+```{r}
+fitA <- lm(salary87 ~ H86, bb)
+mean((bb$salary87 - predict(fitA))^2)
+
+fitB <- lm(salary87 ~ W86, bb)
+mean((bb$salary87 - predict(fitB))^2)
+
+fitC <- lm(salary87 ~ years, bb)
+mean((bb$salary87 - predict(fitC))^2)
+
+fitD <- lm(salary87 ~ H86 + W86, bb)
+mean((bb$salary87 - predict(fitD))^2)
+
+fitE <- lm(salary87 ~ W86 + years, bb)
+mean((bb$salary87 - predict(fitE))^2)
+
+fitF <- lm(salary87 ~ years + H86, bb)
+mean((bb$salary87 - predict(fitF))^2)
+
+fitG <- lm(salary87 ~ H86 + W86 + years, bb)
+mean((bb$salary87 - predict(fitG))^2)
+```
+
+H, W, years 세 개의 설명변수를 모두 추가한 것이 가장 MSE가 작으므로 마지막 회귀모형이 가장 적합하다고 판단한다.
+
+***
+
+##### 의사결정트리
+위의 결과를 이용하여 fitA ~ fitG의 의사결정트리를 비교한다.
+```{r}
+fita <- rpart(salary87 ~ H86, data = bb)
+mean((bb$salary87 - predict(fita, newdata = bb))^2)
+
+fitb <- rpart(salary87 ~ W86, data = bb)
+mean((bb$salary87 - predict(fitb, newdata = bb))^2)
+
+fitc <- rpart(salary87 ~ years, data = bb)
+mean((bb$salary87 - predict(fitc, newdata = bb))^2)
+
+fitd <- rpart(salary87 ~ H86 + W86, data = bb)
+mean((bb$salary87 - predict(fitd, newdata = bb))^2)
+
+fite <- rpart(salary87 ~ W86 + years, data = bb)
+mean((bb$salary87 - predict(fite, newdata = bb))^2)
+
+fitf <- rpart(salary87 ~ years + H86, data = bb)
+mean((bb$salary87 - predict(fitf, newdata = bb))^2)
+
+fitg <- rpart(salary87 ~ H86 + W86 + years, data = bb)
+mean((bb$salary87 - predict(fitg, newdata = bb))^2)
+```
+
+마찬가지로 세 개 변수 모두 사용했을 때가 가장 적합하다.
+
+
