@@ -1,0 +1,74 @@
+---
+title: "마지막 과제"
+author: "23_이도휘"
+date: "2018년 12월 13일"
+---
+
+
+#데이터 전처리
+```{r}
+library(rpart) 
+library(rpart.plot)
+library(dplyr) 
+library(caret)
+library(tidyr) 
+library(ipred) 
+library(randomForest)
+library(ipred)
+
+setwd("C://Users//gfdss//Desktop//datascience//homework1//MJU-2018-02-DataScience")
+a <- read.csv("00_Instructor//W11_MultipleRegression//BaseballHitters.csv", sep=',')
+head(a)
+
+b <- a %>% select(c(1:24)) %>%
+  slice(-c(177,294,44,220,215,25,81,111,107,284,216,36,18,56,91,320,113,194,321,151,7 ,19,242,123,221,230,45,277,54,228,156,298,92,121,181,243,191,68,118,55,264,153 ,125,102,75,32,303,317,106,252,149,70,316,293,40,310,90,100,258,15))
+head(b)
+
+fit1 <- rpart(salary87 ~ team86 + league86, data=b, control = rpart.control(maxdepth=5))
+rpart.plot(fit1)
+test <- b %>% slice(1:100)
+print(predict(fit1, newdata= test))
+```
+
+#randomForest
+```{r}
+b.fit <- randomForest(salary87 ~ team86 + league86, data=b, mtry=floor(2), ntree=500, na.action=na.omit)
+predbf <- print(predict(b.fit, newdata= test))
+head(predbf)
+
+summary(b.fit)
+
+```
+
+
+
+#Bagging
+```{r}
+bagging1 <- bagging(salary87 ~ team86 + league86, data=b, type='prob', coob=TRUE, na.action=na.omit)
+predba1 <- print(predict(bagging1, newdata=test))
+head(predba1)
+
+
+```
+
+
+
+#MSE
+```{r}
+mean((bagging1$y[1:80] - predict(bagging1))^2) #237957.1
+mean((b.fit$y[1:80] - predict(b.fit))^2) #241244.5
+RMSE(b.fit$y[1:80]-predict(b.fit)^2)
+
+```
+
+#결과
+* team86과 league86 변수를 가지고 salary87을 예측해보았다. 
+
+ -전년도 팀과 리그가 당해년도 연봉에 어떤 영향을 미치는 지 알기 위해서이다.
+
+
+* MSE 추정 결과, bagging이 randomForest보다 MSE 값이 작다. 따라서 Bagging이 더 적합함을 알 수 있다. 
+
+-
+
+

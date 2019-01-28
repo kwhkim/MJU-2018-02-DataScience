@@ -1,0 +1,51 @@
+---
+
+---
+
+```{r}
+library(dplyr)
+library(tidyr)
+library(reshape2)
+
+a <- read.csv("C://Users//gfdss//Desktop//응데 과제//연령별 2015.csv")
+head(a)
+
+colnames(a) <- c('state','total','under20','under20.2','under20.3','2130','2130.2','3140','3140.2','4150','4150.2','5160','5160.2','6164','6164.2','above65','above65.2','none', 'none.2')
+a %>% select(state, total, under20, '2130', '3140', '4150', '5160', '6164', above65, none) -> b
+head(b)
+
+
+c <- read.csv("C://Users//gfdss//Desktop//응데 과제//연령별 2016.csv")
+
+
+colnames(c) <- c('state', 'total', 'under20', '2130', '3140', '4150', '5160', '6164', 'above65', 'none')
+head(c)
+
+d <- read.csv("C://Users//gfdss//Desktop//응데 과제//연령별 2017.csv")
+
+colnames(d) <- c('state', 'total', 'under20', '2130', '3140', '4150', '5160', '6164', 'above65', 'none')
+d %>%mutate(state=as.factor(state))
+head(d)
+
+e <- left_join(b, c, by = c('state', 'total', 'under20', '2130', '3140', '4150', '5160', '6164', 'above65', 'none'))
+
+f <- left_join(e, d, by = c('state', 'total', 'under20', '2130', '3140', '4150', '5160', '6164', 'above65', 'none'))
+f <- f %>% mutate('total'=as.factor(total),
+             'under20'=as.factor(under20))
+
+data(f)
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+```
